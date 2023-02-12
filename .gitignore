@@ -6,6 +6,13 @@ __pycache__/
 # C extensions
 *.so
 
+# Google Backup Files
+*.bak
+
+# Pycharm Folders
+**/.idea/
+**/project_venv/
+
 # Distribution / packaging
 .Python
 build/
