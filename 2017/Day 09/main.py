@@ -20,22 +20,24 @@ Part 1
 What is the total score for all groups in your input?
 """
 
+# Define what groups are garbage and what are not
+lgroup = "{"
+rgroup = "}"
+lgarb = "<"
+rgarb = ">"
+cancel = "!"
 
-def clean_stream(garbage_stream: str) -> str:
-    """Remove garbage characters from stream and return a cleaned version."""
 
-    # Define what groups are garbage and what are not
-    lgroup = "{"
-    rgroup = "}"
-    lgarb = "<"
-    rgarb = ">"
-    cancel = "!"
-
-    cleaned_stream = ""
+def stream_score(garbage_stream: str, non_canceled=False) -> int:
+    """What is the score of a stream of garbage characters."""
 
     # Loop over the stream of text and identify the groups
     i = 0
     in_garb = False
+    curr_score = 0
+    score_total = 0
+    canceled_chars = 0
+    stack = []
 
     while i < len(garbage_stream):
 
@@ -44,24 +46,42 @@ def clean_stream(garbage_stream: str) -> str:
 
         # Skip the next character if char is the cancel one.
         if char == cancel:
-            i += 2
-            continue
+            i += 1
 
         # Is the stream in a garbage group
-        if char == lgarb:
+        elif in_garb:
+            if char == rgarb:
+                in_garb = False
+            else:
+                canceled_chars += 1
+
+        # Each new group down causes the score to go up
+        elif char == lgroup:
+            curr_score += 1
+            stack.append(curr_score)
+
+        # If garbage starts
+        elif char == lgarb:
             in_garb = True
 
-        if char == rgarb:
-            in_garb = False
-
-        # Record Groups
-        if not in_garb and char in (lgroup, rgroup):
-            cleaned_stream += char
+        # When a group ends add the current score to the total
+        elif char == rgroup:
+            curr_score -= 1
+            score_total += stack.pop()
 
         # Move onto the next character in the stream
         i += 1
 
-    return cleaned_stream
+    if non_canceled:
+        return canceled_chars
+    else:
+        return score_total
 
 
-print(clean_stream("{{<!>},{<!>},{<!>},{<a>}}"))
+stream = open("data/input.txt", "r").read()
+
+# Part 1
+print(stream_score(stream))
+
+# Part 2
+print(stream_score(stream, True))
