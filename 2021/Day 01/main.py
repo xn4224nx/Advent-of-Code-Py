@@ -20,28 +20,25 @@ as the sweep looks further and further away from the submarine.
 
 """
 
+
+def sonar_sweep(heights: list, window_size: int) -> int:
+
+    sweep_count = 0
+
+    for x in range(len(heights) - window_size):
+
+        # Record if the next window is larger than the current
+        curr_wind = sum(heights[x: x + window_size])
+        next_wind = sum(heights[x + 1: x + window_size + 1])
+
+        if curr_wind < next_wind:
+            sweep_count += 1
+
+    return sweep_count
+
+
 # Load the data
 depths = [int(x) for x in open("./data/input.txt", "r").read().split()]
 
-# Iterate over the loop and count when the loop decreases
-increase_count = 0
-
-for x in range(len(depths) - 1):
-
-    # Record if the next measurement is larger than the current
-    if depths[x] < depths[x + 1]:
-        increase_count += 1
-
-window_count = 0
-for x in range(len(depths) - 3):
-
-    # Record if the next window is larger than the current
-    curr_wind = sum(depths[x:x+3])
-    next_wind = sum(depths[x+1:x+4])
-
-    if curr_wind < next_wind:
-        print("increase")
-        window_count += 1
-
-print(f"Part 1: Total increases = {increase_count}")
-print(f"Part 1: Total window increases = {window_count}")
+print(f"Part 1: Total increases = {sonar_sweep(depths, 1)}")
+print(f"Part 1: Total window increases = {sonar_sweep(depths, 3)}")
