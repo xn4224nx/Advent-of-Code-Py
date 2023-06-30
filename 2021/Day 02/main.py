@@ -24,3 +24,32 @@ planned course.
             your final depth?
 
 """
+
+
+class SubNavigation:
+
+    def __init__(self, instructions_path: str):
+
+        # Submarine Start Position
+        self.x_pos = 0
+        self.y_pos = 0
+
+        # Load and parse the instructions
+        self.inst = open(instructions_path, "r").read().splitlines()
+
+    def show_instructions(self):
+        """
+        Print the submarine instructions to standard out.
+        """
+        [print(x) for x in self.inst]
+
+    def execute_instructions(self):
+        """
+        Move the submarine according to the instructions
+        """
+        pass
+
+    
+sample_dive = SubNavigation("./data/input.txt")
+sample_dive.show_instructions()
+
