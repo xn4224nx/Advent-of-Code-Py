@@ -35,21 +35,54 @@ class SubNavigation:
         self.y_pos = 0
 
         # Load and parse the instructions
-        self.inst = open(instructions_path, "r").read().splitlines()
+        self.instructs = open(instructions_path, "r").read().splitlines()
 
     def show_instructions(self):
         """
         Print the submarine instructions to standard out.
         """
-        [print(x) for x in self.inst]
+        [print(x) for x in self.instructs]
 
-    def execute_instructions(self):
+    def execute_instr(self, instr: str):
+        """
+        Run one instruction defined by the string `instr`. Extract the command
+        and the direction from the instruction string and change the submarine
+        position according to their values.
+        """
+
+        # Extract the command and magnitude
+        comm, mag = instr.split(" ", 1)
+
+        # Parse the magnitude str to a number
+        mag = int(mag)
+
+        # Execute the instruction
+        if comm == "forward":
+            self.x_pos += mag
+
+        elif comm == "up":
+            self.y_pos -= mag
+
+        elif comm == "down":
+            self.y_pos += mag
+
+        else:
+            raise Exception(f"Command '{comm}' not recognised.")
+
+    def execute_all_instructions(self):
         """
         Move the submarine according to the instructions
         """
-        pass
 
-    
+        # Iterate over all the instructions
+        for instr in self.instructs:
+            self.execute_instr(instr)
+
+    def show_position(self):
+        print(self.x_pos, self.y_pos)
+
+
 sample_dive = SubNavigation("./data/input.txt")
-sample_dive.show_instructions()
+sample_dive.execute_all_instructions()
 
+print(f"Answer to part 1: {sample_dive.x_pos * sample_dive.y_pos}")
