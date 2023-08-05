@@ -23,7 +23,7 @@ import numpy as np
 
 class BingoGame:
 
-    def __init__(self, data_path:str):
+    def __init__(self, data_path: str):
 
         # Load the data about the initial game setup
         self.raw_data = open(data_path, "r").read().splitlines()
@@ -58,13 +58,28 @@ class BingoGame:
                           dtype=np.bool_)
             })
 
+    def call_number(self, call_number: int):
+        """
+        Run a round of bingo.
+        """
 
+        # Iterate over every player
+        for i in range(self.players):
+
+            # Change every instance of the called number to True in score
+            mask = self.player_data[i]["board"] == call_number
+            print(mask)
+
+            self.player_data[i]["score"][
+                self.player_data[i]["score"] != mask] = True
 
 
 if __name__ == "__main__":
 
     # Sample Game
     sample = BingoGame("./data/sample.txt")
+
+    sample.call_number(7)
 
     print(sample.call_numbers)
 
