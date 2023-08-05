@@ -25,6 +25,9 @@ class BingoGame:
 
     def __init__(self, data_path: str):
 
+        # Define the size of the bingo board
+        self.board_size = 5
+
         # Load the data about the initial game setup
         self.raw_data = open(data_path, "r").read().splitlines()
 
@@ -35,13 +38,13 @@ class BingoGame:
         self.player_data = []
 
         # Determine the number of boards
-        self.players = len(self.raw_data)//6
+        self.players = len(self.raw_data)//(self.board_size + 1)
 
         # Parse the bingo data
         for i in range(self.players):
 
-            start_idx = 6 * i + 2
-            final_idx = 6 * i + 7
+            start_idx = (self.board_size + 1) * i + 2
+            final_idx = (self.board_size + 1) * i + 7
 
             # Extract the players board data
             board = self.raw_data[start_idx:final_idx]
@@ -53,7 +56,7 @@ class BingoGame:
             self.player_data.append({
                 "board": board,
                 "score": np.full(
-                          shape=(5, 5),
+                          shape=(self.board_size, self.board_size),
                           fill_value=False,
                           dtype=np.bool_)
             })
@@ -68,10 +71,36 @@ class BingoGame:
 
             # Change every instance of the called number to True in score
             mask = self.player_data[i]["board"] == call_number
-            print(mask)
 
             self.player_data[i]["score"][
                 self.player_data[i]["score"] != mask] = True
+
+    def check_for_win(self) -> list[int]:
+        """
+        Check all the players to see if any have won. If any have one return a
+        list of the winning players.
+        """
+
+        winners = []
+
+        # For each player in the game
+        for i in range(self.players):
+
+            # Check any rows for all True
+            row_mask = np.sum(self.player_data[i]["score"], axis=1)
+
+            if self.board_size in row_mask:
+                winners.append(i)
+                continue
+
+            # Check any cols for all True
+            col_mask = np.sum(self.player_data[i]["score"], axis=0)
+
+            if self.board_size in col_mask:
+                winners.append(i)
+                continue
+
+        return winners
 
 
 if __name__ == "__main__":
@@ -80,6 +109,7 @@ if __name__ == "__main__":
     sample = BingoGame("./data/sample.txt")
 
     sample.call_number(7)
+    sample.check_for_win()
 
     print(sample.call_numbers)
 
