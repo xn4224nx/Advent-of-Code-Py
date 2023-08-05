@@ -102,15 +102,44 @@ class BingoGame:
 
         return winners
 
+    def calc_final_score(self, player: int) -> int:
+        """
+        For a winning player sum the un scored numbers.
+        """
+
+        # Filter to the non-scored numbers
+        non_scored = self.player_data[player]["board"][
+            self.player_data[player]["score"] == False]
+
+        return int(np.sum(non_scored))
+
+    def game_of_bingo(self):
+        """
+        Run a game of bingo.
+        """
+
+        # Iterate over each possible call in order
+        for call in self.call_numbers:
+
+            # Call the number
+            self.call_number(call)
+
+            # Check for a winners
+            winners = self.check_for_win()
+
+            if winners:
+                break
+
+        # Calculate the score
+        win_idx = winners[0]
+
+        board_sum = self.calc_final_score(win_idx)
+
+        print(f"Player {win_idx} won with score = {board_sum * call}")
+
 
 if __name__ == "__main__":
 
     # Sample Game
     sample = BingoGame("./data/sample.txt")
-
-    sample.call_number(7)
-    sample.check_for_win()
-
-    print(sample.call_numbers)
-
-
+    sample.game_of_bingo()
