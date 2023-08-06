@@ -118,6 +118,9 @@ class BingoGame:
         Run a game of bingo.
         """
 
+        all_winners = []
+        winner_found = False
+
         # Iterate over each possible call in order
         for call in self.call_numbers:
 
@@ -128,18 +131,31 @@ class BingoGame:
             winners = self.check_for_win()
 
             if winners:
+
+                # Calculate the score of the first winner
+                if not winner_found:
+                    board_sum = self.calc_final_score(winners[0])
+                    print(f"Player {winners[0]} won "
+                          f"with score = {board_sum * call}")
+                    winner_found = True
+
+                # Everytime a new winner is found save
+                for idx in winners:
+                    if idx not in all_winners:
+                        all_winners.append(idx)
+
+            # Finish the loop after everyone has won
+            if len(all_winners) == self.players:
                 break
 
-        # Calculate the score
-        win_idx = winners[0]
-
-        board_sum = self.calc_final_score(win_idx)
-
-        print(f"Player {win_idx} won with score = {board_sum * call}")
+        # Calculate the score of the last winner
+        board_sum = self.calc_final_score(all_winners[-1])
+        print(f"Player {all_winners[-1]} lost "
+              f"with score = {board_sum * call}")
 
 
 if __name__ == "__main__":
 
     # Sample Game
-    sample = BingoGame("./data/sample.txt")
+    sample = BingoGame("./data/input.txt")
     sample.game_of_bingo()
