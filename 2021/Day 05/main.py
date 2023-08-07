@@ -18,3 +18,21 @@ Part 1:
     two lines overlap?
 
 """
+
+# Load the raw data from file
+raw_data = open("./data/sample.txt").read().splitlines()
+
+# Parse the line coordinates
+vents = []
+for line in raw_data:
+
+    # Split the two coordinates
+    start, end = line.split(" -> ")
+
+    # Convert the coordinates to integers
+    start = [int(x) for x in start.split(",")]
+    end = [int(x) for x in end.split(",")]
+
+    vents.append((start, end))
+
+print(vents)
