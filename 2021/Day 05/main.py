@@ -19,20 +19,28 @@ Part 1:
 
 """
 
-# Load the raw data from file
-raw_data = open("./data/sample.txt").read().splitlines()
 
-# Parse the line coordinates
-vents = []
-for line in raw_data:
+def load_vent_data(data_file: str) -> list[tuple[list[int], list[int]]]:
 
-    # Split the two coordinates
-    start, end = line.split(" -> ")
+    # Load the raw data from file
+    raw_data = open(data_file, "r").read().splitlines()
 
-    # Convert the coordinates to integers
-    start = [int(x) for x in start.split(",")]
-    end = [int(x) for x in end.split(",")]
+    # Parse the line coordinates
+    vents = []
+    for line in raw_data:
 
-    vents.append((start, end))
+        # Split the two coordinates
+        start, end = line.split(" -> ")
 
-print(vents)
+        # Convert the coordinates to integers
+        start = [int(x) for x in start.split(",")]
+        end = [int(x) for x in end.split(",")]
+
+        vents.append((start, end))
+
+    return vents
+
+
+sample_data = load_vent_data("./data/sample.txt")
+
+print(sample_data)
