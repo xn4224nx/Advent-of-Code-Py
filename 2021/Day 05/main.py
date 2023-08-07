@@ -41,6 +41,50 @@ def load_vent_data(data_file: str) -> list[tuple[list[int], list[int]]]:
     return vents
 
 
+def points_on_line(line: tuple[list[int], list[int]]) -> list:
+    """
+    Find all the points between and including two points.
+    """
+
+    # Vertical Line
+    if line[0][0] == line[1][0]:
+
+        # Find the smaller & larger number
+        if line[0][1] > line[1][1]:
+            up = line[0][1]
+            dw = line[1][1]
+
+        else:
+            up = line[1][1]
+            dw = line[0][1]
+
+        return [(line[0][0], x) for x in range(dw, up+1)]
+
+    # Horizontal Line
+    elif line[0][1] == line[1][1]:
+
+        # Find the smaller & larger number
+        if line[0][0] > line[1][0]:
+            up = line[0][0]
+            dw = line[1][0]
+
+        else:
+            up = line[1][0]
+            dw = line[0][0]
+
+        return [(x, line[1][1]) for x in range(dw, up+1)]
+
+    else:
+        return []
+
+
+# Load the sample data
 sample_data = load_vent_data("./data/sample.txt")
 
-print(sample_data)
+# For each point
+for line_points in sample_data:
+
+    # find all the points on the line
+    points = points_on_line(line_points)
+
+    print(points)
