@@ -79,12 +79,25 @@ def points_on_line(line: tuple[list[int], list[int]]) -> list:
 
 
 # Load the sample data
-sample_data = load_vent_data("./data/sample.txt")
+sample_data = load_vent_data("./data/input.txt")
 
 # For each point
+vent_points = {}
+
 for line_points in sample_data:
 
     # find all the points on the line
     points = points_on_line(line_points)
 
-    print(points)
+    for vent_pt in points:
+
+        if vent_pt in vent_points:
+            vent_points[vent_pt] += 1
+        else:
+            vent_points[vent_pt] = 1
+
+
+# Count the points where two or more
+overlapping_pts = len([x for x in vent_points if vent_points[x] > 1])
+
+print(overlapping_pts)
