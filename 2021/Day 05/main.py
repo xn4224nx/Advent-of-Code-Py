@@ -17,6 +17,9 @@ Part 1:
     Consider only horizontal and vertical lines. At how many points do at least
     two lines overlap?
 
+Part 2:
+    Consider all of the lines. At how many points do at least two lines overlap?
+
 """
 
 
@@ -41,7 +44,8 @@ def load_vent_data(data_file: str) -> list[tuple[list[int], list[int]]]:
     return vents
 
 
-def points_on_line(line: tuple[list[int], list[int]]) -> list:
+def points_on_line(
+        line: tuple[list[int], list[int]], diag_on: bool = False) -> list:
     """
     Find all the points between and including two points.
     """
@@ -74,20 +78,34 @@ def points_on_line(line: tuple[list[int], list[int]]) -> list:
 
         return [(x, line[1][1]) for x in range(dw, up+1)]
 
+    # Diagonal Line
+    elif diag_on:
+
+        # Calculate The Gradient
+        grad = (line[1][1] - line[0][1]) // (line[1][0] - line[0][0])
+
+        print(grad)
+
+        return [
+            (line[0][0] + grad * x,
+             line[1][1] + grad * x)
+            for x in range(line[1][0]-line[0][0]+1)]
+
     else:
         return []
 
-
 # Load the sample data
-sample_data = load_vent_data("./data/input.txt")
+sample_data = load_vent_data("./data/sample.txt")
 
 # For each point
 vent_points = {}
+vent_diag_points = {}
 
 for line_points in sample_data:
 
     # find all the points on the line
     points = points_on_line(line_points)
+    diag_points = points_on_line(line_points, True)
 
     for vent_pt in points:
 
@@ -96,8 +114,16 @@ for line_points in sample_data:
         else:
             vent_points[vent_pt] = 1
 
+    for vent_pt in diag_points:
+
+        if vent_pt in vent_diag_points:
+            vent_diag_points[vent_pt] += 1
+        else:
+            vent_diag_points[vent_pt] = 1
 
 # Count the points where two or more
 overlapping_pts = len([x for x in vent_points if vent_points[x] > 1])
+overlapping_diag_pts = len([x for x in vent_diag_points if vent_diag_points[x] > 1])
 
 print(overlapping_pts)
+print(overlapping_diag_pts)
