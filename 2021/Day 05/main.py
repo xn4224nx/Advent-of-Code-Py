@@ -84,22 +84,28 @@ def points_on_line(
         # Calculate The Gradient
         grad = (line[1][1] - line[0][1]) // (line[1][0] - line[0][0])
 
-        print(line)
-        print(grad)
-        points = [
-            (line[0][0] + grad * x, line[1][0] + grad * x)
-            for x in range(abs(line[1][0]-line[0][0]+1))]
-        print(points)
+        # Calculate the Intercept
+        intr = line[1][1] - grad * line[1][0]
 
-        print()
+        # Find the point with the lowest x value
+        if line[0][0] < line[1][0]:
+            low = line[0]
+            high = line[1]
+
+        else:
+            low = line[1]
+            high = line[0]
+
+        points = [(x, grad * x + intr) for x in range(low[0], high[0]+1)]
 
         return points
 
     else:
         return []
 
+
 # Load the sample data
-sample_data = load_vent_data("./data/sample.txt")
+sample_data = load_vent_data("./data/input.txt")
 
 # For each point
 vent_points = {}
@@ -126,8 +132,11 @@ for line_points in sample_data:
             vent_diag_points[vent_pt] = 1
 
 # Count the points where two or more
-overlapping_pts = len([x for x in vent_points if vent_points[x] > 1])
-overlapping_diag_pts = len([x for x in vent_diag_points if vent_diag_points[x] > 1])
+overlapping_pts = [x for x in vent_points if vent_points[x] > 1]
+overlapping_diag_pts = [x for x in vent_diag_points if vent_diag_points[x] > 1]
 
-print(overlapping_pts)
-print(overlapping_diag_pts)
+print(f"The number of overlapping points: {len(overlapping_pts)}")
+print(
+    f"The number of overlapping "
+    f"points (diagonals included): {len(overlapping_diag_pts)}"
+)
