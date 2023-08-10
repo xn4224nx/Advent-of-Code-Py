@@ -84,12 +84,16 @@ def points_on_line(
         # Calculate The Gradient
         grad = (line[1][1] - line[0][1]) // (line[1][0] - line[0][0])
 
+        print(line)
         print(grad)
+        points = [
+            (line[0][0] + grad * x, line[1][0] + grad * x)
+            for x in range(abs(line[1][0]-line[0][0]+1))]
+        print(points)
 
-        return [
-            (line[0][0] + grad * x,
-             line[1][1] + grad * x)
-            for x in range(line[1][0]-line[0][0]+1)]
+        print()
+
+        return points
 
     else:
         return []
