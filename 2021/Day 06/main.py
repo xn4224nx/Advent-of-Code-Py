@@ -24,3 +24,17 @@ Part 1:
     How many lanternfish would there be after 80 days?
 
 """
+
+
+class LanternFishes:
+
+    def __init__(self, info_filepath: str):
+
+        # Load the info file into memory
+        self.pop = [int(x) for x in open(info_filepath, "r").read().split(",")]
+
+
+# Read the initial population
+sample = LanternFishes("./data/sample.txt")
+
+print(sample.pop)
