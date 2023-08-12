@@ -33,8 +33,38 @@ class LanternFishes:
         # Load the info file into memory
         self.pop = [int(x) for x in open(info_filepath, "r").read().split(",")]
 
+    def pass_a_day(self):
+        """
+        Emulate a day passing on the lantern fish population.
+        """
+
+        # Decrease the internal timers of the fish by one
+        self.pop = [x-1 for x in self.pop]
+
+        # If there is lantern fish that will divide reset the timer and add one
+        if -1 in self.pop:
+
+            # Count of replicating fish
+            rep_fish = self.pop.count(-1)
+
+            # Replace the `-1` with `6`
+            self.pop = [6 if x == -1 else x for x in self.pop]
+
+            # Add in the new fishes
+            self.pop += [8 for x in range(rep_fish)]
+
+    def run_simulation(self, days: int):
+        """
+        Simulate how the population will change over a set number of days.
+        """
+
+        for i in range(days):
+            self.pass_a_day()
+
 
 # Read the initial population
 sample = LanternFishes("./data/sample.txt")
 
-print(sample.pop)
+# Run a simulation
+sample.run_simulation(80)
+print(f"The answer to part 1: {len(sample.pop)}")
