@@ -30,8 +30,15 @@ class LanternFishes:
 
     def __init__(self, info_filepath: str):
 
+        # Storage for fish by timer age
+        self.pop_by_time = {x: 0 for x in range(9)}
+
         # Load the info file into memory
         self.pop = [int(x) for x in open(info_filepath, "r").read().split(",")]
+
+        # Convert the population to a dictionary of all the states
+        for fish in self.pop:
+            self.pop_by_time[fish] += 1
 
     def pass_a_day(self):
         """
@@ -39,19 +46,17 @@ class LanternFishes:
         """
 
         # Decrease the internal timers of the fish by one
-        self.pop = [x-1 for x in self.pop]
+        new_pop = {x: 0 for x in range(9)}
+        for timer in self.pop_by_time:
 
-        # If there is lantern fish that will divide reset the timer and add one
-        if -1 in self.pop:
+            if timer == 0:
+                new_pop[6] += self.pop_by_time[timer]
+                new_pop[8] += self.pop_by_time[timer]
 
-            # Count of replicating fish
-            rep_fish = self.pop.count(-1)
+            else:
+                new_pop[timer-1] += self.pop_by_time[timer]
 
-            # Replace the `-1` with `6`
-            self.pop = [6 if x == -1 else x for x in self.pop]
-
-            # Add in the new fishes
-            self.pop += [8 for x in range(rep_fish)]
+        self.pop_by_time = new_pop
 
     def run_simulation(self, days: int):
         """
@@ -61,10 +66,19 @@ class LanternFishes:
         for i in range(days):
             self.pass_a_day()
 
+    def num_fish(self) -> int:
+        """
+        How many lantern Fish are there?
+        """
+        return sum([x for x in self.pop_by_time.values()])
+
 
 # Read the initial population
-sample = LanternFishes("./data/sample.txt")
+sample = LanternFishes("./data/input.txt")
 
 # Run a simulation
 sample.run_simulation(80)
-print(f"The answer to part 1: {len(sample.pop)}")
+print(f"The answer to part 1: {sample.num_fish()}")
+
+sample.run_simulation(256-80)
+print(f"The answer to part 2: {sample.num_fish()}")
