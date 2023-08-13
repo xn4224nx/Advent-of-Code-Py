@@ -25,6 +25,12 @@ Part 1:
     least fuel possible. How much fuel must they spend to align to that
     position?
 
+Part 2:
+    As it turns out, crab submarine engines don't burn fuel at a constant rate.
+    Instead, each change of 1 step in horizontal position costs 1 more unit of
+    fuel than the last: the first step costs 1, the second step costs 2, the
+    third step costs 3, and so on.How much fuel must they spend to align to
+    that position?
 """
 
 import numpy as np
@@ -35,8 +41,21 @@ crab_sub_pos = [
 
 crab_sub_pos = np.array(crab_sub_pos)
 
-# Iterate over all possible positions that the crabs could be move to
-move_costs = [np.sum(np.abs(np.subtract(crab_sub_pos, x)))
-              for x in range(max(crab_sub_pos))]
+scalar_move_costs = []
+geometric_move_costs = []
 
-print(f"The answer to part one is: {min(move_costs)}")
+# Iterate over all possible positions that the crabs could be move to
+for dist in range(max(crab_sub_pos)):
+
+    # Calculate the scaler crab move
+    scale_move = np.abs(np.subtract(crab_sub_pos, dist))
+
+    # Calculate the geometric crab move
+    geom_move = (scale_move**2 + scale_move)/2
+
+    # Save the total movement cost of all crabs
+    scalar_move_costs.append(np.sum(scale_move))
+    geometric_move_costs.append(np.sum(geom_move))
+
+print(f"The answer to part one is: {min(scalar_move_costs)}")
+print(f"The answer to part two is: {int(min(geometric_move_costs))}")
