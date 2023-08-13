@@ -26,3 +26,17 @@ Part 1:
     position?
 
 """
+
+import numpy as np
+
+# Load the crab submarine data into memory
+crab_sub_pos = [
+    int(x) for x in open("./data/input.txt", "r").read().split(",")]
+
+crab_sub_pos = np.array(crab_sub_pos)
+
+# Iterate over all possible positions that the crabs could be move to
+move_costs = [np.sum(np.abs(np.subtract(crab_sub_pos, x)))
+              for x in range(max(crab_sub_pos))]
+
+print(f"The answer to part one is: {min(move_costs)}")
