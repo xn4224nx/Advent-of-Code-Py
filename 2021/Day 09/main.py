@@ -37,9 +37,53 @@ def load_heightmap(file_path: str) -> np.array:
     return data
 
 
+def find_low_points(heightmap: np.array) -> list[tuple[int, int]]:
+    """
+    Find the positions of the low points in a heightmap and return a list of
+    tuples of the coordinates of the heightmap.
+    """
+    # Determine the low points in the height map
+    low_points = []
+
+    # Iterate over every point in the height map
+    for i in range(heightmap.shape[0]):
+        for j in range(heightmap.shape[1]):
+
+            # If all the surrounding tiles are higher this point is a low point
+            check = []
+
+            # Check the x axis
+            if i == 0:
+                check.append(heightmap[i, j] < heightmap[i+1, j])
+
+            elif i == heightmap.shape[0]-1:
+                check.append(heightmap[i, j] < heightmap[i-1, j])
+
+            else:
+                check.append(heightmap[i, j] < heightmap[i+1, j])
+                check.append(heightmap[i, j] < heightmap[i-1, j])
+
+            # Check the y axis
+            if j == 0:
+                check.append(heightmap[i, j] < heightmap[i, j+1])
+
+            elif j == heightmap.shape[1]-1:
+                check.append(heightmap[i, j] < heightmap[i, j-1])
+
+            else:
+                check.append(heightmap[i, j] < heightmap[i, j+1])
+                check.append(heightmap[i, j] < heightmap[i, j-1])
+
+            if all(check):
+                low_points.append((i, j))
+
+    return low_points
+
+
 if __name__ == "__main__":
 
-    sample_map = load_heightmap("./data/sample.txt")
-    input_map = load_heightmap("./data/input.txt")
+    # Load the data
+    height_map = load_heightmap("./data/sample.txt")
 
-    print(input_map)
+    # Determine the location of low points in the height map
+    low_point_coords = find_low_points(height_map)
