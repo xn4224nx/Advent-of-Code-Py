@@ -26,6 +26,8 @@ should be able to tell which combinations of signals correspond to those digits.
 Part 1:
     In the output values, how many times do digits 1, 4, 7, or 8 appear?
 
+Part 2:
+    What do you get if you add up all of the output values?
 """
 
 
@@ -143,7 +145,10 @@ def lookup_output_digits(
 
 if __name__ == "__main__":
 
-    raw_digits = open("./data/sample.txt").read().splitlines()
+    raw_digits = open("./data/input.txt").read().splitlines()
+
+    cnt_1_4_7_8 = 0
+    all_outputs = []
 
     for line in raw_digits:
 
@@ -159,5 +164,11 @@ if __name__ == "__main__":
 
         # Use the lookup to de-encode the output number
         out_num = lookup_output_digits(digit_lookup, outputs)
+        all_outputs.append(out_num)
 
-        print(out_num)
+        # Count the occurrence of 1, 4, 7, 8 in the output digits
+        for num in [1, 4, 7, 8]:
+            cnt_1_4_7_8 += str(out_num).count(str(num))
+
+    print(f"The answer to part 1: {cnt_1_4_7_8}")
+    print(f"The answer to part 2: {sum(all_outputs)}")
