@@ -80,10 +80,25 @@ def find_low_points(heightmap: np.array) -> list[tuple[int, int]]:
     return low_points
 
 
+def point_risk_level(
+        heightmap: np.array, point_coords: list[tuple[int, int]]) -> list[int]:
+    """
+    Find the risk level of all the points in the list `points`.
+    """
+
+    # Find the risk levels of the points
+    return [heightmap[x]+1 for x in point_coords]
+
+
 if __name__ == "__main__":
 
     # Load the data
-    height_map = load_heightmap("./data/sample.txt")
+    height_map = load_heightmap("./data/input.txt")
 
     # Determine the location of low points in the height map
     low_point_coords = find_low_points(height_map)
+
+    # Find the low point risk level
+    risk_levels = point_risk_level(height_map, low_point_coords)
+
+    print(f"The answer to part 1: {sum(risk_levels)}")
