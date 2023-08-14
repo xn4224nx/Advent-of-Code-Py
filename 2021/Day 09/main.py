@@ -19,3 +19,27 @@ Part 1:
     levels of all low points on your heightmap?
 
 """
+
+import numpy as np
+
+
+def load_heightmap(file_path: str) -> np.array:
+    """
+    Load the heightmap from file and parse it into an numpy array.
+    """
+    raw_data = []
+
+    for line in open(file_path, "r").read().splitlines():
+        raw_data.append([int(x) for x in line])
+
+    data = np.array(raw_data)
+
+    return data
+
+
+if __name__ == "__main__":
+
+    sample_map = load_heightmap("./data/sample.txt")
+    input_map = load_heightmap("./data/input.txt")
+
+    print(input_map)
