@@ -28,29 +28,136 @@ Part 1:
 
 """
 
-# Load the raw digit data
-raw_digits = open("./data/input.txt").read().splitlines()
 
-# Parse the digit data
-digits = []
-digit_len_cnt = {x: 0 for x in range(10)}
+def sort_str(unordered: str) -> str:
+    """
+    Sort the letters in a string and return it
+    """
+    # Turn it into an ordered list
+    unordered = sorted(unordered)
 
-for line in raw_digits:
+    # Transform it back into a string and return it
+    return "".join(unordered)
 
-    # Extract the signal digits and the output digits
-    signals, outputs = line.split("|")
 
-    # Save the parsed and cleaned digit data
-    digits.append({
-            "signals": [x.strip() for x in signals.split()],
-            "outputs": [x.strip() for x in outputs.split()],
-    })
+def some_char_in_str(container: str, sub: str, count: int = None) -> bool:
+    """
+    Test if all the `count` of the chars in `sub` are all in `container`
+    """
 
-    # Count the frequency of output digit lengths
-    for digi in digits[-1]["outputs"]:
-        digit_len_cnt[len(digi)] += 1
+    char_cnt = 0
 
-cnt_1_4_7_8 = (digit_len_cnt[2] + digit_len_cnt[4] +
-               digit_len_cnt[3] + digit_len_cnt[7])
+    if count is None:
+        count = len(sub)
 
-print(f"The answer to part 1: {cnt_1_4_7_8}")
+    for char in sub:
+        if char in container:
+            char_cnt += 1
+
+    if char_cnt >= count:
+        return True
+    else:
+        return False
+
+
+def parse_digit_codes(digit_signal: list[str]) -> dict[str: str]:
+    """
+    Using a list of digit strings determine what digit refers to each code.
+    """
+
+    # Order the chars in the code
+    digit_signal= [sort_str(x) for x in digit_signal]
+
+    # Return Dictionary
+    digits = {x: None for x in digit_signal}
+
+    # Sort the digits due to length
+    len_5_digi = []
+    len_6_digi = []
+
+    # Pick out the digits with unique length and sort the others
+    for code in digit_signal:
+
+        if len(code) == 2:
+            digits[code] = "1"
+            one_code = code
+
+        elif len(code) == 4:
+            digits[code] = "4"
+            four_code = code
+
+        elif len(code) == 3:
+            digits[code] = "7"
+            seven_code = code
+
+        elif len(code) == 7:
+            digits[code] = "8"
+
+        elif len(code) == 5:
+            len_5_digi.append(code)
+
+        elif len(code) == 6:
+            len_6_digi.append(code)
+
+        else:
+            raise Exception("Unknown digit encountered.")
+
+    # Distinguish the 6 cell digits
+    for code in len_6_digi:
+        if some_char_in_str(code, four_code):
+            digits[code] = "9"
+
+        elif some_char_in_str(code, seven_code):
+            digits[code] = "0"
+
+        else:
+            digits[code] = "6"
+
+    # Distinguish the 5 cell digits
+    for code in len_5_digi:
+        if some_char_in_str(code, one_code):
+            digits[code] = "3"
+
+        elif some_char_in_str(code, four_code, 3):
+            digits[code] = "5"
+
+        else:
+            digits[code] = "2"
+
+    # Ensure all the digits have been identified
+    assert(None not in digits.values())
+
+    # Return a dict of digits lookups
+    return digits
+
+
+def lookup_output_digits(
+        digit_lookup: dict[str: str], digit_output: list[str]) -> int:
+    """
+    Use a code lookup to decode the digit output.
+    """
+
+    output = "".join([digit_lookup[sort_str(x)] for x in digit_output])
+    return int(output)
+
+
+if __name__ == "__main__":
+
+    raw_digits = open("./data/sample.txt").read().splitlines()
+
+    for line in raw_digits:
+
+        # Extract the signal digits and the output digits
+        signals, outputs = line.split("|")
+
+        # Split the signal & output strings into lists
+        signals = [x.strip() for x in signals.split()]
+        outputs = [x.strip() for x in outputs.split()]
+
+        # Work out the code for each digit
+        digit_lookup = parse_digit_codes(signals)
+
+        # Use the lookup to de-encode the output number
+        out_num = lookup_output_digits(digit_lookup, outputs)
+
+        print(out_num)
