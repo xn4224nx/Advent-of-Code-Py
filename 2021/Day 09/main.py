@@ -94,10 +94,40 @@ def point_risk_level(
     return [heightmap[x]+1 for x in point_coords]
 
 
+def find_basins(heightmap: np.array, low_points: list[tuple[int, int]]) -> dict[
+                                        tuple[int, int]: list[tuple[int, int]]]:
+    """
+    For a height map find the basins. Then return a list of the points in each
+    basin.
+    """
+
+    # Key is the lowest point and value is a list of the basin points
+    found_basins = {x: [] for x in low_points}
+
+    # Iterate over every point and find its basin
+    for i in range(heightmap.shape[0]):
+        for j in range(heightmap.shape[1]):
+
+            # The highest point are not part of the basins
+            if heightmap[i, j] == 9:
+                continue
+
+            # Detect low points
+            if (i, j) in found_basins:
+                found_basins[(i, j)].append((i, j))
+                continue
+
+            # For each point find the low point it belongs to
+
+
+
+    return found_basins
+
+
 if __name__ == "__main__":
 
     # Load the data
-    height_map = load_heightmap("./data/input.txt")
+    height_map = load_heightmap("./data/sample.txt")
 
     # Determine the location of low points in the height map
     low_point_coords = find_low_points(height_map)
@@ -106,3 +136,6 @@ if __name__ == "__main__":
     risk_levels = point_risk_level(height_map, low_point_coords)
 
     print(f"The answer to part 1: {sum(risk_levels)}")
+
+    # Find the basins
+    basins = find_basins(height_map, low_point_coords)
