@@ -30,39 +30,41 @@ close_char = [")", "]", "}", ">"]
 compat_char = dict(zip(close_char, open_char))
 scores = {")": 3, "]": 57, "}": 1197, ">": 25137}
 
-# Load the chunk data
-chunk_data = open("./data/sample.txt", "r").read().splitlines()
+if __name__ == "__main__":
 
-first_corrupted = []
+    # Load the chunk data
+    chunk_data = open("./data/sample.txt", "r").read().splitlines()
 
-for chunk in chunk_data:
+    first_corrupted = []
 
-    opening_chunks = []
-    first_corrupted_char = None
+    for chunk in chunk_data:
 
-    # Iterate over each character in the chunk
-    for char in chunk:
+        opening_chunks = []
+        first_corrupted_char = None
 
-        if char in open_char:
-            # Make a record of every new opening chunk
-            opening_chunks.append(char)
+        # Iterate over each character in the chunk
+        for char in chunk:
 
-        elif char in close_char:
+            if char in open_char:
+                # Make a record of every new opening chunk
+                opening_chunks.append(char)
 
-            match_char = opening_chunks.pop()
+            elif char in close_char:
 
-            # Check that the last seen opening chunk is compatible
-            if match_char != compat_char[char]:
+                match_char = opening_chunks.pop()
 
-                # If there isn't a match the line is corrupted
-                if first_corrupted_char is None:
-                    first_corrupted_char = char
-                    continue
-        else:
-            raise Exception(f"'{char}' is not compatible.")
+                # Check that the last seen opening chunk is compatible
+                if match_char != compat_char[char]:
 
-    # Record the first corrupted char
-    if first_corrupted_char is not None:
-        first_corrupted.append(first_corrupted_char)
+                    # If there isn't a match the line is corrupted
+                    if first_corrupted_char is None:
+                        first_corrupted_char = char
+                        continue
+            else:
+                raise Exception(f"'{char}' is not compatible.")
 
-print(first_corrupted)
+        # Record the first corrupted char
+        if first_corrupted_char is not None:
+            first_corrupted.append(first_corrupted_char)
+
+    print(first_corrupted)
