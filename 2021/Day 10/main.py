@@ -1,0 +1,26 @@
+"""
+--- Day 10: Syntax Scoring ---
+
+The navigation subsystem syntax is made of several lines containing chunks.
+There are one or more chunks on each line, and chunks contain zero or more
+other chunks. Adjacent chunks are not separated by any delimiter; if one chunk
+stops, the next chunk (if any) can immediately start. Every chunk must open and
+close with one of four legal pairs of matching characters:
+
+    If a chunk opens with (, it must close with ).
+    If a chunk opens with [, it must close with ].
+    If a chunk opens with {, it must close with }.
+    If a chunk opens with <, it must close with >.
+
+Some lines are incomplete, but others are corrupted. Find and discard the
+corrupted lines first.
+
+A corrupted line is one where a chunk closes with the wrong character - that is,
+where the characters it opens and closes with do not form one of the four legal
+pairs listed above. Some of the lines aren't corrupted, just incomplete; you can
+ignore these lines for now.
+
+Part 1:
+    Find the first illegal character in each corrupted line of the navigation
+    subsystem. What is the total syntax error score for those errors?
+"""
