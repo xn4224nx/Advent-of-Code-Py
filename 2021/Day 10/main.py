@@ -24,3 +24,6 @@ Part 1:
     Find the first illegal character in each corrupted line of the navigation
     subsystem. What is the total syntax error score for those errors?
 """
+
+# Load the chunk data
+chunk_data = open("./data/sample.txt", "r").read().splitlines()
