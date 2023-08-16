@@ -25,5 +25,22 @@ Part 1:
     subsystem. What is the total syntax error score for those errors?
 """
 
+open_char = ["(", "[", "{", "<"]
+close_char = [")", "]", "}", ">"]
+
 # Load the chunk data
 chunk_data = open("./data/sample.txt", "r").read().splitlines()
+
+for chunk in chunk_data:
+
+    # Iterate over each character in the chunk
+    for char in chunk:
+
+        if char in open_char:
+            pass
+
+        elif char in close_char:
+            pass
+
+        else:
+            raise Exception(f"'{char}' is not compatible.")
