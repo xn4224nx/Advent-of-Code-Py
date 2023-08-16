@@ -28,12 +28,25 @@ Part 1:
 open_char = ["(", "[", "{", "<"]
 close_char = [")", "]", "}", ">"]
 compat_char = dict(zip(close_char, open_char))
-scores = {")": 3, "]": 57, "}": 1197, ">": 25137}
+
+
+def score_errors(corrupted_chars: list[str]) -> int:
+    """
+    Generate a score for the list of corrupted characters.
+    """
+    scores = {")": 3, "]": 57, "}": 1197, ">": 25137}
+    tot_score = 0
+
+    for sc_char, val in scores.items():
+        tot_score += corrupted_chars.count(sc_char) * val
+
+    return tot_score
+
 
 if __name__ == "__main__":
 
     # Load the chunk data
-    chunk_data = open("./data/sample.txt", "r").read().splitlines()
+    chunk_data = open("./data/input.txt", "r").read().splitlines()
 
     first_corrupted = []
 
@@ -67,4 +80,6 @@ if __name__ == "__main__":
         if first_corrupted_char is not None:
             first_corrupted.append(first_corrupted_char)
 
-    print(first_corrupted)
+    # Solution to part 1
+    total_score = score_errors(first_corrupted)
+    print(f"Total corrupted character score is: {total_score}")
