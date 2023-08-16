@@ -27,7 +27,7 @@ Part 1:
 
 open_char = ["(", "[", "{", "<"]
 close_char = [")", "]", "}", ">"]
-compat_char = {x: y for x in close_char for y in open_char}
+compat_char = dict(zip(close_char, open_char))
 
 # Load the chunk data
 chunk_data = open("./data/sample.txt", "r").read().splitlines()
@@ -56,7 +56,7 @@ for chunk in chunk_data:
                 # If there isn't a match the line is corrupted
                 if first_corrupted_char is None:
                     first_corrupted_char = char
-
+                    continue
         else:
             raise Exception(f"'{char}' is not compatible.")
 
