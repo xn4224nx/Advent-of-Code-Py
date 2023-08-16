@@ -50,9 +50,10 @@ def score_errors(corrupted_chars: list[str]) -> int:
 if __name__ == "__main__":
 
     # Load the chunk data
-    chunk_data = open("./data/input.txt", "r").read().splitlines()
+    chunk_data = open("./data/sample.txt", "r").read().splitlines()
 
     first_corrupted = []
+    autocomplete_chars = []
 
     for chunk in chunk_data:
 
@@ -77,13 +78,18 @@ if __name__ == "__main__":
                     if first_corrupted_char is None:
                         first_corrupted_char = char
                         continue
+
             else:
                 raise Exception(f"'{char}' is not compatible.")
 
         # Record the first corrupted char
         if first_corrupted_char is not None:
             first_corrupted.append(first_corrupted_char)
+        else:
+            autocomplete_chars.append("".join(opening_chunks))
 
     # Solution to part 1
     total_score = score_errors(first_corrupted)
     print(f"Total corrupted character score is: {total_score}")
+
+    print(autocomplete_chars)
