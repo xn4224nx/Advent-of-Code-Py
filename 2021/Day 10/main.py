@@ -27,20 +27,41 @@ Part 1:
 
 open_char = ["(", "[", "{", "<"]
 close_char = [")", "]", "}", ">"]
+compat_char = {x: y for x in close_char for y in open_char}
 
 # Load the chunk data
 chunk_data = open("./data/sample.txt", "r").read().splitlines()
 
+first_corrupted = []
+
 for chunk in chunk_data:
+
+    opening_chunks = []
+    first_corrupted_char = None
 
     # Iterate over each character in the chunk
     for char in chunk:
 
         if char in open_char:
-            pass
+            # Make a record of every new opening chunk
+            opening_chunks.append(char)
 
         elif char in close_char:
-            pass
+
+            match_char = opening_chunks.pop()
+
+            # Check that the last seen opening chunk is compatible
+            if match_char != compat_char[char]:
+
+                # If there isn't a match the line is corrupted
+                if first_corrupted_char is None:
+                    first_corrupted_char = char
 
         else:
             raise Exception(f"'{char}' is not compatible.")
+
+    # Record the first corrupted char
+    if first_corrupted_char is not None:
+        first_corrupted.append(first_corrupted_char)
+
+print(first_corrupted)
