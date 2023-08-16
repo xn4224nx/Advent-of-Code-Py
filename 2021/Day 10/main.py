@@ -46,11 +46,38 @@ def score_errors(corrupted_chars: list[str]) -> int:
 
     return tot_score
 
+def score_autos(auto_chars: list[str]) -> int:
+    """
+    Find the winning score amongst the autocomplete chunks
+
+    """
+    scores = {"(": 1, "[": 2, "{": 3, "<": 4}
+    tot_scores = []
+
+    # Calculate the chunk scores
+    for at_chunk in auto_chars:
+
+        at_score = 0
+
+        # Reverse the chars
+        at_chunk = at_chunk[::-1]
+
+        for at_char in at_chunk:
+            at_score = (at_score * 5) + scores[at_char]
+
+        tot_scores.append(at_score)
+
+    # Sort the scores
+    tot_scores = sorted(tot_scores)
+
+    # Return the median score (there will always be odd no. chunks
+    return tot_scores[len(tot_scores)//2]
+
 
 if __name__ == "__main__":
 
     # Load the chunk data
-    chunk_data = open("./data/sample.txt", "r").read().splitlines()
+    chunk_data = open("./data/input.txt", "r").read().splitlines()
 
     first_corrupted = []
     autocomplete_chars = []
@@ -92,4 +119,6 @@ if __name__ == "__main__":
     total_score = score_errors(first_corrupted)
     print(f"Total corrupted character score is: {total_score}")
 
-    print(autocomplete_chars)
+    # Solution to part 2
+    median_score = score_autos(autocomplete_chars)
+    print(f"Total autocomplete character score is: {median_score}")
