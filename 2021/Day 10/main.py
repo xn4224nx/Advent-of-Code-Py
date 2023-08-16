@@ -28,6 +28,7 @@ Part 1:
 open_char = ["(", "[", "{", "<"]
 close_char = [")", "]", "}", ">"]
 compat_char = dict(zip(close_char, open_char))
+scores = {")": 3, "]": 57, "}": 1197, ">": 25137}
 
 # Load the chunk data
 chunk_data = open("./data/sample.txt", "r").read().splitlines()
