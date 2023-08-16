@@ -102,8 +102,6 @@ def point_risk_level(
     """
     Find the risk level of all the points in the list `points`.
     """
-
-    # Find the risk levels of the points
     return [heightmap[x]+1 for x in point_coords]
 
 
