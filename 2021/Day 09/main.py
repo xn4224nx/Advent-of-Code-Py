@@ -105,6 +105,30 @@ def point_risk_level(
     return [heightmap[x]+1 for x in point_coords]
 
 
+def descend_heightmap(
+        heightmap: np.array, start_pnt: tuple[int, int]) -> tuple[int, int]:
+    """
+    Starting from a point find the lowest point is connected to and return that
+    point.
+    """
+
+    # Loop until the lowest point has been found
+    while True:
+
+        # For the current point get its neighbours
+        n_neighbours = find_neighbours(heightmap, start_pnt)
+
+        # If all the surrounding points are the same or higher
+        if all(x >= heightmap[start_pnt] for x in n_neighbours.values()):
+            # Return the current point
+            return start_pnt
+
+        # Work out the lowest point in the neighbours
+        else:
+            # Then set `start_pnt` as that point
+            start_pnt = min(n_neighbours, key=n_neighbours.get)
+
+
 def find_basins(
         heightmap: np.array, low_points: list[tuple[int, int]]
 ) -> dict[tuple[int, int]: list[tuple[int, int]]]:
@@ -130,8 +154,25 @@ def find_basins(
                 continue
 
             # For each point find the low point it belongs to
+            pred_low_pnt = descend_heightmap(heightmap, (i, j))
+
+            if pred_low_pnt not in found_basins:
+                raise Exception(f"({pred_low_pnt[0]}, f"
+                                "{pred_low_pnt[1]}) not found in low points")
+
+            found_basins[pred_low_pnt].append((i, j))
 
     return found_basins
+
+
+def calc_basin_multi_size(
+        low_basins: dict[tuple[int, int]: list[tuple[int, int]]]) -> int:
+    """
+    Find the three largest basins and multiply their sizes together. Then return
+    the integer size.
+    """
+    basin_sizes = sorted([len(x) for x in low_basins.values()])
+    return basin_sizes[-1] * basin_sizes[-2] * basin_sizes[-3]
 
 
 if __name__ == "__main__":
@@ -148,4 +189,6 @@ if __name__ == "__main__":
     print(f"The answer to part 1: {sum(risk_levels)}")
 
     # Find the basins
-    # basins = find_basins(height_map, low_point_coords)
+    basins = find_basins(height_map, low_point_coords)
+
+    print(f"The answer to part 2: {calc_basin_multi_size(basins)}")
