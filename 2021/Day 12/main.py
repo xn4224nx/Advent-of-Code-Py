@@ -60,7 +60,7 @@ class CaveGraph:
             else:
                 self.atlas[destination].append(source)
 
-    def find_path(self):
+    def find_path(self) -> list[str]:
         """
         Find a paths between `start` and `end` that only goes through small
         caves once.
@@ -74,11 +74,46 @@ class CaveGraph:
 
             # Filter to  the viable next moves
             moves = [x for x in self.atlas[temp_path[-1]]
-                     if x.low() not in temp_path]
+                     if x.lower() not in temp_path]
+
+            # If there are no viable moves return nothing
+            if not moves:
+                return []
 
             # Out of the connected cave select the next move
             temp_path.append(random.choice(moves))
 
+        return temp_path
+
+    def find_all_paths(self, limit: int = 1000):
+        """
+        Find all possible paths through a cave that only goes through small
+        caves once.
+
+        The algorithm times out after the limit.
+        """
+
+        found_paths = set()
+
+        while limit > 0:
+
+            # Generate a path
+            tmp_path = tuple(self.find_path())
+
+            # Check if it has been seen before
+            if tmp_path in found_paths:
+                limit -= 1
+            else:
+                found_paths.add(tmp_path)
+
+        # Convert to a list
+        self.routes = list(found_paths)
+
+        # Remove the empty path
+        self.routes = [x for x in self.routes if len(x) > 0]
+
 
 sample = CaveGraph("./data/sample.txt")
-print(sample.atlas)
+sample.find_all_paths()
+
+print(f"Part 1: {len(sample.routes)}")
