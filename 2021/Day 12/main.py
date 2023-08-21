@@ -21,6 +21,10 @@ caves any number of times.
 Part 1:
     How many paths through this cave system are there that visit small caves at
     most once?
+
+Part 2:
+    How many paths through this cave system are there that visit small caves at
+    most twice?
 """
 
 import random
@@ -28,11 +32,14 @@ import random
 
 class CaveGraph:
 
-    def __init__(self, datafile: str):
+    def __init__(self, datafile: str, num_small_caves: int):
 
         # Define the start and end nodes
         self.start_node = "start"
         self.end_node = "end"
+
+        # Define how many small caves to allow
+        self.num_small_caves = num_small_caves
 
         # Dict of cave connecting nodes
         self.atlas = {}
@@ -74,7 +81,7 @@ class CaveGraph:
 
             # Filter to  the viable next moves
             moves = [x for x in self.atlas[temp_path[-1]]
-                     if x.lower() not in temp_path]
+                     if self.num_small_caves >= temp_path.count(x.lower())]
 
             # If there are no viable moves return nothing
             if not moves:
@@ -85,7 +92,7 @@ class CaveGraph:
 
         return temp_path
 
-    def find_all_paths(self, limit: int = 1000):
+    def find_all_paths(self, limit: int = 10000):
         """
         Find all possible paths through a cave that only goes through small
         caves once.
@@ -113,7 +120,8 @@ class CaveGraph:
         self.routes = [x for x in self.routes if len(x) > 0]
 
 
-sample = CaveGraph("./data/sample.txt")
+#
+sample = CaveGraph("./data/sample.txt", 2)
 sample.find_all_paths()
 
-print(f"Part 1: {len(sample.routes)}")
+print(f"Part 2: {len(sample.routes)}")
