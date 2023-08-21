@@ -22,3 +22,28 @@ Part 1:
     How many paths through this cave system are there that visit small caves at
     most once?
 """
+
+
+class CaveGraph:
+
+    def __init__(self):
+        self.raw_connections = None
+
+    def load_data(self, datafile: str):
+        """
+        Read a data file and parse the lines into memory.
+        """
+
+        # Read the text in and split by new lines into a list
+        raw = open(datafile, "r").read().splitlines()
+
+        # Split into source node  and destination node
+        raw = [x.split("-") for x in raw]
+
+        self.raw_connections = raw
+
+
+sample = CaveGraph()
+sample.load_data("./data/sample.txt")
+
+print(sample.raw_connections)
