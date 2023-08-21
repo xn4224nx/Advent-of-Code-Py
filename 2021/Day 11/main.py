@@ -101,10 +101,10 @@ def single_flash_iter(energy_grid: np.array) -> int:
 
 
 # Load the data
-oct_energy = load_oct_energy_data("./data/sample.txt")
+oct_energy = load_oct_energy_data("./data/input.txt")
 flashes = 0
 
-for i in range(2):
+for i in range(100):
     flashes += single_flash_iter(oct_energy)
 
-print(oct_energy)
+print(f"Part 1: {flashes}")
