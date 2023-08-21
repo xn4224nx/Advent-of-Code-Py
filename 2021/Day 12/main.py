@@ -38,9 +38,7 @@ class CaveGraph:
         raw = open(datafile, "r").read().splitlines()
 
         # Split into source node  and destination node
-        raw = [x.split("-") for x in raw]
-
-        self.raw_connections = raw
+        self.raw_connections = [x.split("-") for x in raw]
 
 
 sample = CaveGraph()
