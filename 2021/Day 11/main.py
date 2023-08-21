@@ -42,7 +42,69 @@ def load_oct_energy_data(filename: str) -> np.array:
     return raw_oct_energy
 
 
+def single_flash_iter(energy_grid: np.array) -> int:
+    """
+    Have one iteration of the octopuses gaining energy and flashing. The
+    function will return the new energy grid and the number of flashes in this
+    step.
+    """
+
+    # Increase the energy level of each octopus
+    energy_grid += 1
+    flash_idx = []
+
+    # Keep iterating if there are octopuses that are ready to flash
+    while 10 in energy_grid:
+
+        # Find the indexes of octopuses that will flash
+        tmp_flash_idx = np.where(energy_grid == 10)
+
+        # Iterate over the indexes and increase the energy levels of octopuses
+        # near one that flashes
+        for x_idx, y_idx in zip(tmp_flash_idx[0], tmp_flash_idx[1]):
+
+            # Save the location of the flashes
+            flash_idx.append((x_idx, y_idx))
+
+            if x_idx == 0:
+                x_effect = [x_idx, x_idx+1]
+
+            elif x_idx == oct_energy.shape[0]-1:
+                x_effect = [x_idx-1, x_idx]
+
+            else:
+                x_effect = [x_idx-1, x_idx, x_idx+1]
+
+            if y_idx == 0:
+                y_effect = [y_idx, y_idx + 1]
+
+            elif y_idx == oct_energy.shape[1]-1:
+                y_effect = [y_idx - 1, y_idx]
+
+            else:
+                y_effect = [y_idx - 1, y_idx, y_idx + 1]
+
+            # Increase the energy of octopus around those who flash
+            effected_idx = [(x, y) for x in x_effect for y in y_effect]
+            energy_grid[tuple(zip(*effected_idx))] += 1
+
+            # Deduplicate the flash index
+            flash_idx = list(set(flash_idx))
+
+            # Set all octopus who flash to zero energy
+            energy_grid[tuple(zip(*flash_idx))] = 0
+
+            # Set all octopus with >10 to 10 energy
+            energy_grid[energy_grid > 10] = 10
+
+    return len(flash_idx)
+
+
 # Load the data
 oct_energy = load_oct_energy_data("./data/sample.txt")
+flashes = 0
+
+for i in range(2):
+    flashes += single_flash_iter(oct_energy)
 
 print(oct_energy)
