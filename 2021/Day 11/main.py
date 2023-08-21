@@ -28,10 +28,21 @@ Part 1:
 
 import numpy as np
 
-# Load the raw octopus energy data
-raw_oct_energy = open("./data/sample.txt", "r").read().splitlines()
 
-# Parse the energy values
-oct_energy = np.array([[int(x) for x in y] for y in raw_oct_energy])
+def load_oct_energy_data(filename: str) -> np.array:
+    """
+    Load the octopuses energy data from file and return a numpy array.
+    """
+
+    raw_oct_energy = open(filename, "r").read().splitlines()
+
+    # Parse the energy values
+    raw_oct_energy = np.array([[int(x) for x in y] for y in raw_oct_energy])
+
+    return raw_oct_energy
+
+
+# Load the data
+oct_energy = load_oct_energy_data("./data/sample.txt")
 
 print(oct_energy)
