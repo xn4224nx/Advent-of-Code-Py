@@ -26,22 +26,31 @@ Part 1:
 
 class CaveGraph:
 
-    def __init__(self):
-        self.raw_connections = None
+    def __init__(self, datafile: str):
 
-    def load_data(self, datafile: str):
-        """
-        Read a data file and parse the lines into memory.
-        """
+        # Dict of cave connecting nodes
+        self.atlas = {}
 
         # Read the text in and split by new lines into a list
         raw = open(datafile, "r").read().splitlines()
 
-        # Split into source node  and destination node
-        self.raw_connections = [x.split("-") for x in raw]
+        # Split into source node and destination node
+        for line in raw:
+
+            # Extract the source and destination from the line
+            source, destination = line.split("-")
+
+            # Add both nodes to the cave atlas
+            if source not in self.atlas:
+                self.atlas[source] = [destination]
+            else:
+                self.atlas[source].append(destination)
+
+            if destination not in self.atlas:
+                self.atlas[destination] = [source]
+            else:
+                self.atlas[destination].append(source)
 
 
-sample = CaveGraph()
-sample.load_data("./data/sample.txt")
-
-print(sample.raw_connections)
+sample = CaveGraph("./data/sample.txt")
+print(sample.atlas)
