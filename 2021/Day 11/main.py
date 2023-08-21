@@ -22,5 +22,16 @@ step, the following occurs:
     to 0, as it used all of its energy to flash.
 
 Part 1:
-    Given the starting energy levels of the dumbo octopuses in your cavern, simulate 100 steps. How many total flashes are there after 100 steps?
+    Given the starting energy levels of the dumbo octopuses in your cavern,
+    simulate 100 steps. How many total flashes are there after 100 steps?
 """
+
+import numpy as np
+
+# Load the raw octopus energy data
+raw_oct_energy = open("./data/sample.txt", "r").read().splitlines()
+
+# Parse the energy values
+oct_energy = np.array([[int(x) for x in y] for y in raw_oct_energy])
+
+print(oct_energy)
