@@ -23,13 +23,22 @@ Part 1:
     most once?
 """
 
+import random
+
 
 class CaveGraph:
 
     def __init__(self, datafile: str):
 
+        # Define the start and end nodes
+        self.start_node = "start"
+        self.end_node = "end"
+
         # Dict of cave connecting nodes
         self.atlas = {}
+
+        # Possible Access Routes through the cave
+        self.routes = []
 
         # Read the text in and split by new lines into a list
         raw = open(datafile, "r").read().splitlines()
@@ -50,6 +59,25 @@ class CaveGraph:
                 self.atlas[destination] = [source]
             else:
                 self.atlas[destination].append(source)
+
+    def find_path(self):
+        """
+        Find a paths between `start` and `end` that only goes through small
+        caves once.
+        """
+
+        # Initialise a temporary path through the cave
+        temp_path = [self.start_node]
+
+        # Iterate over the possible paths through the cave system
+        while temp_path[-1] != self.end_node:
+
+            # Filter to  the viable next moves
+            moves = [x for x in self.atlas[temp_path[-1]]
+                     if x.low() not in temp_path]
+
+            # Out of the connected cave select the next move
+            temp_path.append(random.choice(moves))
 
 
 sample = CaveGraph("./data/sample.txt")
