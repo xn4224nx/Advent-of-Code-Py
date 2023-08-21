@@ -109,7 +109,26 @@ def single_flash_iter(energy_grid: np.array) -> int:
 oct_energy = load_oct_energy_data("./data/input.txt")
 flashes = 0
 
+# Part 1
 for i in range(100):
+
+    # Count the number of flashes
     flashes += single_flash_iter(oct_energy)
 
 print(f"Part 1: {flashes}")
+
+# Part 2
+all_flash_idx = None
+idx = 0
+
+while all_flash_idx is None:
+
+    _ = single_flash_iter(oct_energy)
+
+    # Detect if everyone has flashed
+    if np.all(oct_energy == True):
+        all_flash_idx = idx
+
+    idx += 1
+
+print(f"Part 2: {all_flash_idx+100}")
