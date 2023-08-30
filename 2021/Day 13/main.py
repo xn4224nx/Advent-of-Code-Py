@@ -14,3 +14,25 @@ Part 1:
     How many dots are visible after completing just the first fold instruction
     on your transparent paper?
 """
+
+
+class TransPaper:
+
+    def __init__(self, data_file: str):
+
+        self.coords = []
+        self.folds = []
+
+        # Load the raw data from file and parse
+        for line in open(data_file, 'r').read().splitlines():
+
+            if ',' in line:
+                self.coords.append(tuple(int(x) for x in line.split(",")))
+
+            elif "fold along" in line:
+                axis, mag = line.split('=')
+                self.folds.append([axis[-1], int(mag)])
+
+
+sample_p = TransPaper("./data/sample.txt")
+input_p = TransPaper("./data/input.txt")
