@@ -66,7 +66,7 @@ class TransPaper:
         """
         Return the number of dots currently on the paper.
         """
-        pass
+        return len(self.coords)
 
     def __str__(self):
         """
