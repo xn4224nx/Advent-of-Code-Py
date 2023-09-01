@@ -47,7 +47,7 @@ class TransPaper:
         for (y_pnt, x_pnt) in self.coords:
 
             # If it is outside the x fold line change the y coord
-            if axis == "x" and x_pnt > fold_pos:
+            if axis == "x" and y_pnt > fold_pos:
                 new_coords.append((2*fold_pos - y_pnt, x_pnt))
 
             # If it is outside the y fold line change the x coord
