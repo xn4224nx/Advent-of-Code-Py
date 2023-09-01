@@ -43,7 +43,26 @@ class Polymer:
         Using the pair insertion rules in the `self.insert_rules` dict inset
         pairs of values in `self.chain`.
         """
-        pass
+
+        new_chain = ""
+
+        for idx in range(1, len(self.chain)):
+
+            # Determine the current pair
+            curr_pair = self.chain[idx - 1:idx + 1]
+
+            # Add the current element to the new chain
+            new_chain += curr_pair[0]
+
+            # Look up the current element pair in the insert rules
+            if curr_pair in self.insert_rules:
+                new_chain += self.insert_rules[curr_pair]
+
+        # Add the last element of the old chain to the new one
+        new_chain += self.chain[-1]
+
+        # Overwrite the old chain with the new
+        self.chain = new_chain
 
     def element_freq_range(self) -> int:
         """
