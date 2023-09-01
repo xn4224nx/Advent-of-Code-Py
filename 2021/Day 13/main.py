@@ -57,6 +57,9 @@ class TransPaper:
             else:
                 new_coords.append((y_pnt, x_pnt))
 
+        # Deduplicate the points
+        new_coords = list(set(new_coords))
+
         self.coords = new_coords
 
     def count_dots(self) -> int:
