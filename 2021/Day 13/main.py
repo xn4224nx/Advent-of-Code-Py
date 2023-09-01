@@ -15,6 +15,8 @@ Part 1:
     on your transparent paper?
 """
 
+import numpy as np
+
 
 class TransPaper:
 
@@ -46,6 +48,36 @@ class TransPaper:
         """
         pass
 
+    def __str__(self):
+        """
+        Return a string representation of the transparent paper.
+        """
+
+        # Find the max x value
+        x_max = max([point[1] for point in self.coords])
+
+        # Find the max y value
+        y_max = max([point[0] for point in self.coords])
+
+        # Fill the paper with empty values
+        paper = np.full((y_max + 1, x_max + 1), ".")
+
+        # Iterate over the coordinates and fill them in
+        for point in self.coords:
+            paper[point] = "#"
+
+        # Convert array to string
+        ret_val = ""
+
+        for j in range(paper.shape[1]):
+            for i in range(paper.shape[0]):
+                ret_val += paper[i, j]
+            ret_val += "\n"
+
+        return ret_val
+
 
 sample_p = TransPaper("./data/sample.txt")
-input_p = TransPaper("./data/input.txt")
+print(sample_p)
+
+# input_p = TransPaper("./data/input.txt")
