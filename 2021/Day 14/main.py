@@ -22,6 +22,7 @@ class Polymer:
     def __init__(self, data_file_path: str):
 
         self.template = ""
+        self.chain = ""
         self.insert_rules = {}
 
         # Load the raw datafile and parse
@@ -30,11 +31,26 @@ class Polymer:
             # Get the template
             if idx == 0:
                 self.template = line
+                self.chain = line
 
             # Collect pair insertion rules
             if "->" in line:
-                pair, single = line.split(" -> ")
-                self.insert_rules[pair] = single
+                pair, element = line.split(" -> ")
+                self.insert_rules[pair] = element
+
+    def process_chain_once(self):
+        """
+        Using the pair insertion rules in the `self.insert_rules` dict inset
+        pairs of values in `self.chain`.
+        """
+        pass
+
+    def element_freq_range(self) -> int:
+        """
+        Return the difference between the most and least frequent element in the
+        polymer chain.
+        """
+        pass
 
 
 sample_poly = Polymer("./data/sample.txt")
