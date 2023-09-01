@@ -46,13 +46,13 @@ class TransPaper:
         # For each coordinate
         for (y_pnt, x_pnt) in self.coords:
 
-            # If it is outside the y fold line halve the y coord
-            if axis == "y" and y_pnt > fold_pos:
-                new_coords.append((y_pnt // 2, x_pnt))
+            # If it is outside the x fold line change the y coord
+            if axis == "x" and x_pnt > fold_pos:
+                new_coords.append((2*fold_pos - y_pnt, x_pnt))
 
-            # If it is outside the x fold line halve the x coord
-            elif axis == "x" and x_pnt > fold_pos:
-                new_coords.append((y_pnt, x_pnt // 2))
+            # If it is outside the y fold line change the x coord
+            elif axis == "y" and x_pnt > fold_pos:
+                new_coords.append((y_pnt, 2*fold_pos - x_pnt))
 
             else:
                 new_coords.append((y_pnt, x_pnt))
@@ -95,6 +95,10 @@ class TransPaper:
 
 
 sample_p = TransPaper("./data/sample.txt")
+print(sample_p)
+
+sample_p.fold_paper("y", 7)
+
 print(sample_p)
 
 # input_p = TransPaper("./data/input.txt")
