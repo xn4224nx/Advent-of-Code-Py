@@ -35,12 +35,29 @@ class TransPaper:
                 axis, mag = line.split('=')
                 self.folds.append([axis[-1], int(mag)])
 
-    def fold_paper(self, axis: str, pos: int):
+    def fold_paper(self, axis: str, fold_pos: int):
         """
-        Fold the paper along a certain line defined by `axis` and `pos`,
+        Fold the paper along a certain line defined by `axis` and `fold_pos`,
         recalculate the dots new position and remove duplicates.
         """
-        pass
+
+        new_coords = []
+
+        # For each coordinate
+        for (y_pnt, x_pnt) in self.coords:
+
+            # If it is outside the y fold line halve the y coord
+            if axis == "y" and y_pnt > fold_pos:
+                new_coords.append((y_pnt // 2, x_pnt))
+
+            # If it is outside the x fold line halve the x coord
+            elif axis == "x" and x_pnt > fold_pos:
+                new_coords.append((y_pnt, x_pnt // 2))
+
+            else:
+                new_coords.append((y_pnt, x_pnt))
+
+        self.coords = new_coords
 
     def count_dots(self) -> int:
         """
