@@ -33,6 +33,19 @@ class TransPaper:
                 axis, mag = line.split('=')
                 self.folds.append([axis[-1], int(mag)])
 
+    def fold_paper(self, axis: str, pos: int):
+        """
+        Fold the paper along a certain line defined by `axis` and `pos`,
+        recalculate the dots new position and remove duplicates.
+        """
+        pass
+
+    def count_dots(self) -> int:
+        """
+        Return the number of dots currently on the paper.
+        """
+        pass
+
 
 sample_p = TransPaper("./data/sample.txt")
 input_p = TransPaper("./data/input.txt")
