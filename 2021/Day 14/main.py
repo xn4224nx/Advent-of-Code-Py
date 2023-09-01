@@ -15,3 +15,26 @@ Part 1:
     quantity of the most common element and subtract the quantity of the least
     common element?
 """
+
+
+class Polymer:
+
+    def __init__(self, data_file_path: str):
+
+        self.template = ""
+        self.insert_rules = {}
+
+        # Load the raw datafile and parse
+        for idx, line in enumerate(open(data_file_path).read().splitlines()):
+
+            # Get the template
+            if idx == 0:
+                self.template = line
+
+            # Collect pair insertion rules
+            if "->" in line:
+                pair, single = line.split(" -> ")
+                self.insert_rules[pair] = single
+
+
+sample_poly = Polymer("./data/sample.txt")
