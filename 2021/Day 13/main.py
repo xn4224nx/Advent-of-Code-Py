@@ -62,6 +62,25 @@ class TransPaper:
 
         self.coords = new_coords
 
+    def execute_fold_instructs(self, num: int = None):
+        """
+        Execute a number of the fold instructions given in the data file.
+        `num` is the number of fold instructions to execute. None indicates they
+        all will be done.
+        """
+
+        # Check for limited number of fold executions
+        if num is None:
+            num = len(self.folds)
+
+        # Execute the specified folds
+        for idx in range(num):
+
+            f_axis = self.folds[idx][0]
+            f_mag = self.folds[idx][1]
+
+            self.fold_paper(f_axis, f_mag)
+
     def count_dots(self) -> int:
         """
         Return the number of dots currently on the paper.
@@ -97,11 +116,7 @@ class TransPaper:
         return ret_val
 
 
-sample_p = TransPaper("./data/sample.txt")
-print(sample_p)
-
-sample_p.fold_paper("y", 7)
-
-print(sample_p)
-
-# input_p = TransPaper("./data/input.txt")
+# Part 1
+input_p = TransPaper("./data/input.txt")
+input_p.execute_fold_instructs(1)
+print(f"The answer to part one is: {input_p.count_dots()}")
