@@ -120,3 +120,8 @@ class TransPaper:
 input_p = TransPaper("./data/input.txt")
 input_p.execute_fold_instructs(1)
 print(f"The answer to part one is: {input_p.count_dots()}")
+
+# Part 2
+input_p = TransPaper("./data/input.txt")
+input_p.execute_fold_instructs()
+print(input_p)
