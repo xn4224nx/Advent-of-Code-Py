@@ -16,6 +16,8 @@ Part 1:
     common element?
 """
 
+from collections import Counter
+
 
 class Polymer:
 
@@ -69,7 +71,19 @@ class Polymer:
         Return the difference between the most and least frequent element in the
         polymer chain.
         """
-        pass
+
+        # Count the elements in the chain
+        ele_freq = Counter(self.chain).most_common()
+
+        return ele_freq[0][1] - ele_freq[-1][1]
+
+    def __str__(self):
+        return self.chain
 
 
-sample_poly = Polymer("./data/sample.txt")
+input_poly = Polymer("./data/input.txt")
+
+for _ in range(10):
+    input_poly.process_chain_once()
+
+print(f"The answer to part 1: {input_poly.element_freq_range()}")
