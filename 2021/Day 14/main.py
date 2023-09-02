@@ -14,6 +14,12 @@ Part 1:
     and least common elements in the result. What do you get if you take the
     quantity of the most common element and subtract the quantity of the least
     common element?
+
+Part 2:
+    Apply 40 steps of pair insertion to the polymer template and find the most
+    and least common elements in the result. What do you get if you take the
+    quantity of the most common element and subtract the quantity of the least
+    common element?
 """
 
 from collections import Counter
@@ -23,22 +29,41 @@ class Polymer:
 
     def __init__(self, data_file_path: str):
 
-        self.template = ""
-        self.chain = ""
+        self.raw_template = ""
+        self.template = {}
         self.insert_rules = {}
+        self.letter_freq = {}
 
         # Load the raw datafile and parse
         for idx, line in enumerate(open(data_file_path).read().splitlines()):
 
             # Get the template
             if idx == 0:
-                self.template = line
-                self.chain = line
+                self.raw_template = line
 
             # Collect pair insertion rules
             if "->" in line:
                 pair, element = line.split(" -> ")
                 self.insert_rules[pair] = element
+
+        # Determine the pairs in the original polymer template
+        for idx in range(len(self.raw_template)-1):
+
+            # Determine the current pair
+            curr_pair = self.raw_template[idx:idx+2]
+
+            # Create a dict of the pair frequency
+            if curr_pair not in self.template:
+                self.template[curr_pair] = 1
+            else:
+                self.template[curr_pair] += 1
+
+        # Create the letter frequency dictionary
+        for char in self.raw_template:
+            if char not in self.letter_freq:
+                self.letter_freq[char] = 1
+            else:
+                self.letter_freq[char] += 1
 
     def process_chain_once(self):
         """
@@ -46,25 +71,40 @@ class Polymer:
         pairs of values in `self.chain`.
         """
 
-        new_chain = ""
+        new_chain = self.template.copy()
 
-        for idx in range(1, len(self.chain)):
+        for pair, ele in self.insert_rules.items():
 
-            # Determine the current pair
-            curr_pair = self.chain[idx - 1:idx + 1]
+            # If the pair is in the template, pairs in the template will change
+            if pair in self.template and self.template[pair] > 0:
 
-            # Add the current element to the new chain
-            new_chain += curr_pair[0]
+                # Create the new pairs
+                left = pair[0] + ele
+                right = ele + pair[1]
 
-            # Look up the current element pair in the insert rules
-            if curr_pair in self.insert_rules:
-                new_chain += self.insert_rules[curr_pair]
+                # Create the keys if they don't exist
+                new_chain.setdefault(pair, 0)
+                new_chain.setdefault(left, 0)
+                new_chain.setdefault(right, 0)
+                self.letter_freq.setdefault(ele, 0)
 
-        # Add the last element of the old chain to the new one
-        new_chain += self.chain[-1]
+                # Get the current pair count
+                pair_cnt = self.template[pair]
 
-        # Overwrite the old chain with the new
-        self.chain = new_chain
+                # Remove the pair that will split
+                new_chain[pair] -= pair_cnt
+
+                # Add in the new pairs
+                new_chain[left] += pair_cnt
+                new_chain[right] += pair_cnt
+
+                # Add in the new letters
+                self.letter_freq[ele] += pair_cnt
+
+        # Remove zero or negative counts
+        new_chain = {pair: cnt for pair, cnt in new_chain.items() if cnt > 0}
+
+        self.template = new_chain
 
     def element_freq_range(self) -> int:
         """
@@ -73,17 +113,21 @@ class Polymer:
         """
 
         # Count the elements in the chain
-        ele_freq = Counter(self.chain).most_common()
+        ele_freq = Counter(self.letter_freq).most_common()
 
         return ele_freq[0][1] - ele_freq[-1][1]
 
-    def __str__(self):
-        return self.chain
 
+if __name__ == "__main__":
 
-input_poly = Polymer("./data/input.txt")
+    poly = Polymer("./data/input.txt")
 
-for _ in range(10):
-    input_poly.process_chain_once()
+    for _ in range(10):
+        poly.process_chain_once()
 
-print(f"The answer to part 1: {input_poly.element_freq_range()}")
+    print(f"The answer to part one is : {poly.element_freq_range()}")
+
+    for _ in range(30):
+        poly.process_chain_once()
+
+    print(f"The answer to part two is : {poly.element_freq_range()}")
