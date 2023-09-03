@@ -34,5 +34,33 @@ class ChitonCave:
         self.start = (0, 0)
         self.end = (self.risk_map.shape[0]-1, self.risk_map.shape[1]-1)
 
+    def find_lowest_risk_path(self):
+        """
+        Find the path with the lowest risk score between `start` and `end` using
+        Dijkstra's algorithm. Use the algorithm listed here:
+        https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+        """
+
+        # Mark all points as unvisited
+        unvisited_points = set()
+
+        # Set a tentative distance for all points as sys.maxsize apart from
+        # start which is set as zero
+        pnt_dist = {}
+
+    def find_connected_points(
+            self, x_coord: int, y_coord: int) -> list[(int, int)]:
+        """
+        For a particular point return a list of the connected points.
+        """
+        pass
+
+    def calc_path_risk(self, path_points: list[(int, int)]) -> int:
+        """
+        Calculate the risk score of one single path defined by a list of tuple
+        integers.
+        """
+        pass
+
 
 cavern = ChitonCave("./data/sample.txt")
