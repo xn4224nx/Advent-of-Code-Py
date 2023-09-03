@@ -17,3 +17,22 @@ Part 1:
     What is the lowest total risk of any path from the top left to the bottom
     right?
 """
+
+import numpy as np
+
+
+class ChitonCave:
+
+    def __init__(self, datafile: str):
+
+        # Load the cave data from file and parse the risk map
+        self.risk_map = np.array(
+            [[int(x) for x in y] for y in
+             open(datafile, "r").read().splitlines()])
+
+        # Define the start and end points
+        self.start = (0, 0)
+        self.end = (self.risk_map.shape[0]-1, self.risk_map.shape[1]-1)
+
+
+cavern = ChitonCave("./data/sample.txt")
