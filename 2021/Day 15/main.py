@@ -72,7 +72,7 @@ class ChitonCave:
                 
                 # Calculate the risk for that node
                 temp_dist = (
-                    self.risk_map[curr_node] + 
+                    pnt_dist[curr_node] + 
                     self.risk_map[nei_node]
                 )
                 
