@@ -88,8 +88,9 @@ class ChitonCave:
                 
                     min_dist = pnt_dist[node]
                     curr_node = node
-
-
+        
+        return pnt_dist[self.end]      
+        
     def find_connected_points(
             self, centre_point: tuple[int, int]) -> list[(int, int)]:
         """
@@ -115,5 +116,7 @@ class ChitonCave:
 
 
 cavern = ChitonCave("./data/sample.txt")
-cavern.find_lowest_risk_path()
+min_risk = cavern.find_lowest_risk_path()
+
+print(f"Part 1 Answer = {min_risk}")
 
