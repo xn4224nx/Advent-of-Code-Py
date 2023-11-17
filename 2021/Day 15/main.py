@@ -13,9 +13,21 @@ starting position unless you enter it; leaving it adds no risk to your total).
 
 Your goal is to find a path with the lowest total risk.
 
+The entire cave is actually five times larger in both dimensions than you 
+thought; the area you originally scanned is just one tile in a 5x5 tile area 
+that forms the full map. Your original map tile repeats to the right and 
+downward; each time the tile repeats to the right or downward, all of its risk 
+levels are 1 higher than the tile immediately up or left of it. However, risk 
+levels above 9 wrap back around to 1. 
+
 Part 1:
     What is the lowest total risk of any path from the top left to the bottom
     right?
+    
+Part 2:
+    Using the full map, what is the lowest total risk of any path from the top 
+    left to the bottom right?
+
 """
 
 import numpy as np
