@@ -126,16 +126,44 @@ class ChitonCave:
         
         return connected_pts
     
-    def expand_the_map(self, expansion_factor: int = 5):
+    def expand_the_map(self, exp_factor: int = 5):
         """
         Expand the map of the cave in both the x and y directions by the given
         `expansion_factor`.
         """
-        pass
         
+        orig_map = self.risk_map.copy()
         
-cavern = ChitonCave("./data/sample.txt")
-min_risk = cavern.find_lowest_risk_path()
+        # Loop over the expansion factors
+        outer_tmp = []
+        for i in range(exp_factor):
+            
+            temp_arr = []
+            for j in range(exp_factor):
+                # Append rotated risk map
+                temp_arr.append(((orig_map + i + j) % 9))
+            
+            # Concaternate a row of maps together
+            outer_tmp.append(np.concatenate(temp_arr, axis=1))  
+        
+        # Create the new map by concatenating the array of concated rows
+        new_map = np.concatenate(outer_tmp, axis=0)       
+        
+        # Replace all 0 with nines
+        new_map[new_map == 0] = 9        
 
+        # Set the new map as the main one for the class
+        self.risk_map = new_map
+        
+        # Define the new end point
+        self.end = (self.risk_map.shape[0]-1, self.risk_map.shape[1]-1)
+
+
+cavern = ChitonCave("./data/input.txt")
+min_risk = cavern.find_lowest_risk_path()
 print(f"Part 1 Answer = {min_risk}")
+
+cavern.expand_the_map()
+min_risk = cavern.find_lowest_risk_path()
+print(f"Part 2 Answer = {min_risk}")
 
