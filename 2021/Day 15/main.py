@@ -125,8 +125,15 @@ class ChitonCave:
             connected_pts.append((centre_point[0], centre_point[1]+1))
         
         return connected_pts
-
-
+    
+    def expand_the_map(self, expansion_factor: int = 5):
+        """
+        Expand the map of the cave in both the x and y directions by the given
+        `expansion_factor`.
+        """
+        pass
+        
+        
 cavern = ChitonCave("./data/sample.txt")
 min_risk = cavern.find_lowest_risk_path()
 
