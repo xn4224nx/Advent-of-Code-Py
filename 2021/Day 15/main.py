@@ -99,33 +99,6 @@ class ChitonCave:
         for pnt, dist in pnt_dist.items():
             print(f"{pnt} {dist}")
 
-    def find_all_connected_points(
-            self, centre_point: tuple[int, int]) -> list[(int, int)]:
-        """
-        For a particular point return a list of the connected points.
-        """
-        
-        connected_pts = []
-        
-        for x in range(centre_point[0]-1, centre_point[0]+2):
-            for y in range(centre_point[1]-1, centre_point[1]+2):
-                
-                # Check to see if the point is beyond left or right hand edge
-                if x < 0 or x > self.risk_map.shape[0]-1:
-                    continue
-                
-                # Check to see if the point beyond the top or bottom edge
-                if y < 0 or y > self.risk_map.shape[1]-1:
-                    continue
-                
-                # Ignore the point itself
-                if y == centre_point[1] and x == centre_point[0]:
-                    continue                
-                
-                connected_pts.append((x, y))
-        
-        return connected_pts
-
     def find_connected_points(
             self, centre_point: tuple[int, int]) -> list[(int, int)]:
         """
@@ -148,14 +121,6 @@ class ChitonCave:
             connected_pts.append((centre_point[0], centre_point[1]+1))
         
         return connected_pts
-
-
-    def calc_path_risk(self, path_points: list[(int, int)]) -> int:
-        """
-        Calculate the risk score of one single path defined by a list of tuple
-        integers.
-        """
-        pass
 
 
 cavern = ChitonCave("./data/sample.txt")
