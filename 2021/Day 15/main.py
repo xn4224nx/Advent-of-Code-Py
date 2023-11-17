@@ -30,8 +30,6 @@ class ChitonCave:
             [[int(x) for x in y] for y in
              open(datafile, "r").read().splitlines()])
         
-        print(self.risk_map)
-        
         # Define the start and end points
         self.start = (0, 0)
         self.end = (self.risk_map.shape[0]-1, self.risk_map.shape[1]-1)
@@ -59,8 +57,6 @@ class ChitonCave:
         
         # Loop until the destination node has been visited
         while self.end in unvisited_points:
-            
-            print(f"\ncurrent node = {curr_node}")
             
             # For each neighbour calculate the risk
             neighb_pnts = []
@@ -90,14 +86,9 @@ class ChitonCave:
             for node in unvisited_points:
                 if pnt_dist[node] < min_dist:
                 
-                    print(f"\t{node} = {pnt_dist[node]}")
                     min_dist = pnt_dist[node]
                     curr_node = node
-            
-            print(f"next current node = {curr_node}")
-        
-        for pnt, dist in pnt_dist.items():
-            print(f"{pnt} {dist}")
+
 
     def find_connected_points(
             self, centre_point: tuple[int, int]) -> list[(int, int)]:
