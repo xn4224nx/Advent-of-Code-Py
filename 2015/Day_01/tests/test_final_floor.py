@@ -39,3 +39,11 @@ def test_example_08():
 
 def test_example_09():
     assert final_floor("./data/example_09.txt") == -3
+
+
+def test_example_10():
+    assert final_floor("./data/example_10.txt", True) == 1
+
+
+def test_example_11():
+    assert final_floor("./data/example_11.txt", True) == 5
