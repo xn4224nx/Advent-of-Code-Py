@@ -4,7 +4,7 @@
 VENV_DIR="./venv"
 
 # Remove old versions of the environment if it exists
-if [ -f "$REQ_FILE" ]; then
+if [ -d "$VENV_DIR" ]; then
     rm -r $VENV_DIR
 fi
 
