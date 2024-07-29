@@ -14,6 +14,19 @@ for each present: the area of the smallest side.
 
 PART 1: All numbers in the elves' list are in feet. How many
         total square feet of wrapping paper should they order?
+
+The elves are also running low on ribbon. Ribbon is all the same
+width, so they only have to worry about the length they need to
+order, which they would again like to be exact.
+
+The ribbon required to wrap a present is the shortest distance
+around its sides, or the smallest perimeter of any one face. Each
+present also requires a bow made out of ribbon as well; the feet
+of ribbon required for the perfect bow is equal to the cubic feet
+of volume of the present. Don't ask how they tie the bow, though;
+they'll never tell.
+
+PART 2: How many total feet of ribbon should they order?
 """
 
 import re
@@ -32,18 +45,22 @@ def calc_area(length: int, width: int, height: int) -> int:
     return box_area + smallest_side
 
 
-def sum_all_wrapping(all_box_dims: list[(int, int, int)]) -> int:
+def calc_ribbon(length: int, width: int, height: int) -> int:
     """
-    Calculate the total area of wrapping paper required to cover
-    all the boxes defined in a list of tuples (all_box_dims).
+    For a box of specific dimensions how much ribbon is also required
+    to wrap it?
+
+    Each box need a length of ribbon the same magnitude as the volume for the
+    bow. Then is needs a length of ribbon equal to the side with the smallest
+    perimeter. The sum of those two values is the total lengths of ribbon
+    needed.
     """
+    bow_len = length * width * height
 
-    wrp_sum = 0
+    # Find the smallest perimeter of a side
+    half_perims = sorted([length + width, width + height, height + length])
 
-    for length, width, height in all_box_dims:
-        wrp_sum += calc_area(length, width, height)
-
-    return wrp_sum
+    return bow_len + 2 * half_perims[0]
 
 
 def parse_box_dims(dim_file: str) -> list[(int, int, int)]:
@@ -68,5 +85,14 @@ def parse_box_dims(dim_file: str) -> list[(int, int, int)]:
 
 
 if __name__ == "__main__":
-    box_dims = parse_box_dims("./data/input.txt")
-    print(f"The answer to part 1 = {sum_all_wrapping(box_dims)}")
+
+    total_paper = 0
+    total_ribbon = 0
+
+    for length, width, height in parse_box_dims("./data/input.txt"):
+        total_paper += calc_area(length, width, height)
+        total_ribbon += calc_ribbon(length, width, height)
+
+    print(
+        f"The answer to part 1 = {total_paper}\nThe answer to part 2 = {total_ribbon}"
+    )
