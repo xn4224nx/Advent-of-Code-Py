@@ -18,7 +18,7 @@ PART 1: To mine AdventCoins, you must find Santa the lowest
 import hashlib
 
 
-def valid_mine(secret_key: str, answer: int) -> bool:
+def valid_mine(secret_key: str, answer: int, zeroes=5) -> bool:
     """
     Determine if the combination of secret key and answer
     creates a MD5 hash digest with five leading zeroes.
@@ -27,17 +27,17 @@ def valid_mine(secret_key: str, answer: int) -> bool:
     value = secret_key + str(answer)
     digest = hashlib.md5(value.encode()).hexdigest()
 
-    return digest[:5] == "00000"
+    return digest[:zeroes] == "0" * zeroes
 
 
-def mine_santa_coins(secret_key: str) -> int:
+def mine_santa_coins(secret_key: str, zeroes=5) -> int:
     """
     Find the lowest integer that produces a MD5 hash that starts
     with five zeroes. Then return that integer.
     """
     answer = 1
 
-    while not valid_mine(secret_key, answer):
+    while not valid_mine(secret_key, answer, zeroes):
         answer += 1
 
     return answer
@@ -45,3 +45,4 @@ def mine_santa_coins(secret_key: str) -> int:
 
 if __name__ == "__main__":
     print(f"Part 1 answer = {mine_santa_coins('iwrupvqb')}")
+    print(f"Part 1 answer = {mine_santa_coins('iwrupvqb', 6)}")
