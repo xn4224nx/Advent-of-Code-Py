@@ -16,6 +16,16 @@ much eggnog, and so his directions are a little off, and Santa
 ends up visiting some houses more than once.
 
 PART 1: How many houses receive at least one present?
+
+The next year, to speed up the process, Santa creates a robot
+version of himself, Robo-Santa, to deliver presents with him.
+
+Santa and Robo-Santa start at the same location (delivering two
+presents to the same starting house), then take turns moving
+based on instructions from the elf, who is eggnoggedly reading
+from the same script as the previous year.
+
+PART 2: This year, how many houses receive at least one present?
 """
 
 
@@ -31,37 +41,52 @@ def read_directions(file_path: str) -> str:
     return contents
 
 
-def houses_covered(directions: str) -> dict[(int, int), str]:
+def houses_covered(directions: str, robo_santa=False) -> int:
     """
-    Determine the coordinates of houses that are visted by Santa
-    when he follows the directions. Return a dict with the
-    visted houses and the visit count.
+    What are the houses covered when Santa has a robot helper that
+    uses every other instruction and Santa uses the other.
     """
-    loc = (0, 0)
-    visted_houses = {loc: 1}
 
-    for char in directions:
+    start_loc = (0, 0)
+    visted_houses = {start_loc}
 
-        if char not in "^>v<":
-            continue
+    r_loc = start_loc
+    s_loc = start_loc
 
-        if char == "^":
-            loc = (loc[0], loc[1] + 1)
-        elif char == "v":
-            loc = (loc[0], loc[1] - 1)
-        elif char == ">":
-            loc = (loc[0] + 1, loc[1])
-        elif char == "<":
-            loc = (loc[0] - 1, loc[1])
+    for idx, char in enumerate(directions):
 
-        if loc not in visted_houses:
-            visted_houses[loc] = 1
+        # Move the robot and record the location it moves to
+        if robo_santa and idx % 2 == 0:
+            r_loc = move_santa(char, r_loc)
+            visted_houses.add(r_loc)
+
+        # Otherwise move Santa and record the location
         else:
-            visted_houses[loc] += 1
+            s_loc = move_santa(char, s_loc)
+            visted_houses.add(s_loc)
 
-    return visted_houses
+    return len(visted_houses)
+
+
+def move_santa(char: str, loc: (int, int)) -> (int, int):
+    """
+    Move a Santa or Robot Santa based on a direction string.
+    """
+    if char == "^":
+        loc = (loc[0], loc[1] + 1)
+    elif char == "v":
+        loc = (loc[0], loc[1] - 1)
+    elif char == ">":
+        loc = (loc[0] + 1, loc[1])
+    elif char == "<":
+        loc = (loc[0] - 1, loc[1])
+    else:
+        raise Exception(f"Unknown movement char: {char}!")
+
+    return loc
 
 
 if __name__ == "__main__":
     directions = read_directions("./data/input.txt")
-    print(f"Solution to part 1 = {len(houses_covered(directions))}")
+    print(f"Solution to part 1 = {houses_covered(directions)}")
+    print(f"Solution to part 2 = {houses_covered(directions, True)}")
