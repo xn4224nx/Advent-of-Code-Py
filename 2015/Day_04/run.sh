@@ -8,7 +8,11 @@ source ../../venv/bin/activate
 pytest tests/
 
 # Execute the main script
-python3 main.py
+time python3 main.py
+time python3 main.py
+time python3 main.py
+time python3 main.py
+time python3 main.py
 
 # Stop the vritual environment
 deactivate
