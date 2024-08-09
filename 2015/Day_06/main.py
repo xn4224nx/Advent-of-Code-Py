@@ -22,7 +22,27 @@ To defeat your neighbors this year, all you have to do is set up
 your lights by doing the instructions Santa sent you in order.
 
 PART 1: After following the instructions, how many lights are
-		lit?
+        lit?
+
+You just finish implementing your winning light pattern when you
+realize you mistranslated Santa's message from Ancient Nordic
+Elvish.
+
+The light grid you bought actually has individual brightness
+controls; each light can have a brightness of zero or more. The
+lights all start at zero.
+
+The phrase turn on actually means that you should increase the
+brightness of those lights by 1.
+
+The phrase turn off actually means that you should decrease the
+brightness of those lights by 1, to a minimum of zero.
+
+The phrase toggle actually means that you should increase the
+brightness of those lights by 2.
+
+PART 2: What is the total brightness of all lights combined
+        after following Santa's instructions?
 """
 
 import numpy as np
@@ -30,6 +50,7 @@ import re
 from enum import Enum
 
 cmd = Enum("cmd", ["turn_on", "turn_off", "toggle"])
+GRID = (1000, 1000)
 
 
 class LightGrid:
@@ -38,13 +59,25 @@ class LightGrid:
     that light is on and false off.
     """
 
-    def __init__(self, grid_shape: (int, int), start_light_state: bool):
-        self.grid = np.full(grid_shape, start_light_state)
-        self.shape = grid_shape
+    def __init__(
+        self,
+        cmd_file: str,
+        elvish: bool,
+    ):
+        self.cmd_file = cmd_file
+        self.elvish = elvish
+
+        if self.elvish:
+            start_light_state = 0
+        else:
+            start_light_state = False
+
+        self.grid = np.full(GRID, start_light_state)
 
     def count_on_lights(self) -> int:
         """
-        Determine how many lights are currently on in the grid.
+        Determine how many lights are currently on in the grid. Or if using
+        Ancient Nordic Elvish the total brightness of the grid.
         """
         return int(np.sum(self.grid))
 
@@ -53,23 +86,36 @@ class LightGrid:
         Turn on the lights in a rectangle between the start point and
         the end point.
         """
-        self.grid[s_pnt[0] : e_pnt[0], s_pnt[1] : e_pnt[1]] = True
+        gr_slice = self.grid[s_pnt[0] : e_pnt[0], s_pnt[1] : e_pnt[1]]
+
+        if self.elvish:
+            gr_slice[:] += 1
+        else:
+            gr_slice[:] = True
 
     def turn_off(self, s_pnt: (int, int), e_pnt: (int, int)):
         """
         Turn off the lights in a rectangle between the start point and
         the end point.
         """
-        self.grid[s_pnt[0] : e_pnt[0], s_pnt[1] : e_pnt[1]] = False
+        gr_slice = self.grid[s_pnt[0] : e_pnt[0], s_pnt[1] : e_pnt[1]]
+
+        if self.elvish:
+            gr_slice[:] -= 1
+        else:
+            gr_slice[:] = False
 
     def toggle(self, s_pnt: (int, int), e_pnt: (int, int)):
         """
         Change the state of the lights in a rectangle between the
         start point and the end point.
         """
-        self.grid[s_pnt[0] : e_pnt[0], s_pnt[1] : e_pnt[1]] = np.invert(
-            self.grid[s_pnt[0] : e_pnt[0], s_pnt[1] : e_pnt[1]]
-        )
+        gr_slice = self.grid[s_pnt[0] : e_pnt[0], s_pnt[1] : e_pnt[1]]
+
+        if self.elvish:
+            gr_slice[:] += 2
+        else:
+            gr_slice[:] = np.invert(gr_slice)
 
     def parse_command(self, raw_command: str) -> dict:
         """
@@ -110,15 +156,23 @@ class LightGrid:
         else:
             self.toggle(com["s_pnt"], com["e_pnt"])
 
-    def execute_commands(self, cmd_file: str):
+        # The brightness of a light cannot go below zero
+        if self.elvish:
+            self.grid = self.grid.clip(min=0)
+
+    def execute_commands(self):
         """
         Read all the commands in a file an execute them all.
         """
-        for line in open(cmd_file).readlines():
+        for line in open(self.cmd_file).readlines():
             self.exe_single_command(line)
 
 
 if __name__ == "__main__":
-    decor = LightGrid((1000, 1000), False)
-    decor.execute_commands("./data/input.txt")
+    decor = LightGrid("./data/input.txt", False)
+    decor.execute_commands()
     print(f"The answer to part 1 = {decor.count_on_lights()}")
+
+    nordic = LightGrid("./data/input.txt", True)
+    nordic.execute_commands()
+    print(f"The answer to part 2 = {nordic.count_on_lights()}")
