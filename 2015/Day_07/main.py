@@ -27,6 +27,13 @@ provide operators for these gates.
 PART 1: In little Bobby's kit's instructions booklet
         (provided as your puzzle input), what signal is
         ultimately provided to wire a?
+
+Now, take the signal you got on wire a, override wire b
+to that signal, and reset the other wires (including wire
+a).
+
+PART 2: What new signal is ultimately provided to wire a?
+
 """
 
 import numpy as np
@@ -46,9 +53,6 @@ class Circuit:
         with open(inst_filepath) as fp:
             for raw_line in fp.readlines():
                 instr, dest = raw_line.split(" -> ", 1)
-
-                # Make a record of each wire
-                # self.wire_sig[dest.strip()] = np.ushort(0)
 
                 # Save the instructions
                 self.all_instr.append((instr.strip(), dest.strip()))
@@ -123,29 +127,44 @@ class Circuit:
         signals accordingly.
         """
 
+        instruts = self.all_instr.copy()
+
         # Try and edxecute the instructions in order while there are some.
-        while self.all_instr:
+        while instruts:
             rm_instr = []
 
             # try and execute all instructions
-            for idx in range(len(self.all_instr)):
+            for idx in range(len(instruts)):
 
                 # If the command was successful don't use it again
-                if self.exe_single_instr(*self.all_instr[idx]):
+                if self.exe_single_instr(*instruts[idx]):
                     rm_instr.append(idx)
 
             # Remove completed commands
             for idx in sorted(rm_instr, reverse=True):
-                del self.all_instr[idx]
+                del instruts[idx]
 
     def ret_a_sig(self):
         """
         Return the signal of the a wire.
         """
-        return int(self.wire_sig["a"])
+        return self.wire_sig["a"]
+
+    def reset_all_but(self, ignored_wire: str):
+        """
+        Remove all the wire signals except the ignored one.
+        """
+        tmp = self.wire_sig[ignored_wire]
+        self.wire_sig = {ignored_wire: tmp}
 
 
 if __name__ == "__main__":
     bob = Circuit("./data/input.txt")
     bob.execute_instructions()
     print(f"Part 1 = {bob.ret_a_sig()}")
+
+    # 46880 too high
+    bob.wire_sig["b"] = bob.ret_a_sig()
+    bob.reset_all_but("b")
+    bob.execute_instructions()
+    print(f"Part 2 = {bob.ret_a_sig()}")
