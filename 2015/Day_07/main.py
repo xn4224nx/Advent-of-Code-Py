@@ -48,7 +48,7 @@ class Circuit:
                 instr, dest = raw_line.split(" -> ", 1)
 
                 # Make a record of each wire
-                self.wire_sig[dest.strip()] = np.ushort(0)
+                # self.wire_sig[dest.strip()] = np.ushort(0)
 
                 # Save the instructions
                 self.all_instr.append((instr.strip(), dest.strip()))
@@ -67,10 +67,11 @@ class Circuit:
         else:
             return None
 
-    def exe_single_instr(self, instr: str, dest: str):
+    def exe_single_instr(self, instr: str, dest: str) -> bool:
         """
         With a single instruction and destination modify
-        the wire signals accordingly.
+        the wire signals accordingly. Return a boolean value
+        based on if the instruction can be executed
         """
 
         if "NOT" in instr:
@@ -78,7 +79,7 @@ class Circuit:
             val = self.resolve_value(tmp)
 
             if val is None:
-                return
+                return False
 
             self.wire_sig[dest] = np.invert(val)
 
@@ -88,7 +89,7 @@ class Circuit:
             val2 = self.resolve_value(p2)
 
             if val1 is None or val2 is None:
-                return
+                return False
 
             if mid == "AND":
                 self.wire_sig[dest] = np.bitwise_and(val1, val2)
@@ -110,23 +111,37 @@ class Circuit:
             val = self.resolve_value(instr)
 
             if val is None:
-                return
+                return False
 
             self.wire_sig[dest] = np.ushort(val)
+
+        return True
 
     def execute_instructions(self):
         """
         Run through all the instructions and modify the wire
         signals accordingly.
         """
-        for instr, dest in self.all_instr:
-            self.exe_single_instr(instr, dest)
+
+        # Try and edxecute the instructions in order while there are some.
+        while self.all_instr:
+            rm_instr = []
+
+            # try and execute all instructions
+            for idx in range(len(self.all_instr)):
+
+                # If the command was successful don't use it again
+                if self.exe_single_instr(*self.all_instr[idx]):
+                    rm_instr.append(idx)
+
+            # Remove completed commands
+            for idx in sorted(rm_instr, reverse=True):
+                del self.all_instr[idx]
 
     def ret_a_sig(self):
         """
         Return the signal of the a wire.
         """
-        print(self.wire_sig)
         return int(self.wire_sig["a"])
 
 
