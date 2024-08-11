@@ -29,5 +29,106 @@ PART 1: In little Bobby's kit's instructions booklet
         ultimately provided to wire a?
 """
 
+
+class Circuit:
+    """
+    Simulate a circuit via a set of instructions read
+    from a text file.
+    """
+
+    def __init__(self, inst_filepath: str):
+        self.wire_sig = {}
+        self.all_instr = []
+
+        # Split the destination and instruction
+        with open(inst_filepath) as fp:
+            for raw_line in fp.readlines():
+                instr, dest = raw_line.split(" -> ", 1)
+
+                # Make a record of each wire
+                self.wire_sig[dest.strip()] = 0
+
+                # Save the instructions
+                self.all_instr.append((instr.strip(), dest.strip()))
+
+    def resolve_value(self, value: str) -> int:
+        """
+        Ensure the value is an integer or find out
+        referenced wire's signal.
+        """
+        if value.isdigit():
+            return int(value)
+
+        elif value in self.wire_sig:
+            return self.wire_sig[value]
+
+        else:
+            return None
+
+    def exe_single_instr(self, instr: str, dest: str):
+        """
+        With a single instruction and destination modify
+        the wire signals accordingly.
+        """
+
+        if "NOT" in instr:
+            tmp = instr.replace("NOT ", "")
+            val = self.resolve_value(tmp)
+
+            if val is None:
+                return
+
+            self.wire_sig[dest] = ~self.resolve_value(tmp)
+
+        elif " " in instr:
+            p1, mid, p2 = instr.split(" ", 2)
+            val1 = self.resolve_value(p1)
+            val2 = self.resolve_value(p2)
+
+            if val1 is None or val2 is None:
+                return
+
+            if mid == "AND":
+                self.wire_sig[dest] = val1 & val2
+
+            elif mid == "OR":
+                self.wire_sig[dest] = val1 | val2
+
+            elif mid == "LSHIFT":
+                self.wire_sig[dest] = val1 << val2
+
+            elif mid == "RSHIFT":
+                self.wire_sig[dest] = val1 >> val2
+
+            else:
+                raise Exception(f"Unknown command {mid}")
+
+        # Assignment
+        else:
+            val = self.resolve_value(instr)
+
+            if val is None:
+                return
+
+            self.wire_sig[dest] = val
+
+    def execute_instructions(self):
+        """
+        Run through all the instructions and modify the wire
+        signals accordingly.
+        """
+        for instr, dest in self.all_instr:
+            self.exe_single_instr(instr, dest)
+
+    def ret_a_sig(self):
+        """
+        Return the signal of the a wire.
+        """
+        print(self.wire_sig)
+        return self.wire_sig["a"]
+
+
 if __name__ == "__main__":
-    pass
+    bob = Circuit("./data/input.txt")
+    bob.execute_instructions()
+    print(f"Part 1 = {bob.ret_a_sig()}")
