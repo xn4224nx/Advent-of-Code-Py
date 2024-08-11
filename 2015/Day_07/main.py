@@ -29,6 +29,8 @@ PART 1: In little Bobby's kit's instructions booklet
         ultimately provided to wire a?
 """
 
+import numpy as np
+
 
 class Circuit:
     """
@@ -46,7 +48,7 @@ class Circuit:
                 instr, dest = raw_line.split(" -> ", 1)
 
                 # Make a record of each wire
-                self.wire_sig[dest.strip()] = 0
+                self.wire_sig[dest.strip()] = np.ushort(0)
 
                 # Save the instructions
                 self.all_instr.append((instr.strip(), dest.strip()))
@@ -78,7 +80,7 @@ class Circuit:
             if val is None:
                 return
 
-            self.wire_sig[dest] = ~self.resolve_value(tmp)
+            self.wire_sig[dest] = np.invert(val)
 
         elif " " in instr:
             p1, mid, p2 = instr.split(" ", 2)
@@ -89,16 +91,16 @@ class Circuit:
                 return
 
             if mid == "AND":
-                self.wire_sig[dest] = val1 & val2
+                self.wire_sig[dest] = np.bitwise_and(val1, val2)
 
             elif mid == "OR":
-                self.wire_sig[dest] = val1 | val2
+                self.wire_sig[dest] = np.bitwise_or(val1, val2)
 
             elif mid == "LSHIFT":
-                self.wire_sig[dest] = val1 << val2
+                self.wire_sig[dest] = np.left_shift(val1, val2)
 
             elif mid == "RSHIFT":
-                self.wire_sig[dest] = val1 >> val2
+                self.wire_sig[dest] = np.right_shift(val1, val2)
 
             else:
                 raise Exception(f"Unknown command {mid}")
@@ -110,7 +112,7 @@ class Circuit:
             if val is None:
                 return
 
-            self.wire_sig[dest] = val
+            self.wire_sig[dest] = np.ushort(val)
 
     def execute_instructions(self):
         """
@@ -125,7 +127,7 @@ class Circuit:
         Return the signal of the a wire.
         """
         print(self.wire_sig)
-        return self.wire_sig["a"]
+        return int(self.wire_sig["a"])
 
 
 if __name__ == "__main__":
