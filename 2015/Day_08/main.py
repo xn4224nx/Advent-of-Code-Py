@@ -28,9 +28,22 @@ PART 1: Disregarding the whitespace in the file, what
         string literals minus the number of
         characters in memory for the values of the
         strings in total for the entire file?
+
+Now, let's go the other way. In addition to finding
+the number of characters of code, you should now
+encode each code representation as a new string and
+find the number of characters of the new encoded
+representation, including the surrounding double
+quotes.
+
+PART 2: Your task is to find the total number of
+        characters to represent the newly encoded
+        strings minus the number of characters of
+        code in each original string literal.
 """
 
 import ast
+import re
 
 
 def read_nn_list(file_path: str) -> list[str]:
@@ -64,7 +77,19 @@ def count_literal_char(f_input: str) -> int:
     return len(ast.literal_eval(f_input))
 
 
-def char_deficit(file_path: str) -> int:
+def count_encoded_char(f_input: str) -> int:
+    """
+    Encode the string as a new representation and
+    return its length.
+    """
+    enc_char = len(f_input) + 2  # For quoting
+    enc_char += f_input.count("\\")
+    enc_char += f_input.count('"')
+
+    return enc_char
+
+
+def char_deficit(file_path: str, char_deficit: bool) -> int:
     """
     Ignoring the whitespace in the file, what is
     the number of characters of code for string
@@ -72,14 +97,19 @@ def char_deficit(file_path: str) -> int:
     for the values of the strings in total for the
     entire file?
     """
-    l_sum = c_sum = 0
+    l_sum = c_sum = e_sum = 0
 
     for line in read_nn_list(file_path):
         c_sum += count_raw_char(line)
         l_sum += count_literal_char(line)
+        e_sum += count_encoded_char(line)
 
-    return c_sum - l_sum
+    if char_deficit:
+        return c_sum - l_sum
+    else:
+        return e_sum - c_sum
 
 
 if __name__ == "__main__":
-    print(f"Part 1 = {char_deficit('./data/input.txt')}")
+    print(f"Part 1 = {char_deficit('./data/input.txt', True)}")
+    print(f"Part 2 = {char_deficit('./data/input.txt', False)}")
