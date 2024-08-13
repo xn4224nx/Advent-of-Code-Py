@@ -14,8 +14,7 @@ this?
 PART 1: What is the distance of the shortest route?
 """
 
-import networkx
-import matplotlib.pyplot as plt
+import itertools
 
 
 class DeliveryNetwork:
@@ -25,7 +24,7 @@ class DeliveryNetwork:
         The locations and routes that Santa visits when
         delivering presents in a single night.
         """
-        self.dn = networkx.Graph()
+        self.data = {}
 
         # Create the graph from the data file
         with open(data_file) as fp:
@@ -35,45 +34,54 @@ class DeliveryNetwork:
                 route, dist = line.split(" = ")
                 loc_a, loc_b = route.split(" to ")
 
-                # Add the nodes
-                self.dn.add_node(loc_a)
-                self.dn.add_node(loc_b)
+                # Ensure an entry for each nodes
+                if loc_a not in self.data:
+                    self.data[loc_a] = {}
 
-                # Add the edge between them
-                self.dn.add_edge(loc_a, loc_b, length=int(dist))
+                if loc_b not in self.data:
+                    self.data[loc_b] = {}
 
-                # self.dn = add_edge_from((loc_a, loc_b, {"w": int(dist)}))
+                # Add in the edge data
+                self.data[loc_b][loc_a] = int(dist)
+                self.data[loc_a][loc_b] = int(dist)
 
-    def sv_image(self, img_file: str):
+    def path_len(self, path) -> int:
         """
-        Save an image of Santas delivery network to disk.
+        Determine the raw distance of a path
         """
-        node_postions = networkx.spring_layout(self.dn)
-        node_sizes = [len(x) * 800 for x in self.dn.nodes()]
 
-        plt.figure(3, figsize=(12, 12))
-        networkx.draw(self.dn, node_postions, with_labels=True, node_size=node_sizes)
+        path_dist = 0
 
-        # Add the distances to the lables
-        edge_labels = dict(
-            [
-                (
-                    (
-                        u,
-                        v,
-                    ),
-                    d["length"],
-                )
-                for u, v, d in self.dn.edges(data=True)
-            ]
-        )
-        networkx.draw_networkx_edge_labels(
-            self.dn, node_postions, edge_labels=edge_labels, font_color="black"
-        )
+        for idx in range(len(path)):
+            if idx == 0:
+                continue
 
-        plt.savefig(img_file)
+            curr_node = path[idx]
+            prev_node = path[idx - 1]
+
+            if curr_node not in self.data[prev_node]:
+                return None
+
+            path_dist += self.data[curr_node][prev_node]
+
+        return path_dist
+
+    def bf_shortest_path(self):
+        """
+        Find every possible path that goes through every node once and find the
+        one with the shortest route.
+        """
+        path_dists = []
+
+        for node_path in itertools.permutations(list(self.data.keys())):
+
+            curr_path_dist = self.path_len(node_path)
+            if curr_path_dist is not None:
+                path_dists.append(curr_path_dist)
+
+        return min(path_dists)
 
 
 if __name__ == "__main__":
-    xmas_route = DeliveryNetwork("./data/input.txt")
-    xmas_route.sv_image("./graphs/input_routes.png")
+    xroute = DeliveryNetwork("./data/input.txt")
+    print(f"Part 1 = {xroute.bf_shortest_path()}")
