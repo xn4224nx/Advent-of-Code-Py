@@ -66,10 +66,10 @@ class DeliveryNetwork:
 
         return path_dist
 
-    def bf_shortest_path(self):
+    def bf_min_max_path(self) -> (int, int):
         """
         Find every possible path that goes through every node once and find the
-        one with the shortest route.
+        one with the shortest route and the once with the longest.
         """
         path_dists = []
 
@@ -79,9 +79,12 @@ class DeliveryNetwork:
             if curr_path_dist is not None:
                 path_dists.append(curr_path_dist)
 
-        return min(path_dists)
+        return min(path_dists), max(path_dists)
 
 
 if __name__ == "__main__":
     xroute = DeliveryNetwork("./data/input.txt")
-    print(f"Part 1 = {xroute.bf_shortest_path()}")
+    x_min, x_max = xroute.bf_min_max_path()
+
+    print(f"Part 1 = {x_min}")
+    print(f"Part 2 = {x_max}")

@@ -18,4 +18,9 @@ def test_read_example():
 
 def test_min_path_len():
     ts = main.DeliveryNetwork(file_p)
-    assert ts.bf_shortest_path() == 605
+    assert ts.bf_min_max_path()[0] == 605
+
+
+def test_max_path_len():
+    ts = main.DeliveryNetwork(file_p)
+    assert ts.bf_min_max_path()[1] == 982
