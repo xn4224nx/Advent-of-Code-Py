@@ -38,7 +38,10 @@ def look_and_say(old_seq: str) -> str:
 if __name__ == "__main__":
     start = "1113122113"
 
-    for i in range(40):
+    for i in range(50):
         start = look_and_say(start)
 
-    print(f"Part 1 answer = {len(start)}")
+        if i == 39:
+            print(f"Part 1 answer = {len(start)}")
+
+    print(f"Part 2 answer = {len(start)}")
