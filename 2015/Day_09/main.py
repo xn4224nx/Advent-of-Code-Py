@@ -12,6 +12,14 @@ once. What is the shortest distance he can travel to achieve
 this?
 
 PART 1: What is the distance of the shortest route?
+
+The next year, just to show off, Santa decides to take the
+route with the longest distance instead.
+
+He can still start and end at any two (different) locations he
+wants, and he still must visit each location exactly once.
+
+PART 2: What is the distance of the longest route?
 """
 
 import itertools
