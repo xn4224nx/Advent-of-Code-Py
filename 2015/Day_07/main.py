@@ -45,7 +45,7 @@ class Circuit:
     from a text file.
     """
 
-    def __init__(self, inst_filepath: str):
+    def __init__(self, inst_filepath: str, b_val: int = None):
         self.wire_sig = {}
         self.all_instr = []
 
@@ -53,6 +53,9 @@ class Circuit:
         with open(inst_filepath) as fp:
             for raw_line in fp.readlines():
                 instr, dest = raw_line.split(" -> ", 1)
+
+                if b_val is not None and dest.strip() == "b":
+                    instr = str(b_val)
 
                 # Save the instructions
                 self.all_instr.append((instr.strip(), dest.strip()))
@@ -150,21 +153,12 @@ class Circuit:
         """
         return self.wire_sig["a"]
 
-    def reset_all_but(self, ignored_wire: str):
-        """
-        Remove all the wire signals except the ignored one.
-        """
-        tmp = self.wire_sig[ignored_wire]
-        self.wire_sig = {ignored_wire: tmp}
-
 
 if __name__ == "__main__":
     bob = Circuit("./data/input.txt")
     bob.execute_instructions()
     print(f"Part 1 = {bob.ret_a_sig()}")
 
-    # 46880 too high
-    bob.wire_sig["b"] = bob.ret_a_sig()
-    bob.reset_all_but("b")
-    bob.execute_instructions()
-    print(f"Part 2 = {bob.ret_a_sig()}")
+    bob2 = Circuit("./data/input.txt", bob.ret_a_sig())
+    bob2.execute_instructions()
+    print(f"Part 2 = {bob2.ret_a_sig()}")
