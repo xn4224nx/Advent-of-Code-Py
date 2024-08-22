@@ -97,4 +97,7 @@ def find_next_pass(start: str) -> str:
 
 
 if __name__ == "__main__":
-    print(f"Part 1 = {find_next_pass('hxbxwxba')}")
+    pass_1 = find_next_pass("hxbxwxba")
+    pass_2 = find_next_pass(increment_string(pass_1))
+
+    print(f"Part 1 = {pass_1}\nPart 2 = {pass_2}")
