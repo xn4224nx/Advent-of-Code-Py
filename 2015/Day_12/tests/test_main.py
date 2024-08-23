@@ -3,6 +3,7 @@ Tests for functions in the main script.
 """
 
 import main
+import json
 
 
 def test_sum_exp_1():
@@ -35,3 +36,19 @@ def test_sum_exp_7():
 
 def test_sum_exp_8():
     assert main.sum_all_nums("{}") == 0
+
+
+def test_sum_non_red_exp_1():
+    assert main.non_red_sum(json.loads("[1,2,3]")) == 6
+
+
+def test_sum_non_red_exp_2():
+    assert main.non_red_sum(json.loads('[1,{"c":"red","b":2},3]')) == 4
+
+
+def test_sum_non_red_exp_3():
+    assert main.non_red_sum(json.loads('{"d":"red","e":[1,2,3,4],"f":5}')) == 0
+
+
+def test_sum_non_red_exp_4():
+    assert main.non_red_sum(json.loads('[1,"red",5]')) == 6
