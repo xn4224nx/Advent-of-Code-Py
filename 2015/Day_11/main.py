@@ -28,6 +28,8 @@ some additional password requirements:
 
 PART 1: Given Santa's current password (your puzzle input), what should his next
         password be?
+
+PART 2: Santa's password expired again. What's the next one?
 """
 
 
@@ -48,8 +50,6 @@ def increment_string(value: str) -> str:
                 incr = False
         else:
             new += value[idx]
-
-        idx -= 1
 
     return new[::-1]
 
