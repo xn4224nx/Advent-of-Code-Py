@@ -13,6 +13,17 @@ neighbors.
 
 PART 1: What is the total change in happiness for the optimal seating
         arrangement of the actual guest list?
+
+In all the commotion, you realize that you forgot to seat yourself. At this
+point, you're pretty apathetic toward the whole thing, and your happiness
+wouldn't really go up or down regardless of who you sit next to. You assume
+everyone else would be just as ambivalent about sitting next to you, too.
+
+So, add yourself to the list, and give all happiness relationships that involve
+you a score of 0.
+
+PART 2: What is the total change in happiness for the optimal seating
+        arrangement that actually includes yourself?
 """
 
 import re
@@ -72,20 +83,26 @@ def score_arrange(rels: dict[(str, str), int], guests: str) -> int:
         if comp_1 == len(guests):
             comp_1 = 0
 
-        happy_sum += rels[(guests[comp_0], guests[comp_1])]
-        happy_sum += rels[(guests[comp_1], guests[comp_0])]
+        happy_sum += rels.get((guests[comp_0], guests[comp_1]), 0)
+        happy_sum += rels.get((guests[comp_1], guests[comp_0]), 0)
 
     return happy_sum
 
 
-def find_max_happy(rels: dict[(str, str), int], guests: list[str]) -> int:
+def find_max_happy(
+    rels: dict[(str, str), int], guests: list[str], me: bool = False
+) -> int:
     """
     Find the seating arrangement that gives the maximum happiness by testing
     each combination of guest seating.
     """
+    if me:
+        guests.append("Me")
+
     return max([score_arrange(rels, comb) for comb in permutations(guests)])
 
 
 if __name__ == "__main__":
     rels, guests = parse_relationships("./data/input.txt")
     print(f"Part 1 = {find_max_happy(rels, guests)}")
+    print(f"Part 2 = {find_max_happy(rels, guests, True)}")
