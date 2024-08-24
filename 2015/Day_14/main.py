@@ -15,24 +15,26 @@ PART 1: Given the descriptions of each reindeer (in your puzzle input), after
 import re
 
 
-def parse_data(file_path: str) -> dict[str : dict[str, int]]:
+def parse_data(file_path: str) -> list[dict[str, int]]:
     """
     Read the reindeer data file and return a list of the reindeer details.
     """
     rein_re = re.compile(
         "".join([r"([A-Za-z]+) [\D]+ ([\d]+) [\D]+ ", r"([\d]+) [\D]+ ([\d]+)"])
     )
-    all_results = {}
+    all_results = []
 
     with open(file_path) as fp:
         for line in fp.readlines():
             matches = rein_re.match(line)
 
-            all_results[matches.group(1)] = {
-                "fly_speed": int(matches.group(2)),
-                "fly_time": int(matches.group(3)),
-                "rest_time": int(matches.group(4)),
-            }
+            all_results.append(
+                {
+                    "fly_speed": int(matches.group(2)),
+                    "fly_time": int(matches.group(3)),
+                    "rest_time": int(matches.group(4)),
+                }
+            )
 
     return all_results
 
@@ -42,40 +44,51 @@ def dist_trav(reindeer: dict[str, int], total_time):
     A generator to determine how far each the reindeer has traveled up to this
     second. Each iteration is assumed to be one second passed.
     """
-    secs_passed = 0
     speed = reindeer["fly_speed"]
     f_time = reindeer["fly_time"]
     r_time = reindeer["rest_time"]
     cycle_time = f_time + r_time
 
-    while secs_passed <= total_time:
-        secs_passed += 1
+    # Calculate the total number of rest fly cycles that have been completed
+    whole_cycles = total_time // cycle_time
 
-        # Calculate the total number of rest fly cycles that have been completed
-        whole_cycles = secs_passed // cycle_time
+    dist = whole_cycles * speed * f_time
 
-        dist = whole_cycles * speed * f_time
+    # Calculate the time into the current cycle
+    rem_time = total_time - whole_cycles * (f_time + r_time)
 
-        # Calculate the time into the current cycle
-        rem_time = total_time - whole_cycles * (f_time + r_time)
+    dist += min(rem_time, f_time) * speed
 
-        dist += min(rem_time, f_time) * speed
-
-        yield dist
+    return dist
 
 
-def race_winner_dist(all_rein: dict[str : dict[str, int]], total_time: int) -> int:
+def race_winner_dist(all_rein: list[dict[str, int]], total_time: int) -> (int, int):
     """
     Find the distance traveled by the winning Reindeer.
     """
-    dists = []
 
-    for rein in all_rein.values():
-        dists.append([x for x in dist_trav(rein, total_time)][-1])
+    scores = [0 for _ in range(len(all_rein))]
 
-    return max(dists)
+    # Determine the reindeer who is in the lead for each second of the race
+    for elap_sec in range(1, total_time + 1):
+        dists = []
+
+        # Calculate the distance traveled by each Reindeer
+        for rein_dta in all_rein:
+            dists.append(dist_trav(rein_dta, elap_sec))
+
+        curr_max_dist = max(dists)
+
+        # Increase the score of each reindeer in the lead
+        for idx in range(len(dists)):
+            if dists[idx] == curr_max_dist:
+                scores[idx] += 1
+
+    return max(dists), max(scores)
 
 
 if __name__ == "__main__":
     rein_data = parse_data("./data/input.txt")
-    print(f"Part 1 = {race_winner_dist(rein_data, 2503)}")
+    win_dist, win_score = race_winner_dist(rein_data, 2503)
+
+    print(f"Part 1 = {win_dist}\nPart 2 = {win_score}")
