@@ -71,6 +71,12 @@ def test_weight_combinations_len():
         == 12
     )
 
+
 def test_best_score():
     data = main.parse_property_data("./data/example_01.txt")
     assert main.find_best_score(data, 100) == 62842880
+
+
+def test_best_score_cc():
+    data = main.parse_property_data("./data/example_01.txt")
+    assert main.find_best_score(data, 100, True) == 57600000

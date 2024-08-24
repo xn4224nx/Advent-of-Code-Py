@@ -25,6 +25,15 @@ totals become 0) and then multiplying together everything except calories.
 
 PART 1: Given the ingredients in your kitchen and their properties, what is
         the total score of the highest-scoring cookie you can make?
+
+Your cookie recipe becomes wildly popular! Someone asks if you can make another
+recipe that has exactly 500 calories per cookie (so they can use it as a meal
+replacement). Keep the rest of your award-winning process the same (100
+teaspoons, same ingredients, same scoring system).
+
+PART 2: Given the ingredients in your kitchen and their properties, what is the
+        total score of the highest-scoring cookie you can make with a calorie
+        total of 500?
 """
 
 from itertools import combinations_with_replacement, permutations
@@ -86,7 +95,20 @@ def weight_combinations(ingredients: list[str], total_weight: int) -> dict[str:i
             yield {x: y for x, y in zip(ingredients, perm)}
 
 
-def find_best_score(properties: dict[str : dict[str:int]], total_weight: int) -> int:
+def calculate_calories(
+    properties: dict[str : dict[str:int]], weight_comb: dict[str:int]
+) -> int:
+    """
+    For a particular ingredient weight combination return the calorie count.
+    """
+    return sum(
+        [properties[name]["calories"] * weight for name, weight in weight_comb.items()]
+    )
+
+
+def find_best_score(
+    properties: dict[str : dict[str:int]], total_weight: int, calorie_cap: bool = False
+) -> int:
     """
     For a combination of ingredients and total weight find the best score
     possible.
@@ -94,7 +116,10 @@ def find_best_score(properties: dict[str : dict[str:int]], total_weight: int) ->
     best_score = 0
 
     for comb in weight_combinations(list(properties.keys()), total_weight):
-        best_score = max(score_weight_comb(properties, comb), best_score)
+        if calorie_cap and calculate_calories(properties, comb) == 500:
+            best_score = max(score_weight_comb(properties, comb), best_score)
+        elif not calorie_cap:
+            best_score = max(score_weight_comb(properties, comb), best_score)
 
     return best_score
 
@@ -102,3 +127,4 @@ def find_best_score(properties: dict[str : dict[str:int]], total_weight: int) ->
 if __name__ == "__main__":
     ingre_prop = parse_property_data("./data/input.txt")
     print(f"Part 1 = {find_best_score(ingre_prop, 100)}")
+    print(f"Part 2 = {find_best_score(ingre_prop, 100, True)}")
