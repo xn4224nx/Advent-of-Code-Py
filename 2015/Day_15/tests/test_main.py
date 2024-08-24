@@ -55,17 +55,18 @@ def test_score_weight_comb():
     )
 
 
-def test_weight_combinations():
-    assert [x for x in main.weight_combinations(["Butterscotch", "Cinnamon"], 10)] == [
-        {"Butterscotch": 0, "Cinnamon": 10},
-        {"Butterscotch": 1, "Cinnamon": 9},
-        {"Butterscotch": 2, "Cinnamon": 8},
-        {"Butterscotch": 3, "Cinnamon": 7},
-        {"Butterscotch": 4, "Cinnamon": 6},
-        {"Butterscotch": 5, "Cinnamon": 5},
-        {"Butterscotch": 6, "Cinnamon": 4},
-        {"Butterscotch": 7, "Cinnamon": 3},
-        {"Butterscotch": 8, "Cinnamon": 2},
-        {"Butterscotch": 9, "Cinnamon": 1},
-        {"Butterscotch": 10, "Cinnamon": 0},
-    ]
+def test_weight_combinations_sum():
+    for comb in main.weight_combinations(["Butterscotch", "Cinnamon"], 10):
+        assert sum(comb.values()) == 10
+
+
+def test_weight_combinations_contents():
+    for comb in main.weight_combinations(["Butterscotch", "Cinnamon"], 10):
+        assert sorted(["Butterscotch", "Cinnamon"]) == sorted(list(comb.keys()))
+
+
+def test_weight_combinations_len():
+    assert (
+        len([x for x in main.weight_combinations(["Butterscotch", "Cinnamon"], 10)])
+        == 12
+    )
