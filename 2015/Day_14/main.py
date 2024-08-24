@@ -10,6 +10,18 @@ moving at all), and always spend whole seconds in either state.
 
 PART 1: Given the descriptions of each reindeer (in your puzzle input), after
         exactly 2503 seconds, what distance has the winning reindeer traveled?
+
+Seeing how reindeer move in bursts, Santa decides he's not pleased with the old
+scoring system.
+
+Instead, at the end of each second, he awards one point to the reindeer
+currently in the lead. (If there are multiple reindeer tied for the lead, they
+each get one point.) He keeps the traditional 2503 second time limit, of
+course, as doing otherwise would be entirely ridiculous.
+
+PART 2: Again given the descriptions of each reindeer (in your puzzle input),
+        after exactly 2503 seconds, how many points does the winning reindeer
+        have?
 """
 
 import re
