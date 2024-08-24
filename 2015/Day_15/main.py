@@ -27,5 +27,20 @@ PART 1: Given the ingredients in your kitchen and their properties, what is
         the total score of the highest-scoring cookie you can make?
 """
 
+
+def parse_property_data(file_path: str) -> dict[str : dict[str:int]]:
+    pass
+
+
+def score_weight_comb(
+    properties: dict[str : dict[str:int]], weight_comb: dict[str:int]
+) -> int:
+    pass
+
+
+def weight_combinations(ingredients: list[str], total_weight: int) -> dict[str:int]:
+    pass
+
+
 if __name__ == "__main__":
     pass
