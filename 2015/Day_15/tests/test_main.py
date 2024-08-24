@@ -70,3 +70,7 @@ def test_weight_combinations_len():
         len([x for x in main.weight_combinations(["Butterscotch", "Cinnamon"], 10)])
         == 12
     )
+
+def test_best_score():
+    data = main.parse_property_data("./data/example_01.txt")
+    assert main.find_best_score(data, 100) == 62842880
