@@ -51,4 +51,5 @@ def find_poss_combs(eggnog: int, containers: list[int]) -> int:
 
 
 if __name__ == "__main__":
-    pass
+    data = read_container_sizes("./data/input.txt")
+    print(f"Part 1 = {find_poss_combs(150, data)}")
