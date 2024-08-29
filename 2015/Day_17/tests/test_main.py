@@ -125,3 +125,12 @@ def test_find_poss_combs():
         main.find_poss_combs(25, main.read_container_sizes("./data/example_01.txt"))
         == 4
     )
+
+
+def test_find_poss_combs_min_size():
+    assert (
+        main.find_poss_combs(
+            25, main.read_container_sizes("./data/example_01.txt"), True
+        )
+        == 3
+    )
