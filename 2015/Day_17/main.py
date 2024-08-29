@@ -17,19 +17,22 @@ PART 1: Filling all containers entirely, how many different combinations of
         containers can exactly fit all 150 liters of eggnog?
 """
 
+import itertools
+
 
 def read_container_sizes(file_path: str) -> list[int]:
     """
     Read the container sizes and return a list of integer sizes.
     """
-    pass
+    with open(file_path) as fp:
+        return [int(x) for x in fp.readlines()]
 
 
 def valid_cont_comb(eggnog: int, containers: list[int]) -> bool:
     """
     Determine if a certain set of `containers` can exactly fit all the `eggnog`.
     """
-    pass
+    return sum(containers) == eggnog
 
 
 def find_poss_combs(eggnog: int, containers: list[int]) -> int:
@@ -37,7 +40,14 @@ def find_poss_combs(eggnog: int, containers: list[int]) -> int:
     Count the total number of combinations of `containers` that can
     completely fit all of supplied `eggnog`.
     """
-    pass
+    num_pos_combs = 0
+
+    for num_conts in range(1, len(containers) + 1):
+        for cont_comb in itertools.combinations(containers, num_conts):
+            if valid_cont_comb(eggnog, cont_comb):
+                num_pos_combs += 1
+
+    return num_pos_combs
 
 
 if __name__ == "__main__":
