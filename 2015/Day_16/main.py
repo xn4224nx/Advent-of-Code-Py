@@ -80,6 +80,19 @@ def read_aunt_data(data_file: str) -> list[dict[str:int]]:
     return all_aunts
 
 
+def is_same_aunt(true_aunt: dict[str:int], pos_aunt: dict[str:int]) -> bool:
+    """
+    Test to see if two aunts could be the same.
+    """
+    for chara, val in pos_aunt.items():
+        # If the aunts share a characteristic ensure it matches
+        # if not they are not the same aunt.
+        if chara in true_aunt and true_aunt[chara] != val:
+            return False
+
+    return True
+
+
 def find_matched_aunt(
     aunt_data: list[dict[str:int]], aunt_to_find: dict[str:int]
 ) -> int:
@@ -87,7 +100,11 @@ def find_matched_aunt(
     Determine the index+1 of the aunt in the `aunt_data` that matches the aunt
     characteristics given in `aunt_to_find`.
     """
-    pass
+    for idx in range(len(aunt_data)):
+        if is_same_aunt(aunt_to_find, aunt_data[idx]):
+            return idx + 1
+    else:
+        raise Exception("Matching Aunt not found!")
 
 
 if __name__ == "__main__":
