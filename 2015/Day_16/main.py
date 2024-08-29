@@ -108,4 +108,7 @@ def find_matched_aunt(
 
 
 if __name__ == "__main__":
-    pass
+    pos_aunts = read_aunt_data("./data/input.txt")
+    true_aunt = read_aunt_data("./data/p1_aunt.txt")[0]
+
+    print(f"Part 1 = {find_matched_aunt(pos_aunts, true_aunt)}")
