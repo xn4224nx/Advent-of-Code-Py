@@ -55,13 +55,29 @@ missing from your list aren't zero - you simply don't remember the value.
 PART 1: What is the number of the Sue that got you the gift?
 """
 
+import re
 
-def read_aunt_data(str: data_file) -> list[dict[str:int]]:
+
+def read_aunt_data(data_file: str) -> list[dict[str:int]]:
     """
     Read a data file that contains details about aunts and
     create a structured format.
     """
-    pass
+    all_aunts = []
+    re_pat = re.compile(r"([a-z]+): (\d+)")
+
+    with open(data_file) as fp:
+        for line in fp.readlines():
+            tmp_aunt = {}
+
+            # Find all the properties of each aunt and store them
+            for match in re_pat.finditer(line):
+                tmp_aunt[match.group(1)] = int(match.group(2))
+
+            # An aunt will be fully described on only one line
+            all_aunts.append(tmp_aunt)
+
+    return all_aunts
 
 
 def find_matched_aunt(
