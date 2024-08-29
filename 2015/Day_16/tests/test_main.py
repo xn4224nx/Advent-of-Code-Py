@@ -119,3 +119,54 @@ def test_find_aunt():
     test_data = main.read_aunt_data("./data/p1_example_aunts.txt")
     aunt_to_find = main.read_aunt_data("./data/p1_aunt.txt")[0]
     assert main.find_matched_aunt(test_data, aunt_to_find) == 5
+
+
+def test_is_same_aunt_comp_ex_1():
+    aunt_to_find = main.read_aunt_data("./data/p1_aunt.txt")[0]
+    assert (
+        main.is_same_aunt(
+            aunt_to_find, {"akitas": 0, "trees": 3, "pomeranians": 3}, True
+        )
+        == False
+    )
+
+
+def test_is_same_aunt_comp_equal():
+    aunt_to_find = main.read_aunt_data("./data/p1_aunt.txt")[0]
+    assert (
+        main.is_same_aunt(
+            aunt_to_find,
+            {"cats": 7, "akitas": 0, "trees": 3, "pomeranians": 3, "goldfish": 5},
+            True,
+        )
+        == False
+    )
+
+
+def test_is_same_aunt_comp_invert():
+    aunt_to_find = main.read_aunt_data("./data/p1_aunt.txt")[0]
+    assert (
+        main.is_same_aunt(
+            aunt_to_find,
+            {"cats": 5, "akitas": 0, "trees": 1, "pomeranians": 5, "goldfish": 7},
+            True,
+        )
+        == False
+    )
+
+
+def test_is_same_aunt_comp_match1():
+    aunt_to_find = main.read_aunt_data("./data/p1_aunt.txt")[0]
+    assert (
+        main.is_same_aunt(
+            aunt_to_find,
+            {"cats": 9, "akitas": 0, "trees": 9, "pomeranians": 2, "goldfish": 4},
+            True,
+        )
+        == True
+    )
+
+
+def test_is_same_aunt_comp_match2():
+    aunt_to_find = main.read_aunt_data("./data/p1_aunt.txt")[0]
+    assert main.is_same_aunt(aunt_to_find, {"trees": 4}, True) == True

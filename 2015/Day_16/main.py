@@ -53,6 +53,18 @@ You make a list of the things you can remember about each Aunt Sue. Things
 missing from your list aren't zero - you simply don't remember the value.
 
 PART 1: What is the number of the Sue that got you the gift?
+
+As you're about to send the thank you note, something in the MFCSAM's
+instructions catches your eye. Apparently, it has an outdated retroencabulator,
+and so the output from the machine isn't exact values - some of them indicate
+ranges.
+
+In particular, the cats and trees readings indicates that there are greater than
+that many (due to the unpredictable nuclear decay of cat dander and tree
+pollen), while the pomeranians and goldfish readings indicate that there are
+fewer than that many (due to the modial interaction of magnetoreluctance).
+
+PART 2: What is the number of the real Aunt Sue?
 """
 
 import re
@@ -80,28 +92,44 @@ def read_aunt_data(data_file: str) -> list[dict[str:int]]:
     return all_aunts
 
 
-def is_same_aunt(true_aunt: dict[str:int], pos_aunt: dict[str:int]) -> bool:
+def is_same_aunt(
+    true_aunt: dict[str:int], pos_aunt: dict[str:int], comp: bool = False
+) -> bool:
     """
     Test to see if two aunts could be the same.
     """
     for chara, val in pos_aunt.items():
         # If the aunts share a characteristic ensure it matches
         # if not they are not the same aunt.
-        if chara in true_aunt and true_aunt[chara] != val:
-            return False
+        if chara in true_aunt:
+
+            if comp:
+                if chara in ["cats", "trees"]:
+                    if true_aunt[chara] >= val:
+                        return False
+
+                elif chara in ["pomeranians", "goldfish"]:
+                    if true_aunt[chara] <= val:
+                        return False
+
+                elif true_aunt[chara] != val:
+                    return False
+
+            elif true_aunt[chara] != val:
+                return False
 
     return True
 
 
 def find_matched_aunt(
-    aunt_data: list[dict[str:int]], aunt_to_find: dict[str:int]
+    aunt_data: list[dict[str:int]], aunt_to_find: dict[str:int], comp: bool = False
 ) -> int:
     """
     Determine the index+1 of the aunt in the `aunt_data` that matches the aunt
     characteristics given in `aunt_to_find`.
     """
     for idx in range(len(aunt_data)):
-        if is_same_aunt(aunt_to_find, aunt_data[idx]):
+        if is_same_aunt(aunt_to_find, aunt_data[idx], comp):
             return idx + 1
     else:
         raise Exception("Matching Aunt not found!")
@@ -112,3 +140,4 @@ if __name__ == "__main__":
     true_aunt = read_aunt_data("./data/p1_aunt.txt")[0]
 
     print(f"Part 1 = {find_matched_aunt(pos_aunts, true_aunt)}")
+    print(f"Part 2 = {find_matched_aunt(pos_aunts, true_aunt, True)}")
