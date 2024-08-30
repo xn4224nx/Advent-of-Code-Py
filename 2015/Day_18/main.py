@@ -138,4 +138,5 @@ def step_lights(old_lights: np.array, num_steps: int) -> np.array:
 
 
 if __name__ == "__main__":
-    pass
+    lights = read_lights("./data/input.txt")
+    print(f"Part 1 = {sum(step_lights(lights, 100)).sum()}")
