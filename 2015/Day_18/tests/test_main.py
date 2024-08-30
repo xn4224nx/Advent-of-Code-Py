@@ -8,30 +8,36 @@ import numpy as np
 
 
 def test_read_lights_ex_1():
-    assert main.read_lights("./data/example_01.txt") == np.array(
-        [
-            [0, 1, 0, 1, 0, 1],
-            [0, 0, 0, 1, 1, 0],
-            [1, 0, 0, 0, 0, 1],
-            [0, 0, 1, 0, 0, 0],
-            [1, 0, 1, 0, 0, 1],
-            [1, 1, 1, 1, 0, 0],
-        ],
-        dtype="bool",
+    assert np.array_equal(
+        main.read_lights("./data/example_01.txt"),
+        np.array(
+            [
+                [0, 1, 0, 1, 0, 1],
+                [0, 0, 0, 1, 1, 0],
+                [1, 0, 0, 0, 0, 1],
+                [0, 0, 1, 0, 0, 0],
+                [1, 0, 1, 0, 0, 1],
+                [1, 1, 1, 1, 0, 0],
+            ],
+            dtype="bool",
+        ),
     )
 
 
 def test_read_lights_ex_2():
-    assert main.read_lights("./data/example_02.txt") == np.array(
-        [
-            [0, 0, 1, 1, 0, 0],
-            [0, 0, 1, 1, 0, 1],
-            [0, 0, 0, 1, 1, 0],
-            [0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0],
-            [1, 0, 1, 1, 0, 0],
-        ],
-        dtype="bool",
+    assert np.array_equal(
+        main.read_lights("./data/example_02.txt"),
+        np.array(
+            [
+                [0, 0, 1, 1, 0, 0],
+                [0, 0, 1, 1, 0, 1],
+                [0, 0, 0, 1, 1, 0],
+                [0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0],
+                [1, 0, 1, 1, 0, 0],
+            ],
+            dtype="bool",
+        ),
     )
 
 

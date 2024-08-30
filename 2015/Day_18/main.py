@@ -42,7 +42,21 @@ def read_lights(file_path: str) -> np.array:
     in time and return a numpy array of booleans, with true representing on
     and false representing off.
     """
-    pass
+    raw_lines = []
+
+    with open(file_path) as fp:
+        for line in fp.readlines():
+            line = line.strip()
+
+            # Replace # with 1 and . with 0
+            line = line.replace("#", "1")
+            line = line.replace(".", "0")
+
+            # Convert the string to a list of booleans
+            raw_lines.append([bool(int(x)) for x in line])
+
+    # Convert the list of lists to a numpy array of booleans
+    return np.array(raw_lines, dtype="bool")
 
 
 def find_adj_coords(
