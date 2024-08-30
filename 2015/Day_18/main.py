@@ -31,6 +31,15 @@ state before moving to the next.
 
 PART 1: In your grid of 100x100 lights, given your initial configuration, how
         many lights are on after 100 steps?
+
+You flip the instructions over; Santa goes on to point out that this is all just
+an implementation of Conway's Game of Life. At least, it was, until you notice
+that something's wrong with the grid of lights you bought: four lights, one in
+each corner, are stuck on and can't be turned off.
+
+PART 2: In your grid of 100x100 lights, given your initial configuration, but
+        with the four corners always in the on state, how many lights are on
+        after 100 steps?
 """
 
 import numpy as np
@@ -103,6 +112,7 @@ def new_light_value(grid: np.array, point: tuple[int, int]) -> bool:
     Determine what the new value of a light should be based on the rules in
     part 1.
     """
+
     l_state = grid[point[0]][point[1]]
 
     adj_lights = find_adj_coords(grid.shape, point)
@@ -119,24 +129,47 @@ def new_light_value(grid: np.array, point: tuple[int, int]) -> bool:
     return False
 
 
-def step_lights(old_lights: np.array, num_steps: int) -> np.array:
+def corner_lights_on(grid: np.array):
+    """
+    Set all the corner lights in the array to on!
+    """
+    grid[0][0] = True
+    grid[grid.shape[0] - 1][0] = True
+    grid[0][grid.shape[1] - 1] = True
+    grid[grid.shape[0] - 1][grid.shape[1] - 1] = True
+
+
+def step_lights(
+    old_lights: np.array, num_steps: int, corners_on: bool = False
+) -> np.array:
     """
     Increment the given light grid by the rules described in part 1.
     """
+    grid = np.array(old_lights)
+
+    # Force the corner lights to be on
+    if corners_on:
+        corner_lights_on(grid)
+
     for _ in range(num_steps):
 
-        new_lights = np.full(old_lights.shape, False, dtype="bool")
+        new_lights = np.full(grid.shape, False, dtype="bool")
 
         # For each light determine it's new state.
-        for x in range(old_lights.shape[1]):
-            for y in range(old_lights.shape[0]):
-                new_lights[x][y] = new_light_value(old_lights, (x, y))
+        for x in range(grid.shape[1]):
+            for y in range(grid.shape[0]):
+                new_lights[x][y] = new_light_value(grid, (x, y))
 
-        old_lights = new_lights
+        # Force the corner lights to be on
+        if corners_on:
+            corner_lights_on(new_lights)
 
-    return old_lights
+        grid = new_lights
+
+    return grid
 
 
 if __name__ == "__main__":
     lights = read_lights("./data/input.txt")
-    print(f"Part 1 = {sum(step_lights(lights, 100)).sum()}")
+    print(f"Part 1 = {step_lights(lights, 100).sum()}")
+    print(f"Part 2 = {step_lights(lights, 100, True).sum()}")

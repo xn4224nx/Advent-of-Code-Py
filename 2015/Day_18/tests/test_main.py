@@ -278,3 +278,39 @@ def test_step_lights_4():
     initial = main.read_lights("./data/example_04.txt")
     final = main.read_lights("./data/example_05.txt")
     assert np.array_equal(main.step_lights(initial, 1), final)
+
+
+def test_step_lights_multi_cor():
+    initial = main.read_lights("./data/example_06.txt")
+    final = main.read_lights("./data/example_11.txt")
+    assert np.array_equal(main.step_lights(initial, 5, True), final)
+
+
+def test_step_lights_1_cor():
+    initial = main.read_lights("./data/example_06.txt")
+    final = main.read_lights("./data/example_07.txt")
+    assert np.array_equal(main.step_lights(initial, 1, True), final)
+
+
+def test_step_lights_2_cor():
+    initial = main.read_lights("./data/example_07.txt")
+    final = main.read_lights("./data/example_08.txt")
+    assert np.array_equal(main.step_lights(initial, 1, True), final)
+
+
+def test_step_lights_3_cor():
+    initial = main.read_lights("./data/example_08.txt")
+    final = main.read_lights("./data/example_09.txt")
+    assert np.array_equal(main.step_lights(initial, 1, True), final)
+
+
+def test_step_lights_4_cor():
+    initial = main.read_lights("./data/example_09.txt")
+    final = main.read_lights("./data/example_10.txt")
+    assert np.array_equal(main.step_lights(initial, 1, True), final)
+
+
+def test_step_lights_5_cor():
+    initial = main.read_lights("./data/example_10.txt")
+    final = main.read_lights("./data/example_11.txt")
+    assert np.array_equal(main.step_lights(initial, 1, True), final)
