@@ -27,5 +27,47 @@ PART 1: How many distinct molecules can be created after all the different ways
         you can do one replacement on the medicine molecule?
 """
 
+def read_machine_data(data_file: str) -> tuple[list[tuple[str, str]], str]:
+    """
+    Read the machine instruction data and return a list of transformations and
+    the starting chemical.
+    """
+    instr = []
+
+    with open(data_file) as fp:
+        for line in fp.readlines():
+            line = line.strip()
+
+            # Extract instruction
+            if " => " in line:
+                instr.append(tuple(line.split(" => " ,1)))
+
+            elif line.strip() == "":
+                continue
+
+            else:
+                chem = line
+
+    return (instr, chem)
+
+def find_one_instr_molec(ins: tuple[str, str], chem: str) -> list[str]:
+    """
+    Determine the possible molecules that can be made from a single replacement
+    using one instruction.
+    """
+    pass
+
+
+
+def find_all_possible_molec(instr: list[tuple[str, str]], chem: str) -> int:
+    """
+    Determine the number of possible molecules that can be created from a set
+    of instructions.
+    """
+    pass
+
+
+
+
 if __name__ == "__main__":
     pass
