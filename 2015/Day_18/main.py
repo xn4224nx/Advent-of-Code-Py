@@ -123,7 +123,18 @@ def step_lights(old_lights: np.array, num_steps: int) -> np.array:
     """
     Increment the given light grid by the rules described in part 1.
     """
-    pass
+    for _ in range(num_steps):
+
+        new_lights = np.full(old_lights.shape, False, dtype="bool")
+
+        # For each light determine it's new state.
+        for x in range(old_lights.shape[1]):
+            for y in range(old_lights.shape[0]):
+                new_lights[x][y] = new_light_value(old_lights, (x, y))
+
+        old_lights = new_lights
+
+    return old_lights
 
 
 if __name__ == "__main__":

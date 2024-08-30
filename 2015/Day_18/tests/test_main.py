@@ -250,7 +250,31 @@ def test_new_light_value_6():
     )
 
 
-def test_step_lights():
+def test_step_lights_multi():
     initial = main.read_lights("./data/example_01.txt")
     final = main.read_lights("./data/example_05.txt")
-    assert main.step_lights(initial, 4) == final
+    assert np.array_equal(main.step_lights(initial, 4), final)
+
+
+def test_step_lights_1():
+    initial = main.read_lights("./data/example_01.txt")
+    final = main.read_lights("./data/example_02.txt")
+    assert np.array_equal(main.step_lights(initial, 1), final)
+
+
+def test_step_lights_2():
+    initial = main.read_lights("./data/example_02.txt")
+    final = main.read_lights("./data/example_03.txt")
+    assert np.array_equal(main.step_lights(initial, 1), final)
+
+
+def test_step_lights_3():
+    initial = main.read_lights("./data/example_03.txt")
+    final = main.read_lights("./data/example_04.txt")
+    assert np.array_equal(main.step_lights(initial, 1), final)
+
+
+def test_step_lights_4():
+    initial = main.read_lights("./data/example_04.txt")
+    final = main.read_lights("./data/example_05.txt")
+    assert np.array_equal(main.step_lights(initial, 1), final)
