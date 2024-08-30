@@ -92,31 +92,31 @@ def test_read_lights_ex_5():
     )
 
 
-def test_find_adj_coords_2():
+def test_find_adj_coords_1():
     pos_coords = main.find_adj_coords((3, 3), (0, 0))
     assert len(pos_coords) == 3
     assert set(pos_coords) == set([(0, 1), (1, 0), (1, 1)])
 
 
-def test_find_adj_coords_3():
+def test_find_adj_coords_2():
     pos_coords = main.find_adj_coords((3, 3), (0, 1))
     assert len(pos_coords) == 5
-    assert set(pos_coords) == set([(0, 0), (0, 2), (1, 0), (1, 1)(1, 2)])
+    assert set(pos_coords) == set([(0, 0), (0, 2), (1, 0), (1, 1), (1, 2)])
 
 
-def test_find_adj_coords_4():
+def test_find_adj_coords_3():
     pos_coords = main.find_adj_coords((3, 3), (0, 2))
     assert len(pos_coords) == 3
-    assert set(pos_coords) == set([(0, 1)(1, 1)(1, 2)])
+    assert set(pos_coords) == set([(0, 1), (1, 1), (1, 2)])
 
 
 def test_find_adj_coords_4():
     pos_coords = main.find_adj_coords((3, 3), (1, 0))
     assert len(pos_coords) == 5
-    assert set(pos_coords) == set([(0, 0), (0, 1), (1, 1)(1, 2), (2, 0), (2, 1)])
+    assert set(pos_coords) == set([(0, 0), (0, 1), (1, 1), (2, 0), (2, 1)])
 
 
-def test_find_adj_coords_1():
+def test_find_adj_coords_5():
     pos_coords = main.find_adj_coords((3, 3), (1, 1))
     assert len(pos_coords) == 8
     assert set(pos_coords) == set(
@@ -124,28 +124,28 @@ def test_find_adj_coords_1():
     )
 
 
-def test_find_adj_coords_4():
+def test_find_adj_coords_6():
     pos_coords = main.find_adj_coords((3, 3), (1, 2))
     assert len(pos_coords) == 5
-    assert set(pos_coords) == set([(0, 1), (0, 2), (1, 1)(2, 1), (2, 2)])
+    assert set(pos_coords) == set([(0, 1), (0, 2), (1, 1), (2, 1), (2, 2)])
 
 
-def test_find_adj_coords_4():
+def test_find_adj_coords_7():
     pos_coords = main.find_adj_coords((3, 3), (2, 0))
     assert len(pos_coords) == 3
-    assert set(pos_coords) == set([(1, 0), (1, 1)(2, 1)])
+    assert set(pos_coords) == set([(1, 0), (1, 1), (2, 1)])
 
 
-def test_find_adj_coords_4():
+def test_find_adj_coords_8():
     pos_coords = main.find_adj_coords((3, 3), (2, 1))
     assert len(pos_coords) == 5
-    assert set(pos_coords) == set([(1, 0), (1, 1)(1, 2), (2, 0), (2, 2)])
+    assert set(pos_coords) == set([(1, 0), (1, 1), (1, 2), (2, 0), (2, 2)])
 
 
-def test_find_adj_coords_4():
+def test_find_adj_coords_9():
     pos_coords = main.find_adj_coords((3, 3), (2, 2))
     assert len(pos_coords) == 3
-    assert set(pos_coords) == set([(1, 1)(1, 2), (2, 1)])
+    assert set(pos_coords) == set([(1, 1), (1, 2), (2, 1)])
 
 
 def test_new_light_value_1():

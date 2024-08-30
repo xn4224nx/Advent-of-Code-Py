@@ -66,7 +66,36 @@ def find_adj_coords(
     For a grid of a certain size and a particular point return a list of the
     adjacent points to the original.
     """
-    pass
+    adj_points = []
+
+    # Row above the point
+    if point[1] > 0:
+        adj_points.append((point[0], point[1] - 1))
+
+        if point[0] > 0:
+            adj_points.append((point[0] - 1, point[1] - 1))
+
+        if point[0] < grid_size[0] - 1:
+            adj_points.append((point[0] + 1, point[1] - 1))
+
+    # The row in line with the point
+    if point[0] > 0:
+        adj_points.append((point[0] - 1, point[1]))
+
+    if point[0] < grid_size[0] - 1:
+        adj_points.append((point[0] + 1, point[1]))
+
+    # The row below the point
+    if point[1] < grid_size[1] - 1:
+        adj_points.append((point[0], point[1] + 1))
+
+        if point[0] > 0:
+            adj_points.append((point[0] - 1, point[1] + 1))
+
+        if point[0] < grid_size[0] - 1:
+            adj_points.append((point[0] + 1, point[1] + 1))
+
+    return adj_points
 
 
 def new_light_value(grid: np.array, point: tuple[int, int]) -> bool:
