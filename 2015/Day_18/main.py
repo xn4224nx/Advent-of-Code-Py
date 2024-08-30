@@ -103,7 +103,20 @@ def new_light_value(grid: np.array, point: tuple[int, int]) -> bool:
     Determine what the new value of a light should be based on the rules in
     part 1.
     """
-    pass
+    l_state = grid[point[0]][point[1]]
+
+    adj_lights = find_adj_coords(grid.shape, point)
+
+    # Determine the number of adj_lights that are on
+    num_on_lights = sum([grid[x][y] for x, y in find_adj_coords(grid.shape, point)])
+
+    if l_state and num_on_lights in [2, 3]:
+        return True
+
+    if not l_state and num_on_lights == 3:
+        return True
+
+    return False
 
 
 def step_lights(old_lights: np.array, num_steps: int) -> np.array:
