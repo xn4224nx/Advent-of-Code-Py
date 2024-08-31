@@ -11,14 +11,14 @@ def test_read_machine_data_exp1():
     assert instr == [("H", "HO"), ("H", "OH"), ("O", "HH")]
 
 
-def test_find_possible_molec_exp1():
+def test_find_all_possible_chems_exp1():
     instr, chem = main.read_machine_data("./data/example_01.txt")
-    assert main.find_possible_molec(instr, chem) == 4
+    assert main.find_all_possible_chems(instr, chem) == 4
 
 
-def test_find_possible_molec_exp2():
+def test_find_all_possible_chems_exp2():
     instr, _ = main.read_machine_data("./data/example_01.txt")
-    assert main.find_possible_molec(instr, "HOHOHO") == 7
+    assert main.find_all_possible_chems(instr, "HOHOHO") == 7
 
 
 def test_find_one_instr_molec_exp1():

@@ -27,6 +27,8 @@ PART 1: How many distinct molecules can be created after all the different ways
         you can do one replacement on the medicine molecule?
 """
 
+import re
+
 
 def read_machine_data(data_file: str) -> tuple[list[tuple[str, str]], str]:
     """
@@ -52,20 +54,32 @@ def read_machine_data(data_file: str) -> tuple[list[tuple[str, str]], str]:
     return (instr, chem)
 
 
-def find_one_instr_molec(ins: tuple[str, str], chem: str) -> list[str]:
+def find_one_instr_molec(instr: tuple[str, str], chem: str) -> list[str]:
     """
-    Determine the possible molecules that can be made from a single replacement
-    using one instruction.
+    Find the possible chemicals that can be made from a single molecules
+    replacement using one instruction on each molecule once.
     """
-    pass
+    all_chems = []
+
+    # Find all the positions of the parts that will be replaced and concat
+    for mtc in re.finditer(instr[0], chem):
+        new_chem = chem[: mtc.start(0)] + instr[1] + chem[mtc.end(0) :]
+        all_chems.append(new_chem)
+
+    return all_chems
 
 
-def find_all_possible_molec(instr: list[tuple[str, str]], chem: str) -> int:
+def find_all_possible_chems(all_instr: list[tuple[str, str]], chem: str) -> int:
     """
-    Determine the number of possible molecules that can be created from a set
-    of instructions.
+    Determine the number of possible chemicals that can be created from a set
+    of molecule replacement instructions.
     """
-    pass
+    possible_chems = set()
+
+    for instr in all_instr:
+        possible_chems.update(find_one_instr_molec(instr, chem))
+
+    return len(possible_chems)
 
 
 if __name__ == "__main__":
