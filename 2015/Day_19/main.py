@@ -83,4 +83,5 @@ def find_all_possible_chems(all_instr: list[tuple[str, str]], chem: str) -> int:
 
 
 if __name__ == "__main__":
-    pass
+    molec_replace, chem = read_machine_data("./data/input.txt")
+    print(f"Part 1 = {find_all_possible_chems(molec_replace, chem)}")
