@@ -37,6 +37,7 @@ PART 2: How long will it take to make the medicine? Given the available
 """
 
 import re
+import random
 
 
 def read_machine_data(data_file: str) -> tuple[list[tuple[str, str]], str]:
@@ -96,30 +97,35 @@ def steps_to_build_chem(all_instr: list[tuple[str, str]], target_chem: str) -> i
     Count the number of steps required to create a molecule from a single
     electron, "e".
     """
-    seen_chems = {target_chem: 0}
+    num_commands = len(target_chem)
+    while True:
 
-    # Reverse the instructions
+        chem = "e"
+        score = 0
 
-    # Create chemicals until the single electon is created
-    while "e" not in seen_chems:
-        new_seen_chems = seen_chems.copy()
+        # Pick a number of commands and try and build the chemical
+        for _ in range(num_commands):
 
-        # For each already seen chemical create replacements based on the
-        # possible transformations.
-        for chem, path_len in seen_chems.items():
-            for instr in all_instr:
-                new_chems = find_one_instr_molec((instr[1], instr[0]), chem)
+            instr = random.choice(all_instr)
 
-                # If the chemical doesn't exist add in, or replace a lower path
-                for n_chm in new_chems:
-                    if n_chm not in seen_chems or path_len + 1 < seen_chems[n_chm]:
-                        new_seen_chems[n_chm] = path_len + 1
+            if instr[0] in chem:
+                max_molc = chem.count(instr[0])
 
-        seen_chems = new_seen_chems
+                # Pick a random number to replace
+                repl_num = random.randint(1, len(target_chem))
 
-    return seen_chems["e"]
+                chem = chem.replace(instr[0], instr[1], repl_num)
+                score += min(repl_num, max_molc)
+
+                if chem == target_chem:
+                    return score
+
+            # If the current guess is longer than the target it is a dead end
+            if len(chem) >= len(target_chem):
+                break
 
 
 if __name__ == "__main__":
     molec_replace, chem = read_machine_data("./data/input.txt")
     print(f"Part 1 = {find_all_possible_chems(molec_replace, chem)}")
+    print(f"Part 2 = {steps_to_build_chem(molec_replace, chem)}")

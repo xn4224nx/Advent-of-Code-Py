@@ -51,5 +51,5 @@ def test_steps_to_build_chem_exp1():
 
 
 def test_steps_to_build_chem_exp2():
-    instr, chem = main.read_machine_data("./data/example_02.txt")
-    assert main.steps_to_build_chem(instr, "HOH") == 3
+    instr, chem = main.read_machine_data("./data/example_03.txt")
+    assert main.steps_to_build_chem(instr, chem) == 3
