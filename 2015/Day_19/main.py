@@ -25,6 +25,15 @@ bottom, the medicine molecule for which you need to calibrate the machine.
 
 PART 1: How many distinct molecules can be created after all the different ways
         you can do one replacement on the medicine molecule?
+
+Now that the machine is calibrated, you're ready to begin molecule fabrication.
+
+Molecule fabrication always begins with just a single electron, e, and applying
+replacements one at a time, just like the ones during calibration.
+
+PART 2: How long will it take to make the medicine? Given the available
+        replacements and the medicine molecule in your puzzle input, what is
+        the fewest number of steps to go from e to the medicine molecule?
 """
 
 import re
@@ -80,6 +89,35 @@ def find_all_possible_chems(all_instr: list[tuple[str, str]], chem: str) -> int:
         possible_chems.update(find_one_instr_molec(instr, chem))
 
     return len(possible_chems)
+
+
+def steps_to_build_chem(all_instr: list[tuple[str, str]], target_chem: str) -> int:
+    """
+    Count the number of steps required to create a molecule from a single
+    electron, "e".
+    """
+    seen_chems = {target_chem: 0}
+
+    # Reverse the instructions
+
+    # Create chemicals until the single electon is created
+    while "e" not in seen_chems:
+        new_seen_chems = seen_chems.copy()
+
+        # For each already seen chemical create replacements based on the
+        # possible transformations.
+        for chem, path_len in seen_chems.items():
+            for instr in all_instr:
+                new_chems = find_one_instr_molec((instr[1], instr[0]), chem)
+
+                # If the chemical doesn't exist add in, or replace a lower path
+                for n_chm in new_chems:
+                    if n_chm not in seen_chems or path_len + 1 < seen_chems[n_chm]:
+                        new_seen_chems[n_chm] = path_len + 1
+
+        seen_chems = new_seen_chems
+
+    return seen_chems["e"]
 
 
 if __name__ == "__main__":
