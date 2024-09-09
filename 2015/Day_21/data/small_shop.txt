@@ -1,0 +1,10 @@
+Weapons:    Cost  Damage  Armor
+Dagger        8     4       0
+
+Armor:      Cost  Damage  Armor
+Leather      13     0       1
+Chainmail    31     0       2
+
+Rings:      Cost  Damage  Armor
+Damage +1    25     1       0
+Defense +1   20     0       1
