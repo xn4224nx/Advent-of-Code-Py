@@ -30,7 +30,7 @@ PART 1: You have 100 hit points. The boss's actual stats are in your puzzle
         fight?
 """
 
-import re
+from itertools import combinations
 
 
 def read_store_data(file_path: str) -> dict[str : dict[str:int]]:
@@ -67,7 +67,19 @@ def iter_equipment(store: dict[str : dict[str:int]]) -> list[str]:
     """
     Generate the possible equipment configurations possible from the store.
     """
-    pass
+
+    # You must always buy a weapon
+    for weapon in store["Weapons"].keys():
+
+        # You can have one or no piece of armour
+        for arm_num in [0, 1]:
+            for arm_comb in combinations(store["Armor"].keys(), arm_num):
+
+                # You can have 0 to 2 rings but no duplicates
+                for ring_num in [0, 1, 2]:
+                    for ring_comb in combinations(store["Rings"].keys(), ring_num):
+
+                        yield [weapon] + list(arm_comb) + list(ring_comb)
 
 
 def cost_store_purchases(store: dict[str : dict[str:int]], equip: list[str]) -> int:

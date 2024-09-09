@@ -55,25 +55,38 @@ def test_read_store_data_2():
 
 
 def test_iter_equipment():
-    store = read_store_data("./data/small_shop.txt")
-    equip_combs = set([set(x) for x in iter_equipment(store)])
+    true_equip_combs = [
+        ["Dagger"],
+        ["Dagger", "Leather"],
+        ["Dagger", "Chainmail"],
+        ["Dagger", "Damage +1"],
+        ["Dagger", "Leather", "Damage +1"],
+        ["Dagger", "Chainmail", "Damage +1"],
+        ["Dagger", "Defense +1"],
+        ["Dagger", "Leather", "Defense +1"],
+        ["Dagger", "Chainmail", "Defense +1"],
+        ["Dagger", "Damage +1", "Defense +1"],
+        ["Dagger", "Leather", "Damage +1", "Defense +1"],
+        ["Dagger", "Chainmail", "Damage +1", "Defense +1"],
+    ]
 
-    assert equip_combs == set(
-        [
-            set(["Dagger"]),
-            set(["Dagger", "Leather"]),
-            set(["Dagger", "Chainmail"]),
-            set(["Dagger", "Damage +1"]),
-            set(["Dagger", "Leather", "Damage +1"]),
-            set(["Dagger", "Chainmail", "Damage +1"]),
-            set(["Dagger", "Defense +1"]),
-            set(["Dagger", "Leather", "Defense +1"]),
-            set(["Dagger", "Chainmail", "Defense +1"]),
-            set(["Dagger", "Damage +1", "Defense +1"]),
-            set(["Dagger", "Leather", "Damage +1", "Defense +1"]),
-            set(["Dagger", "Chainmail", "Damage +1", "Defense +1"]),
-        ]
-    )
+    store = read_store_data("./data/small_shop.txt")
+    test_combs = [x for x in iter_equipment(store)]
+
+    # Ensure there are no extra combinations outside the true amount
+    assert len(test_combs) == len(test_combs)
+
+    # for each true combination ensure that it gets created
+    for true_comb in true_equip_combs:
+        for comb in test_combs:
+            if set(comb) == set(true_comb):
+                break
+
+        # If no match has been found the test has failed
+        else:
+            raise Exception(f"Combination {true_comb} could not be found")
+
+
 
 
 def test_cost_store_purchases_1():
