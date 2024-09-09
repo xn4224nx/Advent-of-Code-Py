@@ -63,7 +63,7 @@ def read_store_data(file_path: str) -> dict[str : dict[str:int]]:
     return store
 
 
-def iter_equipment(store: dict[str : dict[str:int]]) -> list[str]:
+def iter_equipment(store: dict[str : dict[str:int]]) -> dict[str:str]:
     """
     Generate the possible equipment configurations possible from the store.
     """
@@ -79,14 +79,18 @@ def iter_equipment(store: dict[str : dict[str:int]]) -> list[str]:
                 for ring_num in [0, 1, 2]:
                     for ring_comb in combinations(store["Rings"].keys(), ring_num):
 
-                        yield [weapon] + list(arm_comb) + list(ring_comb)
+                        yield {
+                            "Weapons": [weapon],
+                            "Armor": list(arm_comb),
+                            "Rings": list(ring_comb),
+                        }
 
 
 def cost_store_purchases(store: dict[str : dict[str:int]], equip: list[str]) -> int:
     """
-    Determine the cost of a certain set of equipment.
+    Determine the total cost of a certain set of equipment.
     """
-    pass
+    return sum([store[cata][x]["Cost"] for cata, prods in equip.items() for x in prods])
 
 
 def determine_stats(

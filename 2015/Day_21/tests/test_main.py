@@ -56,18 +56,26 @@ def test_read_store_data_2():
 
 def test_iter_equipment():
     true_equip_combs = [
-        ["Dagger"],
-        ["Dagger", "Leather"],
-        ["Dagger", "Chainmail"],
-        ["Dagger", "Damage +1"],
-        ["Dagger", "Leather", "Damage +1"],
-        ["Dagger", "Chainmail", "Damage +1"],
-        ["Dagger", "Defense +1"],
-        ["Dagger", "Leather", "Defense +1"],
-        ["Dagger", "Chainmail", "Defense +1"],
-        ["Dagger", "Damage +1", "Defense +1"],
-        ["Dagger", "Leather", "Damage +1", "Defense +1"],
-        ["Dagger", "Chainmail", "Damage +1", "Defense +1"],
+        {"Weapons": ["Dagger"], "Armor": [], "Rings": []},
+        {"Weapons": ["Dagger"], "Armor": ["Leather"], "Rings": []},
+        {"Weapons": ["Dagger"], "Armor": ["Chainmail"], "Rings": []},
+        {"Weapons": ["Dagger"], "Armor": [], "Rings": ["Damage +1"]},
+        {"Weapons": ["Dagger"], "Armor": ["Leather"], "Rings": ["Damage +1"]},
+        {"Weapons": ["Dagger"], "Armor": ["Chainmail"], "Rings": ["Damage +1"]},
+        {"Weapons": ["Dagger"], "Armor": [], "Rings": ["Defense +1"]},
+        {"Weapons": ["Dagger"], "Armor": ["Leather"], "Rings": ["Defense +1"]},
+        {"Weapons": ["Dagger"], "Armor": ["Chainmail"], "Rings": ["Defense +1"]},
+        {"Weapons": ["Dagger"], "Armor": [], "Rings": ["Damage +1", "Defense +1"]},
+        {
+            "Weapons": ["Dagger"],
+            "Armor": ["Leather"],
+            "Rings": ["Damage +1", "Defense +1"],
+        },
+        {
+            "Weapons": ["Dagger"],
+            "Armor": ["Chainmail"],
+            "Rings": ["Damage +1", "Defense +1"],
+        },
     ]
 
     store = read_store_data("./data/small_shop.txt")
@@ -79,7 +87,7 @@ def test_iter_equipment():
     # for each true combination ensure that it gets created
     for true_comb in true_equip_combs:
         for comb in test_combs:
-            if set(comb) == set(true_comb):
+            if comb == true_comb:
                 break
 
         # If no match has been found the test has failed
@@ -87,61 +95,125 @@ def test_iter_equipment():
             raise Exception(f"Combination {true_comb} could not be found")
 
 
-
-
 def test_cost_store_purchases_1():
     store = read_store_data("./data/shop.txt")
-    assert cost_store_purchases(store, ["Dagger", "Leather"]) == 21
+    assert (
+        cost_store_purchases(
+            store, {"Weapons": ["Dagger"], "Armor": ["Leather"], "Rings": []}
+        )
+        == 21
+    )
 
 
 def test_cost_store_purchases_2():
     store = read_store_data("./data/shop.txt")
-    assert cost_store_purchases(store, ["Dagger", "Leather", "Defense +3"]) == 101
+    assert (
+        cost_store_purchases(
+            store,
+            {"Weapons": ["Dagger"], "Armor": ["Leather"], "Rings": ["Defense +3"]},
+        )
+        == 101
+    )
 
 
 def test_cost_store_purchases_3():
     store = read_store_data("./data/shop.txt")
-    assert cost_store_purchases(store, ["Longsword", "Defense +1"]) == 60
+    assert (
+        cost_store_purchases(
+            store, {"Weapons": ["Longsword"], "Armor": [], "Rings": ["Defense +1"]}
+        )
+        == 60
+    )
 
 
 def test_cost_store_purchases_4():
     store = read_store_data("./data/shop.txt")
-    assert cost_store_purchases(store, ["Greataxe", "Chainmail"]) == 105
+    assert (
+        cost_store_purchases(
+            store, {"Weapons": ["Greataxe"], "Armor": ["Chainmail"], "Rings": []}
+        )
+        == 105
+    )
 
 
 def test_cost_store_purchases_5():
     store = read_store_data("./data/shop.txt")
-    assert cost_store_purchases(store, ["Longsword", "Splintmail", "Defense +3"]) == 193
+    assert (
+        cost_store_purchases(
+            store,
+            {
+                "Weapons": ["Longsword"],
+                "Armor": ["Splintmail"],
+                "Rings": ["Defense +3"],
+            },
+        )
+        == 173
+    )
 
 
 def test_cost_store_purchases_6():
     store = read_store_data("./data/shop.txt")
-    assert cost_store_purchases(store, ["Warhammer", "Leather", "Defense +2"]) == 78
+    assert (
+        cost_store_purchases(
+            store,
+            {"Weapons": ["Warhammer"], "Armor": ["Leather"], "Rings": ["Defense +2"]},
+        )
+        == 78
+    )
 
 
 def test_cost_store_purchases_7():
     store = read_store_data("./data/shop.txt")
-    assert cost_store_purchases(store, ["Dagger", "Chainmail", "Damage +3"]) == 139
+    assert (
+        cost_store_purchases(
+            store,
+            {"Weapons": ["Dagger"], "Armor": ["Chainmail"], "Rings": ["Damage +3"]},
+        )
+        == 139
+    )
 
 
 def test_cost_store_purchases_8():
     store = read_store_data("./data/shop.txt")
-    assert cost_store_purchases(store, ["Greataxe", "Bandedmail"]) == 149
+    assert (
+        cost_store_purchases(
+            store, {"Weapons": ["Greataxe"], "Armor": ["Bandedmail"], "Rings": []}
+        )
+        == 149
+    )
 
 
 def test_cost_store_purchases_9():
     store = read_store_data("./data/shop.txt")
-    assert cost_store_purchases(store, ["Warhammer", "Platemail", "Damage +1"]) == 152
+    assert (
+        cost_store_purchases(
+            store,
+            {"Weapons": ["Warhammer"], "Armor": ["Platemail"], "Rings": ["Damage +1"]},
+        )
+        == 152
+    )
 
 
 def test_cost_store_purchases_10():
     store = read_store_data("./data/shop.txt")
-    assert cost_store_purchases(store, ["Shortsword", "Splintmail", "Damage +2"]) == 113
+    assert (
+        cost_store_purchases(
+            store,
+            {
+                "Weapons": ["Shortsword"],
+                "Armor": ["Splintmail"],
+                "Rings": ["Damage +2"],
+            },
+        )
+        == 113
+    )
 
 
 def test_determine_stats_1():
     store = read_store_data("./data/shop.txt")
-    assert determine_stats(store, "Dagger", "Leather", "Defense +3") == {
+    assert determine_stats(
+        store, {"Weapons": ["Dagger"], "Armor": ["Leather"], "Rings": ["Defense +3"]}
+    ) == {
         "Hit Points": 100,
         "Damage": 4,
         "Armor": 4,
@@ -150,7 +222,9 @@ def test_determine_stats_1():
 
 def test_determine_stats_2():
     store = read_store_data("./data/shop.txt")
-    assert determine_stats(store, ["Dagger", "Leather"]) == {
+    assert determine_stats(
+        store, {"Weapons": ["Dagger"], "Armor": ["Leather"], "Rings": []}
+    ) == {
         "Hit Points": 100,
         "Damage": 4,
         "Armor": 1,
@@ -159,7 +233,9 @@ def test_determine_stats_2():
 
 def test_determine_stats_3():
     store = read_store_data("./data/shop.txt")
-    assert determine_stats(store, ["Longsword", "Defense +1"]) == {
+    assert determine_stats(
+        store, {"Weapons": ["Longsword"], "Armor": [], "Rings": ["Defense +1"]}
+    ) == {
         "Hit Points": 100,
         "Damage": 7,
         "Armor": 1,
@@ -168,7 +244,9 @@ def test_determine_stats_3():
 
 def test_determine_stats_4():
     store = read_store_data("./data/shop.txt")
-    assert determine_stats(store, ["Greataxe", "Chainmail"]) == {
+    assert determine_stats(
+        store, {"Weapons": ["Greataxe"], "Armor": ["Chainmail"], "Rings": []}
+    ) == {
         "Hit Points": 100,
         "Damage": 8,
         "Armor": 2,
@@ -177,7 +255,10 @@ def test_determine_stats_4():
 
 def test_determine_stats_5():
     store = read_store_data("./data/shop.txt")
-    assert determine_stats(store, ["Longsword", "Splintmail", "Defense +3"]) == {
+    assert determine_stats(
+        store,
+        {"Weapons": ["Longsword"], "Armor": ["Splintmail"], "Rings": ["Defense +3"]},
+    ) == {
         "Hit Points": 100,
         "Damage": 7,
         "Armor": 6,
@@ -186,7 +267,9 @@ def test_determine_stats_5():
 
 def test_determine_stats_6():
     store = read_store_data("./data/shop.txt")
-    assert determine_stats(store, ["Warhammer", "Leather", "Defense +2"]) == {
+    assert determine_stats(
+        store, {"Weapons": ["Warhammer"], "Armor": ["Leather"], "Rings": ["Defense +2"]}
+    ) == {
         "Hit Points": 100,
         "Damage": 6,
         "Armor": 3,
@@ -195,7 +278,9 @@ def test_determine_stats_6():
 
 def test_determine_stats_7():
     store = read_store_data("./data/shop.txt")
-    assert determine_stats(store, ["Dagger", "Chainmail", "Damage +3"]) == {
+    assert determine_stats(
+        store, {"Weapons": ["Dagger"], "Armor": ["Chainmail"], "Rings": ["Damage +3"]}
+    ) == {
         "Hit Points": 100,
         "Damage": 7,
         "Armor": 2,
@@ -204,7 +289,9 @@ def test_determine_stats_7():
 
 def test_determine_stats_8():
     store = read_store_data("./data/shop.txt")
-    assert determine_stats(store, ["Greataxe", "Bandedmail"]) == {
+    assert determine_stats(
+        store, {"Weapons": ["Greataxe"], "Armor": ["Bandedmail"], "Rings": []}
+    ) == {
         "Hit Points": 100,
         "Damage": 8,
         "Armor": 4,
@@ -213,7 +300,10 @@ def test_determine_stats_8():
 
 def test_determine_stats_9():
     store = read_store_data("./data/shop.txt")
-    assert determine_stats(store, ["Warhammer", "Platemail", "Damage +1"]) == {
+    assert determine_stats(
+        store,
+        {"Weapons": ["Warhammer"], "Armor": ["Platemail"], "Rings": ["Damage +1"]},
+    ) == {
         "Hit Points": 100,
         "Damage": 7,
         "Armor": 5,
@@ -222,7 +312,10 @@ def test_determine_stats_9():
 
 def test_determine_stats_10():
     store = read_store_data("./data/shop.txt")
-    assert determine_stats(store, ["Shortsword", "Splintmail", "Damage +2"]) == {
+    assert determine_stats(
+        store,
+        {"Weapons": ["Shortsword"], "Armor": ["Splintmail"], "Rings": ["Damage +2"]},
+    ) == {
         "Hit Points": 100,
         "Damage": 7,
         "Armor": 3,
@@ -231,7 +324,9 @@ def test_determine_stats_10():
 
 def test_determine_stats_11():
     store = read_store_data("./data/shop.txt")
-    assert determine_stats(store, ["Dagger", "Leather"]) == {
+    assert determine_stats(
+        store, {"Weapons": ["Dagger"], "Armor": [], "Rings": []}
+    ) == {
         "Hit Points": 100,
         "Damage": 4,
         "Armor": 0,
