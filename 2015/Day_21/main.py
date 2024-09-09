@@ -30,13 +30,37 @@ PART 1: You have 100 hit points. The boss's actual stats are in your puzzle
         fight?
 """
 
+import re
+
 
 def read_store_data(file_path: str) -> dict[str : dict[str:int]]:
     """
     Open the file detailing the store contents and parse it into a nested
     dictionary format.
     """
-    pass
+    store = {}
+
+    with open(file_path, "r") as fp:
+        for line in fp.readlines():
+
+            # A new list of item types is starting
+            if "Cost  Damage  Armor" in line:
+                cata, _ = line.split(":")
+                store[cata] = {}
+
+            # Add a item to the store
+            elif line != "\n":
+                revline = line[::-1]
+                cont = revline.split(None, 3)
+
+                # Un-reverse the individual string parts
+                store[cata][cont[3][::-1]] = {
+                    "Cost": int(cont[2][::-1]),
+                    "Damage": int(cont[1][::-1]),
+                    "Armor": int(cont[0][::-1]),
+                }
+
+    return store
 
 
 def iter_equipment(store: dict[str : dict[str:int]]) -> list[str]:
