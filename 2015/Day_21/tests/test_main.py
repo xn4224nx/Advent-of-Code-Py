@@ -74,7 +74,7 @@ def test_iter_equipment():
     test_combs = [x for x in iter_equipment(store)]
 
     # Ensure there are no extra combinations outside the true amount
-    assert len(test_combs) == len(test_combs)
+    assert len(test_combs) == len(true_equip_combs)
 
     # for each true combination ensure that it gets created
     for true_comb in true_equip_combs:
