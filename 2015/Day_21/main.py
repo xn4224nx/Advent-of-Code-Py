@@ -63,7 +63,7 @@ def read_store_data(file_path: str) -> dict[str : dict[str:int]]:
     return store
 
 
-def iter_equipment(store: dict[str : dict[str:int]]) -> dict[str:str]:
+def iter_equipment(store: dict[str : dict[str:int]]) -> dict[str : list[str]]:
     """
     Generate the possible equipment configurations possible from the store.
     """
@@ -86,7 +86,9 @@ def iter_equipment(store: dict[str : dict[str:int]]) -> dict[str:str]:
                         }
 
 
-def cost_store_purchases(store: dict[str : dict[str:int]], equip: list[str]) -> int:
+def cost_store_purchases(
+    store: dict[str : dict[str:int]], equip: dict[str : list[str]]
+) -> int:
     """
     Determine the total cost of a certain set of equipment.
     """
@@ -99,7 +101,18 @@ def determine_stats(
     """
     Calculate hit-points, damage, armour based on the equipment attached.
     """
-    pass
+    stats = {"Damage": 0, "Armor": 0}
+
+    # Lookup and record the modifiers for each item of equipment
+    for cata, prods in equip.items():
+        for prd in prods:
+            for sta in stats.keys():
+                stats[sta] += store[cata][prd][sta]
+
+    # Health is set value
+    stats["Hit Points"] = 100
+
+    return stats
 
 
 def boss_defeated(boss_stats: dict[str:int], advt_stats: dict[str:int]) -> bool:
