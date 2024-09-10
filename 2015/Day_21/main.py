@@ -28,6 +28,12 @@ buy, for example, two rings of Damage +3.
 PART 1: You have 100 hit points. The boss's actual stats are in your puzzle
         input. What is the least amount of gold you can spend and still win the
         fight?
+
+Turns out the shopkeeper is working with the boss, and can persuade you to buy
+whatever items he wants. The other rules still apply, and he still only has one
+of each item.
+
+PART 2: What is the most amount of gold you can spend and still lose the fight?
 """
 
 from itertools import combinations
@@ -138,7 +144,7 @@ def boss_defeated(boss_stats: dict[str:int], adve_stats: dict[str:int]) -> bool:
             return False
 
 
-def find_min_gold_to_defeat(
+def find_min_gold_to_win(
     boss_stats: dict[str:int], store: dict[str : dict[str:int]]
 ) -> int:
     """
@@ -158,8 +164,29 @@ def find_min_gold_to_defeat(
     return min_cost
 
 
+def find_max_gold_to_lose(
+    boss_stats: dict[str:int], store: dict[str : dict[str:int]]
+) -> int:
+    """
+    Determine every possible equipment combination and find the most expensive
+    one that loses to the boss.
+    """
+    max_cost = 0
+
+    for equip in iter_equipment(store):
+
+        adve_stats = determine_stats(store, equip)
+        equip_cost = cost_store_purchases(store, equip)
+
+        if equip_cost > max_cost and not boss_defeated(boss_stats, adve_stats):
+            max_cost = equip_cost
+
+    return max_cost
+
+
 if __name__ == "__main__":
     store_data = read_store_data("./data/shop.txt")
-    print(
-        f"Part 1 = {find_min_gold_to_defeat({'Hit Points': 100, 'Damage': 8, 'Armor': 2}, store_data)}"
-    )
+    boss_stats = {"Hit Points": 100, "Damage": 8, "Armor": 2}
+
+    print(f"Part 1 = {find_min_gold_to_win(boss_stats, store_data)}")
+    print(f"Part 2 = {find_max_gold_to_lose(boss_stats, store_data)}")
