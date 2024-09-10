@@ -115,11 +115,26 @@ def determine_stats(
     return stats
 
 
-def boss_defeated(boss_stats: dict[str:int], advt_stats: dict[str:int]) -> bool:
+def boss_defeated(boss_stats: dict[str:int], adve_stats: dict[str:int]) -> bool:
     """
     Does the adventurer defeat the boss?
     """
-    pass
+    boss_health = boss_stats["Hit Points"]
+    adve_health = adve_stats["Hit Points"]
+
+    while True:
+
+        # The adventurer attacks
+        boss_health -= max(adve_stats["Damage"] - boss_stats["Armor"], 1)
+
+        if boss_health <= 0:
+            return True
+
+        # The boss attacks
+        adve_health -= max(boss_stats["Damage"] - adve_stats["Armor"], 1)
+
+        if adve_health <= 0:
+            return False
 
 
 def find_min_gold_to_defeat(

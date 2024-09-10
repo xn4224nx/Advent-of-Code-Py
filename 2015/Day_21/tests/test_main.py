@@ -336,5 +336,5 @@ def test_determine_stats_11():
 def test_boss_defeated():
     assert boss_defeated(
         {"Hit Points": 12, "Damage": 7, "Armor": 2},
-        {"Hit Points": 8, "Damage": 5, "Armor": 2},
+        {"Hit Points": 8, "Damage": 5, "Armor": 5},
     )
