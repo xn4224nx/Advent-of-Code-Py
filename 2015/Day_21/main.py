@@ -31,6 +31,7 @@ PART 1: You have 100 hit points. The boss's actual stats are in your puzzle
 """
 
 from itertools import combinations
+import sys
 
 
 def read_store_data(file_path: str) -> dict[str : dict[str:int]]:
@@ -144,8 +145,21 @@ def find_min_gold_to_defeat(
     Determine every possible equipment combination and find the cheapest one
     that beats the boss.
     """
-    pass
+    min_cost = sys.maxsize
+
+    for equip in iter_equipment(store):
+
+        adve_stats = determine_stats(store, equip)
+        equip_cost = cost_store_purchases(store, equip)
+
+        if equip_cost < min_cost and boss_defeated(boss_stats, adve_stats):
+            min_cost = equip_cost
+
+    return min_cost
 
 
 if __name__ == "__main__":
-    pass
+    store_data = read_store_data("./data/shop.txt")
+    print(
+        f"Part 1 = {find_min_gold_to_defeat({'Hit Points': 100, 'Damage': 8, 'Armor': 2}, store_data)}"
+    )
