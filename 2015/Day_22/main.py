@@ -65,6 +65,23 @@ class WizardBattle:
         # Record the duration of active effects
         self.poison = 0
         self.shield = 0
+        self.recharge = 0
+
+    def new_turn(self):
+        """
+        Change the state of the battle at the start of a new turn.
+        """
+        if self.recharge > 0:
+            self.mana +=  101
+            self.recharge -= 1
+
+        if self.poison > 0:
+            self.b_health -= 3
+            self.poison -= 1
+
+        if self.shield > 0:
+            self.shield -= 1
+
 
     def boss_attacks(self):
         pass

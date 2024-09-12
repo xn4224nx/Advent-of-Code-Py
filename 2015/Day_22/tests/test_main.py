@@ -4,6 +4,48 @@ Tests for functions in the main script.
 
 from main import WizardBattle
 
+def test_new_turn_1():
+    test = WizardBattle(20, 100, 20, 3)
+
+    test.poison = 4
+    test.shield = 5
+    test.recharge = 6
+
+    test.new_turn()
+    test.new_turn()
+    test.new_turn()
+
+    test.poison = 1
+    test.shield = 2
+    test.recharge = 3
+
+
+def test_new_turn_2():
+    test = WizardBattle(20, 100, 20, 3)
+
+    test.poison = 3
+    test.shield = 2
+    test.recharge = 1
+
+    test.new_turn()
+    test.new_turn()
+
+    test.poison = 0
+    test.shield = 0
+    test.recharge = 1
+
+def test_new_turn_3():
+    test = WizardBattle(20, 100, 20, 3)
+    test.poison = 7
+    test.shield = 0
+    test.recharge = 1
+
+    test.new_turn()
+    test.new_turn()
+
+    test.poison = 5
+    test.shield = 0
+    test.recharge = 0
 
 def test_boss_attack_raw_1():
     test = WizardBattle(20, 100, 20, 3)
