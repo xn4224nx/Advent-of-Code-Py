@@ -104,7 +104,16 @@ class WizardBattle:
         self.b_health -= 4
 
     def cast_drain(self):
-        pass
+        """
+        Simulate the wizard casting the Drain spell.
+        """
+        assert self.mana >= 73
+        self.new_turn()
+
+        self.mana -= 73
+        self.b_health -= 2
+        self.w_health += 2
+
 
     def cast_shield(self):
         pass
