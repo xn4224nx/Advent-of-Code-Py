@@ -48,6 +48,9 @@ PART 1: What is the least amount of mana you can spend and still win the fight?
         (Do not include mana recharge effects as "spending" negative mana.)
 """
 
+import random
+import sys
+
 
 class WizardBattle:
     """
@@ -55,7 +58,7 @@ class WizardBattle:
     enemy.
     """
 
-    def __init__(self, w_health, mana, b_health, damage):
+    def __init__(self, w_health: int, mana: int, b_health: int, damage: int):
         self.w_health = w_health
         self.b_health = b_health
         self.mana = mana
@@ -66,6 +69,16 @@ class WizardBattle:
         self.poison = 0
         self.shield = 0
         self.recharge = 0
+
+        self.spell_costs = {
+            "missile": 53,
+            "drain": 73,
+            "shield": 113,
+            "poison": 173,
+            "recharge": 229,
+        }
+
+        self.cheapest_spell = min([x for x in self.spell_costs.values()])
 
     def new_turn(self):
         """
@@ -97,20 +110,22 @@ class WizardBattle:
         """
         Simulate the wizard casting the Magic Missile spell.
         """
-        assert self.mana >= 53
+        assert self.mana >= self.spell_costs["missile"]
         self.new_turn()
 
-        self.mana -= 53
+        self.mana -= self.spell_costs["missile"]
+        self.mana_used += self.spell_costs["missile"]
         self.b_health -= 4
 
     def cast_drain(self):
         """
         Simulate the wizard casting the Drain spell.
         """
-        assert self.mana >= 73
+        assert self.mana >= self.spell_costs["drain"]
         self.new_turn()
 
-        self.mana -= 73
+        self.mana -= self.spell_costs["drain"]
+        self.mana_used += self.spell_costs["drain"]
         self.b_health -= 2
         self.w_health += 2
 
@@ -118,35 +133,102 @@ class WizardBattle:
         """
         Simulate the wizard casting the Shield spell.
         """
-        assert self.mana >= 113
+        assert self.mana >= self.spell_costs["shield"]
         self.new_turn()
         self.shield = 6
-        self.mana -= 113
+        self.mana -= self.spell_costs["shield"]
+        self.mana_used += self.spell_costs["shield"]
 
     def cast_poison(self):
         """
         Simulate the wizard casting the Poison spell.
         """
-        assert self.mana >= 173
+        assert self.mana >= self.spell_costs["poison"]
         self.new_turn()
         self.poison = 6
-        self.mana -= 173
+        self.mana -= self.spell_costs["poison"]
+        self.mana_used += self.spell_costs["poison"]
 
     def cast_recharge(self):
         """
         Simulate the wizard casting the Recharge spell.
         """
-        assert self.mana >= 229
+        assert self.mana >= self.spell_costs["recharge"]
         self.new_turn()
         self.recharge = 5
-        self.mana -= 229
+        self.mana -= self.spell_costs["recharge"]
+        self.mana_used += self.spell_costs["recharge"]
 
     def cast_rnd_spell(self):
-        pass
+        """
+        Pick a random spell that can be cast with the ammount of mana the
+        wizard has.
+        """
+        viable_spells = [x for x, y in self.spell_costs.items() if y <= self.mana]
 
-    def battle(self):
-        pass
+        # Catch no viable spells, so nothing can be cast and the wizard has lost
+        if not viable_spells:
+            return
+
+        rnd_spell = random.choice(viable_spells)
+
+        if rnd_spell == "missile":
+            self.cast_missile()
+
+        elif rnd_spell == "drain":
+            self.cast_drain()
+
+        elif rnd_spell == "shield":
+            self.cast_shield()
+
+        elif rnd_spell == "poison":
+            self.cast_poison()
+
+        elif rnd_spell == "recharge":
+            self.cast_recharge()
+
+        else:
+            raise Exception(f"Unknown spell {rnd_spell} encountered!")
+
+    def battle(self) -> bool:
+        """
+        Simulate a battle between a boss and a wizard. If it returns true then
+        the boss has been defeated and the wizard has won.
+        """
+        while True:
+
+            # The wizard loses if they have no health or can't cast a spell
+            if self.w_health <= 0 or self.mana < self.cheapest_spell:
+                return False
+            elif self.b_health <= 0:
+                return True
+
+            self.cast_rnd_spell()
+
+            # The boss looses if they run out of health
+            if self.w_health <= 0:
+                return False
+            elif self.b_health <= 0:
+                return True
+
+            self.boss_attacks()
+
+
+def find_lowest_mana_to_win(itr: int = 50_000) -> int:
+    """
+    Simulate multiple battles and find the lowest amount of mana it takes to
+    win.
+    """
+    min_mana = sys.maxsize
+
+    for _ in range(itr):
+        siml = WizardBattle(50, 500, 51, 9)
+
+        if siml.battle() and siml.mana_used < min_mana:
+            min_mana = siml.mana_used
+
+    return min_mana
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {find_lowest_mana_to_win()}")
