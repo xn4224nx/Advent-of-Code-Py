@@ -72,7 +72,7 @@ class WizardBattle:
         Change the state of the battle at the start of a new turn.
         """
         if self.recharge > 0:
-            self.mana +=  101
+            self.mana += 101
             self.recharge -= 1
 
         if self.poison > 0:
@@ -82,9 +82,16 @@ class WizardBattle:
         if self.shield > 0:
             self.shield -= 1
 
-
     def boss_attacks(self):
-        pass
+        """
+        Simulate the boss attacking the wizard.
+        """
+        self.new_turn()
+
+        if self.shield > 0:
+            self.w_health -= max(self.damage - 7, 1)
+        else:
+            self.w_health -= self.damage
 
     def cast_missile(self):
         pass
