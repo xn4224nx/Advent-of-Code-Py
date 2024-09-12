@@ -116,7 +116,13 @@ class WizardBattle:
 
 
     def cast_shield(self):
-        pass
+        """
+        Simulate the wizard casting the Shield spell.
+        """
+        assert self.mana >= 113
+        self.new_turn()
+        self.shield = 7
+        self.mana -= 113
 
     def cast_poison(self):
         pass

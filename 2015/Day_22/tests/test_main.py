@@ -77,8 +77,8 @@ def test_boss_attack_while_shield_1():
     for _ in range(10):
         test.boss_attacks()
 
-    assert test.w_health == 78
     assert test.mana == 7
+    assert test.w_health == 78
 
 
 def test_boss_attack_while_shield_2():
@@ -177,11 +177,13 @@ def test_shield():
     test.cast_missile()
 
     test.boss_attacks()
-    assert test.b_health == 97
-    test.cast_missile()
+    assert test.w_health == 97
 
     test.boss_attacks()
-    assert test.w_health == 93
+    assert test.w_health == 96
+
+    test.boss_attacks()
+    assert test.w_health == 92
 
 
 def test_recharge():
