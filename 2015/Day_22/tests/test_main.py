@@ -4,6 +4,7 @@ Tests for functions in the main script.
 
 from main import WizardBattle
 
+
 def test_new_turn_1():
     test = WizardBattle(20, 100, 20, 3)
 
@@ -34,6 +35,7 @@ def test_new_turn_2():
     test.shield = 0
     test.recharge = 1
 
+
 def test_new_turn_3():
     test = WizardBattle(20, 100, 20, 3)
     test.poison = 7
@@ -46,6 +48,7 @@ def test_new_turn_3():
     test.poison = 5
     test.shield = 0
     test.recharge = 0
+
 
 def test_boss_attack_raw_1():
     test = WizardBattle(20, 100, 20, 3)
@@ -125,7 +128,8 @@ def test_magic_missile_3():
     test = WizardBattle(21, 250, 20, 10)
     test.cast_missile()
     test.cast_missile()
-    assert test.b_health == 8
+    assert test.b_health == 12
+    assert test.mana == 144
 
 
 def test_drain_1():

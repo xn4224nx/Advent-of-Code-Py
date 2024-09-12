@@ -94,7 +94,14 @@ class WizardBattle:
             self.w_health -= self.damage
 
     def cast_missile(self):
-        pass
+        """
+        Simulate the wizard casting the Magic Missile spell.
+        """
+        assert self.mana >= 53
+        self.new_turn()
+
+        self.mana -= 53
+        self.b_health -= 4
 
     def cast_drain(self):
         pass
