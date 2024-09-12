@@ -114,21 +114,32 @@ class WizardBattle:
         self.b_health -= 2
         self.w_health += 2
 
-
     def cast_shield(self):
         """
         Simulate the wizard casting the Shield spell.
         """
         assert self.mana >= 113
         self.new_turn()
-        self.shield = 7
+        self.shield = 6
         self.mana -= 113
 
     def cast_poison(self):
-        pass
+        """
+        Simulate the wizard casting the Poison spell.
+        """
+        assert self.mana >= 173
+        self.new_turn()
+        self.poison = 6
+        self.mana -= 173
 
     def cast_recharge(self):
-        pass
+        """
+        Simulate the wizard casting the Recharge spell.
+        """
+        assert self.mana >= 229
+        self.new_turn()
+        self.recharge = 5
+        self.mana -= 229
 
     def cast_rnd_spell(self):
         pass

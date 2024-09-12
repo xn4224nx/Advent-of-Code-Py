@@ -78,7 +78,7 @@ def test_boss_attack_while_shield_1():
         test.boss_attacks()
 
     assert test.mana == 7
-    assert test.w_health == 78
+    assert test.w_health == 75
 
 
 def test_boss_attack_while_shield_2():
@@ -180,10 +180,34 @@ def test_shield():
     assert test.w_health == 97
 
     test.boss_attacks()
-    assert test.w_health == 96
+    assert test.w_health == 93
 
     test.boss_attacks()
-    assert test.w_health == 92
+    assert test.w_health == 89
+
+
+def test_poison():
+    test = WizardBattle(100, 1000, 100, 4)
+
+    test.cast_poison()
+    assert test.mana == 827
+
+    test.boss_attacks()
+    assert test.b_health == 97
+    test.cast_missile()
+
+    test.boss_attacks()
+    assert test.b_health == 87
+    test.cast_missile()
+
+    test.boss_attacks()
+    assert test.b_health == 77
+
+    test.boss_attacks()
+    assert test.b_health == 74
+
+    test.boss_attacks()
+    assert test.b_health == 74
 
 
 def test_recharge():
@@ -207,10 +231,10 @@ def test_recharge():
     assert test.mana == 1170
 
     test.cast_missile()
-    assert test.mana == 1218
+    assert test.mana == 1117
 
     test.boss_attacks()
-    assert test.mana == 1218
+    assert test.mana == 1117
 
 
 def test_battle_1():
@@ -241,49 +265,41 @@ def test_battle_2():
     assert test.w_health == 10
     assert test.mana == 21
     assert test.b_health == 14
-
     test.boss_attacks()
 
     assert test.w_health == 2
     assert test.mana == 122
     assert test.b_health == 14
-
     test.cast_shield()
 
     assert test.w_health == 2
     assert test.mana == 110
     assert test.b_health == 14
-
     test.boss_attacks()
 
     assert test.w_health == 1
     assert test.mana == 211
     assert test.b_health == 14
-
-    test.cast_poison()
+    test.cast_drain()
 
     assert test.w_health == 3
     assert test.mana == 239
     assert test.b_health == 12
-
     test.boss_attacks()
 
     assert test.w_health == 2
     assert test.mana == 340
     assert test.b_health == 12
-
-    test.cast_drain()
+    test.cast_poison()
 
     assert test.w_health == 2
     assert test.mana == 167
     assert test.b_health == 12
-
     test.boss_attacks()
 
     assert test.w_health == 1
     assert test.mana == 167
     assert test.b_health == 9
-
     test.cast_missile()
 
     assert test.w_health == 1
