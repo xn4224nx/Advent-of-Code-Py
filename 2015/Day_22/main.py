@@ -46,6 +46,14 @@ You start with 50 hit points and 500 mana points.
 
 PART 1: What is the least amount of mana you can spend and still win the fight?
         (Do not include mana recharge effects as "spending" negative mana.)
+
+On the next run through the game, you increase the difficulty to hard.
+
+At the start of each player turn (before any other effects apply), you lose 1
+hit point. If this brings you to or below 0 hit points, you lose.
+
+PART 2: With the same starting stats for you and the boss, what is the least
+        amount of mana you can spend and still win the fight?
 """
 
 import random
@@ -59,11 +67,16 @@ class WizardBattle:
     """
 
     def __init__(self, w_health: int, mana: int, b_health: int, damage: int):
+        self.start_w_health = w_health
+        self.start_b_health = b_health
+        self.start_mana = mana
+        self.damage = damage
+        self.mana_used = 0
+
+        # Temporary variables
         self.w_health = w_health
         self.b_health = b_health
         self.mana = mana
-        self.damage = damage
-        self.mana_used = 0
 
         # Record the duration of active effects
         self.poison = 0
@@ -79,6 +92,20 @@ class WizardBattle:
         }
 
         self.cheapest_spell = min([x for x in self.spell_costs.values()])
+
+    def reset_stats():
+        """
+        Re-initialise the stats of a wizard battle.
+        """
+        self.w_health = self.start_w_health
+        self.b_health = self.start_b_health
+        self.mana = self.start_mana
+
+        # Record the duration of active effects
+        self.poison = 0
+        self.shield = 0
+        self.recharge = 0
+
 
     def new_turn(self):
         """
@@ -190,12 +217,15 @@ class WizardBattle:
         else:
             raise Exception(f"Unknown spell {rnd_spell} encountered!")
 
-    def battle(self) -> bool:
+    def battle(self, hard_mode: bool = False) -> bool:
         """
         Simulate a battle between a boss and a wizard. If it returns true then
         the boss has been defeated and the wizard has won.
         """
         while True:
+
+            if hard_mode:
+                self.w_health -= 1
 
             # The wizard loses if they have no health or can't cast a spell
             if self.w_health <= 0 or self.mana < self.cheapest_spell:
@@ -204,6 +234,9 @@ class WizardBattle:
                 return True
 
             self.cast_rnd_spell()
+
+            if hard_mode:
+                self.w_health -= 1
 
             # The boss looses if they run out of health
             if self.w_health <= 0:
@@ -214,7 +247,7 @@ class WizardBattle:
             self.boss_attacks()
 
 
-def find_lowest_mana_to_win(itr: int = 50_000) -> int:
+def find_lowest_mana_to_win(itr: int = 100_000, hard_mode: bool = False) -> int:
     """
     Simulate multiple battles and find the lowest amount of mana it takes to
     win.
@@ -224,11 +257,14 @@ def find_lowest_mana_to_win(itr: int = 50_000) -> int:
     for _ in range(itr):
         siml = WizardBattle(50, 500, 51, 9)
 
-        if siml.battle() and siml.mana_used < min_mana:
+        if siml.battle(hard_mode) and siml.mana_used < min_mana:
             min_mana = siml.mana_used
+            print(f"New min found: {min_mana}")
+
 
     return min_mana
 
 
 if __name__ == "__main__":
     print(f"Part 1 = {find_lowest_mana_to_win()}")
+    print(f"Part 2 = {find_lowest_mana_to_win(hard_mode = True)}")
