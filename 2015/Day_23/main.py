@@ -39,6 +39,12 @@ The program exits when it tries to run an instruction beyond the ones defined.
 
 PART 1: What is the value in register b when the program in your puzzle input
         is finished executing?
+
+The unknown benefactor is very thankful for releasi-- er, helping little Jane
+Marie with her computer.
+
+PART 2: What is the value in register b after the program is finished executing
+        if register a starts as 1 instead?
 """
 
 
@@ -49,8 +55,8 @@ class Register:
     instruction to be executed.
     """
 
-    def __init__(self):
-        self.values = {"a": 0, "b": 0}
+    def __init__(self, start_a: int = 0):
+        self.values = {"a": start_a, "b": 0}
         self.instr_idx = 0
 
     def read_instr(self, file_path: str):
@@ -115,3 +121,7 @@ if __name__ == "__main__":
     ljm = Register()
     ljm.read_instr("./data/input.txt")
     print(f"Part 1 = {ljm.run_all_instr('b')}")
+
+    ljm = Register(1)
+    ljm.read_instr("./data/input.txt")
+    print(f"Part 2 = {ljm.run_all_instr('b')}")
