@@ -46,7 +46,11 @@ def calc_group_qe(group: list[int]) -> int:
     """
     Calculate the quantum entanglement score of a group of box sizes.
     """
-    pass
+    prod = 1
+    for val in group:
+        prod *= val
+
+    return prod
 
 
 def calc_group_weight(group: list[int]) -> int:
