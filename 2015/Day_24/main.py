@@ -64,7 +64,9 @@ def check_all_weights_same(multi_group: list[list[int]]) -> bool:
     """
     Confirm all the groups have the same weight.
     """
-    pass
+    group_weights = [calc_group_weight(x) for x in multi_group]
+    return min(group_weights) == max(group_weights)
+
 
 
 def check_first_group_fewest(multi_group: list[list[int]]) -> bool:
