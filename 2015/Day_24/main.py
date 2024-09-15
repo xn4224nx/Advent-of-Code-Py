@@ -68,13 +68,16 @@ def check_all_weights_same(multi_group: list[list[int]]) -> bool:
     return min(group_weights) == max(group_weights)
 
 
-
 def check_first_group_fewest(multi_group: list[list[int]]) -> bool:
     """
     Ensure that the first group has the smallest number of boxes, or is drawn
     for lowest with other boxes.
     """
-    pass
+    for idx in range(1, len(multi_group)):
+        if len(multi_group[idx]) < len(multi_group[0]):
+            return False
+
+    return True
 
 
 def iter_over_group_combs(group_sizes: list[int], num_groups: int) -> list[list[int]]:
