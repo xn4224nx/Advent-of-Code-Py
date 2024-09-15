@@ -69,12 +69,15 @@ class Register:
 
         if com == "hlf":
             self.values[dets] //= 2
+            self.instr_idx += 1
 
         elif com == "tpl":
             self.values[dets] *= 3
+            self.instr_idx += 1
 
         elif com == "inc":
             self.values[dets] += 1
+            self.instr_idx += 1
 
         elif com == "jmp":
             self.instr_idx += int(dets)
@@ -83,21 +86,32 @@ class Register:
             reg, inc = dets.split(", ", maxsplit=1)
             if self.values[reg] % 2 == 0:
                 self.instr_idx += int(inc)
+            else:
+                self.instr_idx += 1
 
         elif com == "jio":
             reg, inc = dets.split(", ", maxsplit=1)
-            if self.values[reg] % 2 != 0:
+            if self.values[reg] == 1:
                 self.instr_idx += int(inc)
+            else:
+                self.instr_idx += 1
 
         else:
             raise Exception(f"Unrecognised instruction '{instr}'")
 
-    def run_all_instr(self):
+    def run_all_instr(self, reg: str) -> int:
         """
-        Execute all the instructions stored in the instance of the class.
+        Execute all the instructions stored in the instance of the class. Then
+        calculate the value of the register specified by `reg`.
         """
-        pass
+        # Keep executing instructions until the index goes outside the range
+        while self.instr_idx >= 0 and self.instr_idx < len(self.all_instr):
+            self.execute_instr(self.all_instr[self.instr_idx])
+
+        return self.values[reg]
 
 
 if __name__ == "__main__":
-    pass
+    ljm = Register()
+    ljm.read_instr("./data/input.txt")
+    print(f"Part 1 = {ljm.run_all_instr('b')}")

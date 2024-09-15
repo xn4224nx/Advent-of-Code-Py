@@ -141,26 +141,25 @@ def test_even_jump_02():
     test.values["a"] = 101
     test.instr_idx = 1
     test.execute_instr("jie a, +4")
-    assert test.instr_idx == 1
+    assert test.instr_idx == 2
 
 
-def test_odd_jump_01():
+def test_one_jump_01():
     test = Register()
-    test.values["b"] = 7
+    test.values["b"] = 1
     test.execute_instr("jio b, +20")
     assert test.instr_idx == 20
 
 
-def test_odd_jump_02():
+def test_one_jump_02():
     test = Register()
-    test.values["b"] = 2
+    test.values["b"] = 3
     test.instr_idx = 10
     test.execute_instr("jio b, +20")
-    assert test.instr_idx == 10
+    assert test.instr_idx == 11
 
 
 def test_a_register_example():
     test = Register()
     test.read_instr("./data/example_01.txt")
-    test.run_all_instr()
-    assert test.values["a"] == 2
+    assert test.run_all_instr("a") == 2
