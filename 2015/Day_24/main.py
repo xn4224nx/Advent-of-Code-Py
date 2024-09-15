@@ -57,7 +57,7 @@ def calc_group_weight(group: list[int]) -> int:
     """
     Determine the sum of the weights of the boxes in a group.
     """
-    pass
+    return sum(group)
 
 
 def check_all_weights_same(multi_group: list[list[int]]) -> bool:
