@@ -50,8 +50,7 @@ class Register:
     """
 
     def __init__(self):
-        self.a = 0
-        self.b = 0
+        self.values = {"a": 0, "b": 0}
         self.instr_idx = 0
 
     def read_instr(self, file_path: str):
@@ -60,13 +59,38 @@ class Register:
         each element representing a single instruction.
         """
         with open(file_path, "r") as fp:
-            self.instr = [x.strip() for x in fp.readlines()]
+            self.all_instr = [x.strip() for x in fp.readlines()]
 
     def execute_instr(self, instr: str):
         """
         Modify the register based on a single raw instruction.
         """
-        pass
+        com, dets = instr.split(maxsplit=1)
+
+        if com == "hlf":
+            self.values[dets] //= 2
+
+        elif com == "tpl":
+            self.values[dets] *= 3
+
+        elif com == "inc":
+            self.values[dets] += 1
+
+        elif com == "jmp":
+            self.instr_idx += int(dets)
+
+        elif com == "jie":
+            reg, inc = dets.split(", ", maxsplit=1)
+            if self.values[reg] % 2 == 0:
+                self.instr_idx += int(inc)
+
+        elif com == "jio":
+            reg, inc = dets.split(", ", maxsplit=1)
+            if self.values[reg] % 2 != 0:
+                self.instr_idx += int(inc)
+
+        else:
+            raise Exception(f"Unrecognised instruction '{instr}'")
 
     def run_all_instr(self):
         """

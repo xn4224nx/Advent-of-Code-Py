@@ -8,7 +8,7 @@ from main import Register
 def test_read_instr_example_01():
     test = Register()
     test.read_instr("./data/example_01.txt")
-    assert test.instr == [
+    assert test.all_instr == [
         "inc a",
         "jio a, +2",
         "tpl a",
@@ -19,7 +19,7 @@ def test_read_instr_example_01():
 def test_read_instr_input():
     test = Register()
     test.read_instr("./data/input.txt")
-    assert test.instr == [
+    assert test.all_instr == [
         "jio a, +18",
         "inc a",
         "tpl a",
@@ -72,31 +72,31 @@ def test_read_instr_input():
 
 def test_halve_register_a():
     test = Register()
-    test.a = 9
+    test.values["a"] = 9
     test.execute_instr("hlf a")
-    assert test.a == 4
+    assert test.values["a"] == 4
 
 
 def test_halve_register_b():
     test = Register()
-    test.b = 1
+    test.values["b"] = 1
     test.execute_instr("hlf b")
-    assert test.b == 0
+    assert test.values["b"] == 0
 
 
 def test_triple_register_a():
     test = Register()
-    test.a = 3
+    test.values["a"] = 3
     test.execute_instr("tpl a")
 
-    assert test.a == 9
+    assert test.values["a"] == 9
 
 
 def test_triple_register_b():
     test = Register()
-    test.b = 4
+    test.values["b"] = 4
     test.execute_instr("tpl b")
-    assert test.b == 12
+    assert test.values["b"] == 12
 
 
 def test_incr_register_a():
@@ -104,7 +104,7 @@ def test_incr_register_a():
     test.execute_instr("inc a")
     test.execute_instr("inc a")
     test.execute_instr("inc a")
-    assert test.a == 3
+    assert test.values["a"] == 3
 
 
 def test_incr_register_b():
@@ -113,7 +113,7 @@ def test_incr_register_b():
     test.execute_instr("inc b")
     test.execute_instr("inc b")
     test.execute_instr("inc b")
-    assert test.b == 4
+    assert test.values["b"] == 4
 
 
 def test_pos_jump():
@@ -131,14 +131,14 @@ def test_neg_jump():
 
 def test_even_jump_01():
     test = Register()
-    test.a = 100
+    test.values["a"] = 100
     test.execute_instr("jie a, +4")
     assert test.instr_idx == 4
 
 
 def test_even_jump_02():
     test = Register()
-    test.a = 101
+    test.values["a"] = 101
     test.instr_idx = 1
     test.execute_instr("jie a, +4")
     assert test.instr_idx == 1
@@ -146,14 +146,14 @@ def test_even_jump_02():
 
 def test_odd_jump_01():
     test = Register()
-    test.b = 7
+    test.values["b"] = 7
     test.execute_instr("jio b, +20")
     assert test.instr_idx == 20
 
 
 def test_odd_jump_02():
     test = Register()
-    test.b = 2
+    test.values["b"] = 2
     test.instr_idx = 10
     test.execute_instr("jio b, +20")
     assert test.instr_idx == 10
@@ -163,4 +163,4 @@ def test_a_register_example():
     test = Register()
     test.read_instr("./data/example_01.txt")
     test.run_all_instr()
-    assert test.a == 2
+    assert test.values["a"] == 2
