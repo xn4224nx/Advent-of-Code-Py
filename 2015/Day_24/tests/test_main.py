@@ -33,7 +33,7 @@ def test_calc_group_qe_05():
 
 
 def test_calc_group_weight_01():
-    assert calc_group_weight([56, 49, 5]) == 100
+    assert calc_group_weight([46, 49, 5]) == 100
 
 
 def test_calc_group_weight_02():
