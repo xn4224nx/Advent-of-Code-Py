@@ -7,7 +7,7 @@ from main import Register
 
 def test_read_instr_example_01():
     test = Register()
-    test.read_instr("./data/example.01.txt")
+    test.read_instr("./data/example_01.txt")
     assert test.instr == [
         "inc a",
         "jio a, +2",
@@ -18,7 +18,7 @@ def test_read_instr_example_01():
 
 def test_read_instr_input():
     test = Register()
-    test.read_instr("./data/example.01.txt")
+    test.read_instr("./data/input.txt")
     assert test.instr == [
         "jio a, +18",
         "inc a",

@@ -59,7 +59,8 @@ class Register:
         Read the raw instructions from disk and keep them in a list of strings
         each element representing a single instruction.
         """
-        pass
+        with open(file_path, "r") as fp:
+            self.instr = [x.strip() for x in fp.readlines()]
 
     def execute_instr(self, instr: str):
         """
