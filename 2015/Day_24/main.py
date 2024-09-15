@@ -38,7 +38,8 @@ def read_box_sizes(file_path: str) -> list[int]:
     """
     From disk read the box sizes and return a list of them.
     """
-    pass
+    with open(file_path, "r") as fp:
+        return [int(x) for x in fp.readlines()]
 
 
 def calc_group_qe(group: list[int]) -> int:
