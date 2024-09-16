@@ -95,7 +95,7 @@ def test_check_first_group_fewest_05():
 
 
 def test_find_lowest_qe():
-    assert test_find_lowest_qe(read_box_sizes("./data/example_01.txt")) == 90
+    assert find_lowest_qe(read_box_sizes("./data/example_01.txt"), 3) == 99
 
 
 def test_read_box_sizes_example_01():
