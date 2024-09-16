@@ -132,7 +132,22 @@ def find_lowest_qe(boxes: list[int], num_groups: int) -> int:
     """
     Find the lowest quantum entanglement of all the valid box groups.
     """
-    pass
+    possible_results = {}
+
+    for box_com in iter_over_group_combs(boxes, num_groups):
+
+        # Calculate the Quantum Entanglement of the first group
+        qe = calc_group_qe(box_com[0])
+        grp_size_0 = len(box_com[0])
+
+        # Save the results by the size of the first group
+        if grp_size_0 not in possible_results or qe < possible_results[grp_size_0]:
+            possible_results[grp_size_0] = qe
+
+    print(possible_results)
+
+    # Return the qe of the smallest group size
+    return possible_results[min(possible_results.keys())]
 
 
 if __name__ == "__main__":
