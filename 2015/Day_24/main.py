@@ -33,6 +33,8 @@ PART 1: What is the quantum entanglement of the first group of packages in the
         ideal configuration?
 """
 
+from itertools import combinations_with_replacement, permutations
+
 
 def read_box_sizes(file_path: str) -> list[int]:
     """
@@ -80,14 +82,53 @@ def check_first_group_fewest(multi_group: list[list[int]]) -> bool:
     return True
 
 
-def iter_over_group_combs(group_sizes: list[int], num_groups: int) -> list[list[int]]:
+def check_first_group_size_fewest(group_sizes: tuple[int]) -> bool:
+    """
+    Ensure that the first group size has the smallest number of boxes, or is
+    drawn for lowest with other boxes.
+    """
+    for idx in range(1, len(group_sizes)):
+        if group_sizes[idx] < group_sizes[0]:
+            return False
+
+    return True
+
+
+def iter_over_group_combs(boxes: list[int], num_groups: int) -> list[list[int]]:
     """
     A generator to iterate over all the possible valid box group combinations.
     """
-    pass
+    # Iterate over the possible group sizes
+    for group_sizes in combinations_with_replacement(
+        [x for x in range(1, len(boxes))], num_groups
+    ):
+
+        # Every box needs to be able to fit into the groups exactly
+        if sum(group_sizes) != len(boxes):
+            continue
+
+        # The first group needs to be smallest
+        if not check_first_group_size_fewest(group_sizes):
+            continue
+
+        # Iterate over every permutation of the box ordering
+        for shuf_boxes in permutations(boxes):
+            conv_boxes = list(shuf_boxes)
+
+            # Create the group of group of boxes
+            box_comb = []
+            for size in group_sizes:
+                tmp = []
+                for _ in range(size):
+                    tmp.append(conv_boxes.pop())
+                box_comb.append(tmp)
+
+            # Test the validity
+            if check_all_weights_same(box_comb):
+                yield box_comb
 
 
-def find_lowest_qe(group_sizes: list[int]) -> int:
+def find_lowest_qe(boxes: list[int], num_groups: int) -> int:
     """
     Find the lowest quantum entanglement of all the valid box groups.
     """
