@@ -33,7 +33,7 @@ PART 1: What is the quantum entanglement of the first group of packages in the
         ideal configuration?
 """
 
-from itertools import combinations_with_replacement, permutations
+from itertools import combinations_with_replacement, combinations
 
 
 def read_box_sizes(file_path: str) -> list[int]:
@@ -94,61 +94,79 @@ def check_first_group_size_fewest(group_sizes: tuple[int]) -> bool:
     return True
 
 
-def iter_over_group_combs(boxes: list[int], num_groups: int) -> list[list[int]]:
+def find_a_valid_group(
+    cur_boxes: list[int], target_sum: int, max_grp_size: int
+) -> tuple[int]:
     """
-    A generator to iterate over all the possible valid box group combinations.
+    Determine valid group compositions. Return the boxes in the valid group
+    """
+    for grp_size in range(1, max_grp_size):
+        for comb in combinations(cur_boxes, grp_size):
+            if sum(comb) == target_sum:
+                yield comb
+
+
+def find_valid_group_sizes(num_boxes: int, num_grps: int) -> list[tuple[int]]:
+    """
+    Determine the possible group sizes
     """
     # Iterate over the possible group sizes
     for group_sizes in combinations_with_replacement(
-        [x for x in range(1, len(boxes))], num_groups
+        [x for x in range(1, num_boxes)], num_grps
     ):
-
         # Every box needs to be able to fit into the groups exactly
-        if sum(group_sizes) != len(boxes):
+        if sum(group_sizes) != num_boxes:
             continue
 
         # The first group needs to be smallest
         if not check_first_group_size_fewest(group_sizes):
             continue
 
-        # Iterate over every permutation of the box ordering
-        for shuf_boxes in permutations(boxes):
-            conv_boxes = list(shuf_boxes)
-
-            # Create the group of group of boxes
-            box_comb = []
-            for size in group_sizes:
-                tmp = []
-                for _ in range(size):
-                    tmp.append(conv_boxes.pop())
-                box_comb.append(tmp)
-
-            # Test the validity
-            if check_all_weights_same(box_comb):
-                yield box_comb
+        yield group_sizes
 
 
-def find_lowest_qe(boxes: list[int], num_groups: int) -> int:
+def find_lowest_qe_3grps(boxes: list[int]) -> int:
     """
-    Find the lowest quantum entanglement of all the valid box groups.
+    Determine the valid groups of boxes.
     """
-    possible_results = {}
+    num_groups = 3
 
-    for box_com in iter_over_group_combs(boxes, num_groups):
+    group_sum = sum(boxes) / num_groups
+    lowest_valid_first_group_size = len(boxes)
+    results = []
 
-        # Calculate the Quantum Entanglement of the first group
-        qe = calc_group_qe(box_com[0])
-        grp_size_0 = len(box_com[0])
+    # Iterate over every possible size of the box groups
+    for grp_sizes in find_valid_group_sizes(len(boxes), num_groups):
 
-        # Save the results by the size of the first group
-        if grp_size_0 not in possible_results or qe < possible_results[grp_size_0]:
-            possible_results[grp_size_0] = qe
+        if lowest_valid_first_group_size < grp_sizes[0]:
+            break
 
-    print(possible_results)
+        # Find valid ways to make the first group
+        for grp_0 in combinations(boxes, grp_sizes[0]):
 
-    # Return the qe of the smallest group size
-    return possible_results[min(possible_results.keys())]
+            # If it has the not got the right sum
+            if sum(grp_0) != group_sum:
+                continue
+
+            # Work out the remaining boxes that are in the other groups
+            rem_boxes_0 = [x for x in boxes if x not in grp_0]
+
+            # Find valid ways to make the second group
+            for grp_1 in combinations(rem_boxes_0, grp_sizes[1]):
+
+                # If it has the not got the right sum
+                if sum(grp_1) != group_sum:
+                    continue
+
+                # Work out the remaining boxes that are in the other groups
+                rem_boxes_1 = [x for x in boxes if x not in grp_1]
+
+                results.append(calc_group_qe(grp_0))
+                lowest_valid_first_group_size = grp_sizes[0]
+
+    return min(results)
 
 
 if __name__ == "__main__":
-    pass
+    boxes = read_box_sizes("./data/input.txt")
+    print(f"Part 1 = {find_lowest_qe_3grps(boxes)}")
