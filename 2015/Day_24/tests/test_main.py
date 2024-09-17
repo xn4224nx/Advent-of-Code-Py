@@ -9,6 +9,7 @@ from main import (
     check_all_weights_same,
     check_first_group_fewest,
     find_lowest_qe_3grps,
+    find_lowest_qe_4grps,
 )
 
 
@@ -94,8 +95,13 @@ def test_check_first_group_fewest_05():
     )
 
 
-def test_find_lowest_qe():
+def test_find_lowest_qe_3grps():
     assert find_lowest_qe_3grps(read_box_sizes("./data/example_01.txt")) == 99
+
+
+def test_find_lowest_qe_4grps():
+    assert find_lowest_qe_4grps(read_box_sizes("./data/example_01.txt")) == 44
+
 
 
 def test_read_box_sizes_example_01():

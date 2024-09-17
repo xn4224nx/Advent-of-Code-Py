@@ -31,6 +31,16 @@ weigh the same amount.
 
 PART 1: What is the quantum entanglement of the first group of packages in the
         ideal configuration?
+
+That's weird... the sleigh still isn't balancing.
+
+"Ho ho ho", Santa muses to himself. "I forgot the trunk".
+
+Balance the sleigh again, but this time, separate the packages into four groups
+instead of three. The other constraints still apply.
+
+PART 2: Now, what is the quantum entanglement of the first group of packages in
+        the ideal configuration?
 """
 
 from itertools import combinations_with_replacement, combinations
@@ -94,18 +104,6 @@ def check_first_group_size_fewest(group_sizes: tuple[int]) -> bool:
     return True
 
 
-def find_a_valid_group(
-    cur_boxes: list[int], target_sum: int, max_grp_size: int
-) -> tuple[int]:
-    """
-    Determine valid group compositions. Return the boxes in the valid group
-    """
-    for grp_size in range(1, max_grp_size):
-        for comb in combinations(cur_boxes, grp_size):
-            if sum(comb) == target_sum:
-                yield comb
-
-
 def find_valid_group_sizes(num_boxes: int, num_grps: int) -> list[tuple[int]]:
     """
     Determine the possible group sizes
@@ -167,6 +165,59 @@ def find_lowest_qe_3grps(boxes: list[int]) -> int:
     return min(results)
 
 
+def find_lowest_qe_4grps(boxes: list[int]) -> int:
+    """
+    Determine the valid groups of boxes.
+    """
+    num_groups = 4
+
+    group_sum = sum(boxes) / num_groups
+    lowest_valid_first_group_size = len(boxes)
+    results = []
+
+    # Iterate over every possible size of the box groups
+    for grp_sizes in find_valid_group_sizes(len(boxes), num_groups):
+
+        if lowest_valid_first_group_size < grp_sizes[0]:
+            break
+
+        # Find valid ways to make the first group
+        for grp_0 in combinations(boxes, grp_sizes[0]):
+
+            # If it has the not got the right sum
+            if sum(grp_0) != group_sum:
+                continue
+
+            # Work out the remaining boxes that are in the other groups
+            rem_boxes_0 = [x for x in boxes if x not in grp_0]
+
+            # Find valid ways to make the second group
+            for grp_1 in combinations(rem_boxes_0, grp_sizes[1]):
+
+                # If it has the not got the right sum
+                if sum(grp_1) != group_sum:
+                    continue
+
+                # Work out the remaining boxes that are in the other groups
+                rem_boxes_1 = [x for x in rem_boxes_0 if x not in grp_1]
+
+                # Find valid ways to make the third group
+                for grp_2 in combinations(rem_boxes_1, grp_sizes[2]):
+
+                    # If it has the not got the right sum
+                    if sum(grp_2) != group_sum:
+                        continue
+
+                    # Work out the remaining boxes that are in the other groups
+                    rem_boxes_2 = [x for x in rem_boxes_1 if x not in grp_2]
+
+                    results.append(calc_group_qe(grp_0))
+                    lowest_valid_first_group_size = grp_sizes[0]
+
+    return min(results)
+
+
 if __name__ == "__main__":
     boxes = read_box_sizes("./data/input.txt")
     print(f"Part 1 = {find_lowest_qe_3grps(boxes)}")
+    print(f"Part 2 = {find_lowest_qe_4grps(boxes)}")
