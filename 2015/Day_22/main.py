@@ -106,7 +106,6 @@ class WizardBattle:
         self.shield = 0
         self.recharge = 0
 
-
     def new_turn(self):
         """
         Change the state of the battle at the start of a new turn.
@@ -126,8 +125,6 @@ class WizardBattle:
         """
         Simulate the boss attacking the wizard.
         """
-        self.new_turn()
-
         if self.shield > 0:
             self.w_health -= max(self.damage - 7, 1)
         else:
@@ -138,8 +135,6 @@ class WizardBattle:
         Simulate the wizard casting the Magic Missile spell.
         """
         assert self.mana >= self.spell_costs["missile"]
-        self.new_turn()
-
         self.mana -= self.spell_costs["missile"]
         self.mana_used += self.spell_costs["missile"]
         self.b_health -= 4
@@ -149,8 +144,6 @@ class WizardBattle:
         Simulate the wizard casting the Drain spell.
         """
         assert self.mana >= self.spell_costs["drain"]
-        self.new_turn()
-
         self.mana -= self.spell_costs["drain"]
         self.mana_used += self.spell_costs["drain"]
         self.b_health -= 2
@@ -161,7 +154,6 @@ class WizardBattle:
         Simulate the wizard casting the Shield spell.
         """
         assert self.mana >= self.spell_costs["shield"]
-        self.new_turn()
         self.shield = 6
         self.mana -= self.spell_costs["shield"]
         self.mana_used += self.spell_costs["shield"]
@@ -171,7 +163,6 @@ class WizardBattle:
         Simulate the wizard casting the Poison spell.
         """
         assert self.mana >= self.spell_costs["poison"]
-        self.new_turn()
         self.poison = 6
         self.mana -= self.spell_costs["poison"]
         self.mana_used += self.spell_costs["poison"]
@@ -181,7 +172,6 @@ class WizardBattle:
         Simulate the wizard casting the Recharge spell.
         """
         assert self.mana >= self.spell_costs["recharge"]
-        self.new_turn()
         self.recharge = 5
         self.mana -= self.spell_costs["recharge"]
         self.mana_used += self.spell_costs["recharge"]
@@ -223,11 +213,11 @@ class WizardBattle:
         the boss has been defeated and the wizard has won.
         """
         while True:
-
             if hard_mode:
                 self.w_health -= 1
 
             # The wizard loses if they have no health or can't cast a spell
+            self.new_turn()
             if self.w_health <= 0 or self.mana < self.cheapest_spell:
                 return False
             elif self.b_health <= 0:
@@ -235,11 +225,9 @@ class WizardBattle:
 
             self.cast_rnd_spell()
 
-            if hard_mode:
-                self.w_health -= 1
-
             # The boss looses if they run out of health
-            if self.w_health <= 0:
+            self.new_turn()
+            if self.w_health <= 0 or self.mana < self.cheapest_spell:
                 return False
             elif self.b_health <= 0:
                 return True
@@ -260,7 +248,6 @@ def find_lowest_mana_to_win(itr: int = 100_000, hard_mode: bool = False) -> int:
         if siml.battle(hard_mode) and siml.mana_used < min_mana:
             min_mana = siml.mana_used
             print(f"New min found: {min_mana}")
-
 
     return min_mana
 
