@@ -25,6 +25,11 @@ take a moment and work out the destination. Given that you can only walk on the
 street grid of the city, how far is the shortest path to the destination?
 
 PART 1: How many blocks away is Easter Bunny HQ?
+
+Then, you notice the instructions continue on the back of the Recruiting
+Document. Easter Bunny HQ is actually at the first location you visit twice.
+
+PART 2: How many blocks away is the first location you visit twice?
 """
 
 
@@ -36,19 +41,31 @@ def read_direction_data(file_path: str) -> list[list[str, int]]:
         return [[x[0], int(x[1:].strip())] for x in fp.read().split(", ")]
 
 
-def directions_dist(directions: list[list[str, int]]) -> int:
+def directions_dist(directions: list[list[str, int]], repeat=False) -> int:
     """
     Calculate the distance from the start to the end point the directions
     take you too.
     """
     curr_dir = 1j  # You start pointing north
     curr_loc = 0 + 0j  # You start at the origin
+    seen_locs = set()
 
     for turn, dist_mag in directions:
         if turn == "L":
             curr_dir *= 1j
         else:
             curr_dir *= -1j
+
+        if repeat:
+            # Save every point that the user passes through
+            for i in range(1, dist_mag + 1):
+                pnt = curr_loc + (curr_dir * i)
+
+                # If the point has been seen before return the magnitude
+                if pnt in seen_locs:
+                    return int(abs(pnt.real) + abs(pnt.imag))
+                else:
+                    seen_locs.add(pnt)
 
         curr_loc += curr_dir * dist_mag
 
@@ -58,3 +75,4 @@ def directions_dist(directions: list[list[str, int]]) -> int:
 if __name__ == "__main__":
     instrs = read_direction_data("./data/input.txt")
     print(f"Part 1 = {directions_dist(instrs)}")
+    print(f"Part 2 = {directions_dist(instrs, True)}")

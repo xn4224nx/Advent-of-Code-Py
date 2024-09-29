@@ -39,3 +39,8 @@ def test_directions_dist_exp_2():
 def test_directions_dist_exp_3():
     data = read_direction_data("./data/example_03.txt")
     assert directions_dist(data) == 12
+
+
+def test_directions_dist_exp_4():
+    data = read_direction_data("./data/example_04.txt")
+    assert directions_dist(data, True) == 4
