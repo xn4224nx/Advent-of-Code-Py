@@ -32,7 +32,8 @@ def read_direction_data(file_path: str) -> list[list[str, int]]:
     """
     Parse the direction data from a file and return it in a list of tuples.
     """
-    pass
+    with open(file_path) as fp:
+        return [[x[0], int(x[1:].strip())] for x in fp.read().split(", ")]
 
 
 def directions_dist(directions: list[list[str, int]]) -> int:
@@ -40,8 +41,20 @@ def directions_dist(directions: list[list[str, int]]) -> int:
     Calculate the distance from the start to the end point the directions
     take you too.
     """
-    pass
+    curr_dir = 1j  # You start pointing north
+    curr_loc = 0 + 0j  # You start at the origin
+
+    for turn, dist_mag in directions:
+        if turn == "L":
+            curr_dir *= 1j
+        else:
+            curr_dir *= -1j
+
+        curr_loc += curr_dir * dist_mag
+
+    return int(abs(curr_loc.real) + abs(curr_loc.imag))
 
 
 if __name__ == "__main__":
-    pass
+    instrs = read_direction_data("./data/input.txt")
+    print(f"Part 1 = {directions_dist(instrs)}")
