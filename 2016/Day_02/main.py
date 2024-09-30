@@ -74,4 +74,7 @@ class SecSystem:
 
 
 if __name__ == "__main__":
-    pass
+    ebh = SecSystem([["1", "2", "3"], ["4", "5", "6"], ["7", "8", "9"]], (1, 1))
+    ebh.read_bathrm_codes("./data/input.txt")
+
+    print(f"Part 1 = {ebh.find_buttons_pressed()}")
