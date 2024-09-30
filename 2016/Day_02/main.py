@@ -31,26 +31,46 @@ class SecSystem:
         self.keypad = keypad
         self.start_pnt = start_pnt
         self.pressed_buttons = ""
+        self.curr_loc = start_pnt
 
     def read_bathrm_codes(self, file_path: str):
         """
         Open the file that has the bathroom instructions and store it within the
         class instance.
         """
-        pass
+        with open(file_path) as fp:
+            self.codes = [x for x in fp.read().splitlines()]
 
     def execute_instr(self, instr: str):
         """
         Move the current cursor according to the instruction.
         """
-        pass
+        if instr == "U" and self.curr_loc[0] > 0:
+            self.curr_loc = (self.curr_loc[0] - 1, self.curr_loc[1])
+
+        elif instr == "D" and self.curr_loc[0] < len(self.keypad) - 1:
+            self.curr_loc = (self.curr_loc[0] + 1, self.curr_loc[1])
+
+        elif instr == "L" and self.curr_loc[1] > 0:
+            self.curr_loc = (self.curr_loc[0], self.curr_loc[1] - 1)
+
+        elif instr == "R" and self.curr_loc[1] < len(self.keypad[0]) - 1:
+            self.curr_loc = (self.curr_loc[0], self.curr_loc[1] + 1)
 
     def find_buttons_pressed(self) -> str:
         """
         Execute all the instructions and find the buttons that got pressed and
         return a string of the buttons pressed.
         """
-        pass
+        for move_chars in self.codes:
+
+            # Move the cursor around and save the last char it lands on
+            for instr in move_chars:
+                self.execute_instr(instr)
+
+            self.pressed_buttons += self.keypad[self.curr_loc[0]][self.curr_loc[1]]
+
+        return self.pressed_buttons
 
 
 if __name__ == "__main__":
