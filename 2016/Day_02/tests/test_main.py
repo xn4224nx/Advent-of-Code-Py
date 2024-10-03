@@ -8,7 +8,7 @@ from main import SecSystem
 def test_read_data():
     test = SecSystem(None, None)
     test.read_bathrm_codes("./data/example_01.txt")
-    test.codes == "ULLRRDDDLURDLUUUUD"
+    test.codes == ["ULL", "RRDDD", "LURDL", "UUUUD"]
 
 
 def test_valid_moves():
@@ -55,3 +55,18 @@ def test_find_buttons_pressed():
     test = SecSystem([["1", "2", "3"], ["4", "5", "6"], ["7", "8", "9"]], (1, 1))
     test.read_bathrm_codes("./data/example_01.txt")
     assert test.find_buttons_pressed() == "1985"
+
+
+def test_find_buttons_pressed():
+    test = SecSystem(
+        [
+            [None, None, "1", None, None],
+            [None, "2", "3", "4", None],
+            ["5", "6", "7", "8", "9"],
+            [None, "A", "B", "C", None],
+            [None, None, "D", None, None],
+        ],
+        (2, 0),
+    )
+    test.read_bathrm_codes("./data/example_01.txt")
+    assert test.find_buttons_pressed() == "5DB3"

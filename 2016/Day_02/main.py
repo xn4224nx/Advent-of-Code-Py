@@ -19,6 +19,23 @@ each line. If a move doesn't lead to a button, ignore it.
 
 PART 1: Your puzzle input is the instructions from the document you found at the
         front desk. What is the bathroom code?
+
+You finally arrive at the bathroom (it's a several minute walk from the lobby so
+visitors can behold the many fancy conference rooms and water coolers on this
+floor) and go to punch in the code. Much to your bladder's dismay, the keypad is
+not at all like you imagined it. Instead, you are confronted with the result of
+hundreds of man-hours of bathroom-keypad-design meetings:
+
+    1
+  2 3 4
+5 6 7 8 9
+  A B C
+    D
+
+You still start at "5" and stop when you're at an edge.
+
+PART 2: Using the same instructions in your puzzle input, what is the correct
+        bathroom code?
 """
 
 
@@ -45,17 +62,26 @@ class SecSystem:
         """
         Move the current cursor according to the instruction.
         """
+        new_loc = None
+
         if instr == "U" and self.curr_loc[0] > 0:
-            self.curr_loc = (self.curr_loc[0] - 1, self.curr_loc[1])
+            new_loc = (self.curr_loc[0] - 1, self.curr_loc[1])
 
         elif instr == "D" and self.curr_loc[0] < len(self.keypad) - 1:
-            self.curr_loc = (self.curr_loc[0] + 1, self.curr_loc[1])
+            new_loc = (self.curr_loc[0] + 1, self.curr_loc[1])
 
         elif instr == "L" and self.curr_loc[1] > 0:
-            self.curr_loc = (self.curr_loc[0], self.curr_loc[1] - 1)
+            new_loc = (self.curr_loc[0], self.curr_loc[1] - 1)
 
         elif instr == "R" and self.curr_loc[1] < len(self.keypad[0]) - 1:
-            self.curr_loc = (self.curr_loc[0], self.curr_loc[1] + 1)
+            new_loc = (self.curr_loc[0], self.curr_loc[1] + 1)
+
+        # If the new instruction would take the key pad out of bounds revert it
+        if new_loc is not None:
+            if self.keypad[new_loc[0]][new_loc[1]] is None:
+                return
+            else:
+                self.curr_loc = new_loc
 
     def find_buttons_pressed(self) -> str:
         """
@@ -76,5 +102,17 @@ class SecSystem:
 if __name__ == "__main__":
     ebh = SecSystem([["1", "2", "3"], ["4", "5", "6"], ["7", "8", "9"]], (1, 1))
     ebh.read_bathrm_codes("./data/input.txt")
-
     print(f"Part 1 = {ebh.find_buttons_pressed()}")
+
+    ebh = SecSystem(
+        [
+            [None, None, "1", None, None],
+            [None, "2", "3", "4", None],
+            ["5", "6", "7", "8", "9"],
+            [None, "A", "B", "C", None],
+            [None, None, "D", None, None],
+        ],
+        (2, 0),
+    )
+    ebh.read_bathrm_codes("./data/input.txt")
+    print(f"Part 2 = {ebh.find_buttons_pressed()}")
