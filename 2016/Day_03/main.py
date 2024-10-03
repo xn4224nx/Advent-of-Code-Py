@@ -24,22 +24,40 @@ def read_triangle_data(file_path: str) -> list[tuple[int, int, int]]:
     """
     Open a file of triangle data and read the side lengths.
     """
-    pass
+    tri = []
+
+    with open(file_path) as fp:
+        for line in fp.read().splitlines():
+            nums = line.split()
+            tri.append((int(nums[0]), int(nums[1]), int(nums[2])))
+
+    return tri
 
 
 def is_valid_triangle(sides: tuple[int, int, int]) -> bool:
     """
     Determine if the given side lengths could be a valid triangle.
     """
-    pass
+
+    if sides[0] >= sides[1] + sides[2]:
+        return False
+
+    if sides[1] >= sides[0] + sides[2]:
+        return False
+
+    if sides[2] >= sides[0] + sides[1]:
+        return False
+
+    return True
 
 
 def count_valid_triangles(multi_sides: list[tuple[int, int, int]]) -> int:
     """
     From a list of sides count the number of triangles that could be valid.
     """
-    pass
+    return sum([is_valid_triangle(tri) for tri in multi_sides])
 
 
 if __name__ == "__main__":
-    pass
+    weird_triangles = read_triangle_data("./data/input.txt")
+    print(f"Part 1 = {count_valid_triangles(weird_triangles)}")

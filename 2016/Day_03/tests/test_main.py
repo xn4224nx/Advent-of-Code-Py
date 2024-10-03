@@ -2,7 +2,7 @@
 Tests for the main script
 """
 
-from main import read_triangle_data, is_valid_triangle
+from main import read_triangle_data, is_valid_triangle, count_valid_triangles
 
 
 def test_read_triangle_data_exp_1():
@@ -37,3 +37,8 @@ def test_is_valid_triangle_exp_5():
 
 def test_is_valid_triangle_exp_6():
     assert is_valid_triangle((15, 881, 210)) == False
+
+
+def test_count_valid_triangles_exp_1():
+    test = read_triangle_data("./data/example_01.txt")
+    assert count_valid_triangles(test) == 2
