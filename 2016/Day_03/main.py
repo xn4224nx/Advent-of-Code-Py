@@ -17,6 +17,13 @@ side. For example, the "triangle" given above is impossible, because 5 + 10 is
 not larger than 25.
 
 PART 1: In your puzzle input, how many of the listed triangles are possible?
+
+Now that you've helpfully marked up their design documents, it occurs to you
+that triangles are specified in groups of three vertically. Each set of three
+numbers in a column specifies a triangle. Rows are unrelated.
+
+PART 2: In your puzzle input, and instead reading by columns, how many of the
+        listed triangles are possible?
 """
 
 
