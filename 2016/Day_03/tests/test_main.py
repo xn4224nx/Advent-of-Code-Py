@@ -15,6 +15,17 @@ def test_read_triangle_data_exp_1():
     ]
 
 
+def test_read_triangle_data_exp_2():
+    assert read_triangle_data("./data/example_02.txt", True) == [
+        (101, 102, 103),
+        (301, 302, 303),
+        (501, 502, 503),
+        (201, 202, 203),
+        (401, 402, 403),
+        (601, 602, 603),
+    ]
+
+
 def test_is_valid_triangle_exp_1():
     assert is_valid_triangle((5, 10, 25)) == False
 

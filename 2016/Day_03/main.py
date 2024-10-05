@@ -27,16 +27,34 @@ PART 2: In your puzzle input, and instead reading by columns, how many of the
 """
 
 
-def read_triangle_data(file_path: str) -> list[tuple[int, int, int]]:
+def read_triangle_data(file_path: str, vert=False) -> list[tuple[int, int, int]]:
     """
     Open a file of triangle data and read the side lengths.
     """
     tri = []
+    vert_data = []
 
     with open(file_path) as fp:
-        for line in fp.read().splitlines():
+        for idx, line in enumerate(fp.read().splitlines()):
             nums = line.split()
-            tri.append((int(nums[0]), int(nums[1]), int(nums[2])))
+
+            if vert:
+                vert_data.append([int(nums[0]), int(nums[1]), int(nums[2])])
+
+                # Every third line vertically split the sizes
+                if (idx + 1) % 3 == 0:
+
+                    for tri_n in range(3):
+                        tri.append(
+                            (
+                                vert_data[idx - 2][tri_n],
+                                vert_data[idx - 1][tri_n],
+                                vert_data[idx][tri_n],
+                            )
+                        )
+
+            else:
+                tri.append((int(nums[0]), int(nums[1]), int(nums[2])))
 
     return tri
 
@@ -66,5 +84,10 @@ def count_valid_triangles(multi_sides: list[tuple[int, int, int]]) -> int:
 
 
 if __name__ == "__main__":
-    weird_triangles = read_triangle_data("./data/input.txt")
-    print(f"Part 1 = {count_valid_triangles(weird_triangles)}")
+    horiz_tri = read_triangle_data("./data/input.txt")
+    verti_tri = read_triangle_data("./data/input.txt", True)
+
+    print(
+        f"Part 1 = {count_valid_triangles(horiz_tri)}\n"
+        f"Part 2 = {count_valid_triangles(verti_tri)}"
+    )
