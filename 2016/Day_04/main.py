@@ -12,6 +12,20 @@ A room is real (not a decoy) if the checksum is the five most common letters in
 the encrypted name, in order, with ties broken by alphabetization.
 
 PART 1: What is the sum of the sector IDs of the real rooms?
+
+With all the decoy data out of the way, it's time to decrypt this list and get
+moving.
+
+The room names are encrypted by a state-of-the-art shift cipher, which is
+nearly unbreakable without the right software. However, the information kiosk
+designers at Easter Bunny HQ were not expecting to deal with a master
+cryptographer like yourself.
+
+To decrypt a room name, rotate each letter forward through the alphabet a
+number of times equal to the room's sector ID. A becomes B, B becomes C, Z
+becomes A, and so on. Dashes become spaces.
+
+PART 2: What is the sector ID of the room where North Pole objects are stored?
 """
 
 import re
@@ -73,6 +87,22 @@ def is_room_real(room: dict) -> bool:
     return room_checksum(room["name"]) == room["check_sum"]
 
 
+def decrypt_room_name(room: dict) -> str:
+    """
+    Determine what the unencrypted name of the room is.
+    """
+    clear_name = ""
+
+    for char in room["name"]:
+        if char == "-":
+            clear_name += " "
+            continue
+
+        clear_name += chr(ord("a") + (ord(char) - ord("a") + room["sec_id"]) % 26)
+
+    return clear_name
+
+
 def sum_real_room_sector_ids(all_rooms: list[dict]) -> int:
     """
     Return the sum of sector ids of all the real rooms.
@@ -86,6 +116,18 @@ def sum_real_room_sector_ids(all_rooms: list[dict]) -> int:
     return sector_sum
 
 
+def find_northpole_room_id(all_rooms: list[dict]) -> int:
+    """
+    Determine the id of the room that has the name `northpole object storage`
+    """
+    for room in room_data:
+        if decrypt_room_name(room) == "northpole object storage":
+            return room["sec_id"]
+
+
 if __name__ == "__main__":
     room_data = read_room_data("./data/input.txt")
-    print(f"Part 1 = {sum_real_room_sector_ids(room_data)}")
+    print(
+        f"Part 1 = {sum_real_room_sector_ids(room_data)}\n"
+        f"Part 2 = {find_northpole_room_id(room_data)}\n"
+    )

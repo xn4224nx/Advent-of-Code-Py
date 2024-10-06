@@ -2,7 +2,13 @@
 Tests for the main script
 """
 
-from main import read_room_data, is_room_real, sum_real_room_sector_ids, room_checksum
+from main import (
+    read_room_data,
+    is_room_real,
+    sum_real_room_sector_ids,
+    room_checksum,
+    decrypt_room_name,
+)
 
 
 def test_read_example_room_data():
@@ -69,4 +75,11 @@ def test_sum_real_room_sector_ids_exp1():
             ]
         )
         == 1514
+    )
+
+
+def test_decrypt_room_name():
+    assert (
+        decrypt_room_name({"name": "qzmt-zixmtkozy-ivhz", "sec_id": 343})
+        == "very encrypted name"
     )
