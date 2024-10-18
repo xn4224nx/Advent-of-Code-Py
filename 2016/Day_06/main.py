@@ -17,7 +17,6 @@ PART 1: Given the recording in your puzzle input, what is the error-corrected
 """
 
 import numpy as np
-from scipy import stats
 
 
 def read_signal_data(file_path: str) -> np.array:
@@ -50,4 +49,5 @@ def find_vert_msg(signals: np.array) -> str:
 
 
 if __name__ == "__main__":
-    pass
+    sig = read_signal_data("./data/input.txt")
+    print(f"Part 1 = {find_vert_msg(sig)}")
