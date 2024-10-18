@@ -7,10 +7,10 @@ from main import read_ip_addresses, str_has_abba, supports_tls, count_valid_ip
 
 def test_read_ip_addresses_exp1():
     assert read_ip_addresses("./data/example_01.txt") == [
-        ("abba", "mnop", "qrst"),
-        ("abcd", "bddb", "xyyx"),
-        ("aaaa", "qwer", "tyui"),
-        ("ioxxoj", "asdfgh", "zxcvbn"),
+        {"brack_txt": ["mnop"], "out_brack_txt": ["abba", "qrst"]},
+        {"brack_txt": ["bddb"], "out_brack_txt": ["abcd", "xyyx"]},
+        {"brack_txt": ["qwer"], "out_brack_txt": ["aaaa", "tyui"]},
+        {"brack_txt": ["asdfgh"], "out_brack_txt": ["ioxxoj", "zxcvbn"]},
     ]
 
 
@@ -63,29 +63,40 @@ def test_str_has_abba_exp12():
 
 
 def test_supports_tls_exp1():
-    assert supports_tls(("abba", "mnop", "qrst")) == True
+    assert (
+        supports_tls({"brack_txt": ["mnop"], "out_brack_txt": ["abba", "qrst"]}) == True
+    )
 
 
 def test_supports_tls_exp2():
-    assert supports_tls(("abcd", "bddb", "xyyx")) == False
+    assert (
+        supports_tls({"brack_txt": ["bddb"], "out_brack_txt": ["abcd", "xyyx"]})
+        == False
+    )
 
 
 def test_supports_tls_exp3():
-    assert supports_tls(("aaaa", "qwer", "tyui")) == False
+    assert (
+        supports_tls({"brack_txt": ["qwer"], "out_brack_txt": ["aaaa", "tyui"]})
+        == False
+    )
 
 
 def test_supports_tls_exp4():
-    assert supports_tls(("ioxxoj", "asdfgh", "zxcvbn")) == True
+    assert (
+        supports_tls({"brack_txt": ["asdfgh"], "out_brack_txt": ["ioxxoj", "zxcvbn"]})
+        == True
+    )
 
 
 def test_count_valid_ip_exp1():
     assert (
         count_valid_ip(
             [
-                ("abba", "mnop", "qrst"),
-                ("abcd", "bddb", "xyyx"),
-                ("aaaa", "qwer", "tyui"),
-                ("ioxxoj", "asdfgh", "zxcvbn"),
+                {"brack_txt": ["mnop"], "out_brack_txt": ["abba", "qrst"]},
+                {"brack_txt": ["bddb"], "out_brack_txt": ["abcd", "xyyx"]},
+                {"brack_txt": ["qwer"], "out_brack_txt": ["aaaa", "tyui"]},
+                {"brack_txt": ["asdfgh"], "out_brack_txt": ["ioxxoj", "zxcvbn"]},
             ]
         )
         == 2

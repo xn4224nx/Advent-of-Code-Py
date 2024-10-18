@@ -14,23 +14,60 @@ which are contained by square brackets.
 PART 1: How many IPs in your puzzle input support TLS?
 """
 
-import re
 
-
-def read_ip_addresses(file_path: str) -> list[(str, str, str)]:
+def read_ip_addresses(file_path: str) -> list[dict[str:[str]]]:
     """
     Read and parse an IP address file into a list of tuples of the
     three string parts of the address.
     """
-    re_pat = r"([a-z]+)\[([a-z]+)\]([a-z]+)"
     ip_adrs = []
 
     with open(file_path) as fp:
 
-        # Extract the three parts of the ip address for each line
+        # Extract the two parts of the ip address for each line
         for line in fp.readlines():
-            parts = re.search(re_pat, line)
-            ip_adrs.append((parts.group(1), parts.group(2), parts.group(3)))
+            all_brack = []
+            all_out_brack = []
+
+            brack_txt = ""
+            out_brack_txt = ""
+            in_brack = False
+
+            # For each line in the file
+            for char in line:
+                if char == "\n":
+                    break
+
+                elif char == "[":
+                    in_brack = True
+
+                    # When entering a bracket save the text outside
+                    if len(out_brack_txt) > 0:
+                        all_out_brack.append(out_brack_txt)
+                        out_brack_txt = ""
+
+                elif char == "]":
+                    in_brack = False
+
+                    # When exiting a bracket save the text outside
+                    if len(brack_txt) > 0:
+                        all_brack.append(brack_txt)
+                        brack_txt = ""
+
+                elif in_brack:
+                    brack_txt += char
+
+                else:
+                    out_brack_txt += char
+
+            # If the end of the string has been reached save the result.
+            if len(out_brack_txt) > 0:
+                all_out_brack.append(out_brack_txt)
+
+            if len(brack_txt) > 0:
+                all_brack.append(brack_txt)
+
+            ip_adrs.append({"brack_txt": all_brack, "out_brack_txt": all_out_brack})
 
     return ip_adrs
 
@@ -56,13 +93,24 @@ def str_has_abba(ip_part: str) -> bool:
         return False
 
 
-def supports_tls(ip_addr: (str, str, str)) -> bool:
+def supports_tls(ip_addr: dict[str:[str]]) -> bool:
     """
     Does a supplied IP address support TLS?
     """
-    return (str_has_abba(ip_addr[0]) or str_has_abba(ip_addr[2])) and not str_has_abba(
-        ip_addr[1]
-    )
+
+    # If the internal text has a abba it can never support TLS.
+    for inter_addr in ip_addr["brack_txt"]:
+        if str_has_abba(inter_addr):
+            return False
+
+    # Then in the external text has abba it will support TLS.
+    for ext_addr in ip_addr["out_brack_txt"]:
+        if str_has_abba(ext_addr):
+            return True
+
+    # If neither group has abba it can't support TLS.
+    else:
+        return False
 
 
 def count_valid_ip(all_ips: list[(str, str, str)]) -> int:
@@ -73,4 +121,5 @@ def count_valid_ip(all_ips: list[(str, str, str)]) -> int:
 
 
 if __name__ == "__main__":
-    pass
+    addr = read_ip_addresses("./data/input.txt")
+    print(f"Part 1 = {count_valid_ip(addr)}")
