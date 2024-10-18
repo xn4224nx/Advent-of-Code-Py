@@ -2,5 +2,5 @@ black
 numpy
 pandas
 pytest
-networkx
 matplotlib
+scipy
