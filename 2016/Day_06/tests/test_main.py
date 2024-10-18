@@ -7,7 +7,7 @@ from main import read_signal_data, find_vert_msg
 
 
 def test_read_signal_data():
-    assert read_signal_data("./data/example_01.txt") == np.array(
+    assert read_signal_data("./data/example_01.txt").all() == np.array(
         [
             ["e", "e", "d", "a", "d", "n"],
             ["d", "r", "v", "t", "e", "e"],
@@ -27,7 +27,7 @@ def test_read_signal_data():
             ["e", "n", "a", "r", "a", "r"],
         ],
         dtype="<U1",
-    )
+    ).all()
 
 
 def test_find_vert_msg_exp1():

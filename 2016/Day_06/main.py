@@ -17,13 +17,18 @@ PART 1: Given the recording in your puzzle input, what is the error-corrected
 """
 
 import numpy as np
+from scipy import stats
 
 
 def read_signal_data(file_path: str) -> np.array:
     """
     Load the corrupted signal data into a 2D numpy array of characters.
     """
-    pass
+    with open(file_path) as fp:
+        raw_signal = [line.strip() for line in fp.readlines()]
+
+    # Parse each line as an array of characters
+    return np.array(list(map(list, raw_signal)))
 
 
 def find_vert_msg(signals: np.array) -> str:
@@ -31,7 +36,17 @@ def find_vert_msg(signals: np.array) -> str:
     For each column find the modal character and return them all as a
     concaternated string.
     """
-    pass
+    msg = []
+
+    # Iterate over every column in the signals
+    for col_idx in range(signals.shape[1]):
+        vals, counts = np.unique(signals[:, col_idx], return_counts=True)
+
+        # Save the modal character for this column
+        msg.append(vals[np.argmax(counts)])
+
+    # Assemble the resulting message
+    return "".join(msg)
 
 
 if __name__ == "__main__":
