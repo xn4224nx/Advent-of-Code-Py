@@ -14,6 +14,18 @@ position.
 
 PART 1: Given the recording in your puzzle input, what is the error-corrected
         version of the message being sent?
+
+Of course, that would be the message - if you hadn't agreed to use a modified
+repetition code instead.
+
+In this modified code, the sender instead transmits what looks like random data,
+but for each character, the character they actually want to send is slightly
+less likely than the others. Even after signal-jamming noise, you can look at
+the letter distributions in each column and choose the least common letter to
+reconstruct the original message.
+
+PART 2: Given the recording in your puzzle input and this new decoding
+        methodology, what is the original message that Santa is trying to send?
 """
 
 import numpy as np
@@ -30,7 +42,7 @@ def read_signal_data(file_path: str) -> np.array:
     return np.array(list(map(list, raw_signal)))
 
 
-def find_vert_msg(signals: np.array) -> str:
+def find_vert_msg(signals: np.array, min_occur=False) -> str:
     """
     For each column find the modal character and return them all as a
     concaternated string.
@@ -42,7 +54,11 @@ def find_vert_msg(signals: np.array) -> str:
         vals, counts = np.unique(signals[:, col_idx], return_counts=True)
 
         # Save the modal character for this column
-        msg.append(vals[np.argmax(counts)])
+        if min_occur:
+            msg.append(vals[np.argmin(counts)])
+
+        else:
+            msg.append(vals[np.argmax(counts)])
 
     # Assemble the resulting message
     return "".join(msg)
@@ -51,3 +67,4 @@ def find_vert_msg(signals: np.array) -> str:
 if __name__ == "__main__":
     sig = read_signal_data("./data/input.txt")
     print(f"Part 1 = {find_vert_msg(sig)}")
+    print(f"Part 2 = {find_vert_msg(sig, True)}")
