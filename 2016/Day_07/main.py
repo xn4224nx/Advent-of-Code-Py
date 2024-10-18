@@ -14,13 +14,25 @@ which are contained by square brackets.
 PART 1: How many IPs in your puzzle input support TLS?
 """
 
+import re
+
 
 def read_ip_addresses(file_path: str) -> list[(str, str, str)]:
     """
     Read and parse an IP address file into a list of tuples of the
     three string parts of the address.
     """
-    pass
+    re_pat = r"([a-z]+)\[([a-z]+)\]([a-z]+)"
+    ip_adrs = []
+
+    with open(file_path) as fp:
+
+        # Extract the three parts of the ip address for each line
+        for line in fp.readlines():
+            parts = re.search(re_pat, line)
+            ip_adrs.append((parts.group(1), parts.group(2), parts.group(3)))
+
+    return ip_adrs
 
 
 def str_has_abba(ip_part: str) -> bool:
@@ -28,21 +40,36 @@ def str_has_abba(ip_part: str) -> bool:
     Determine if a part of an ip address is a pair of two different characters
     followed by the reverse of that pair.
     """
-    pass
+    for idx in range(3, len(ip_part)):
+
+        # Check to see that the first char equals the last and the two inside
+        # chars are equal and all four chars are not the same.
+        if (
+            ip_part[idx - 3] == ip_part[idx]
+            and ip_part[idx - 2] == ip_part[idx - 1]
+            and ip_part[idx] != ip_part[idx - 1]
+        ):
+            return True
+
+    # If the end of the string has been reached and no abba has been found.
+    else:
+        return False
 
 
-def supports_tls(ip_address: (str, str, str)) -> bool:
+def supports_tls(ip_addr: (str, str, str)) -> bool:
     """
     Does a supplied IP address support TLS?
     """
-    pass
+    return (str_has_abba(ip_addr[0]) or str_has_abba(ip_addr[2])) and not str_has_abba(
+        ip_addr[1]
+    )
 
 
 def count_valid_ip(all_ips: list[(str, str, str)]) -> int:
     """
     Count the number of IP addresses that support TLS.
     """
-    pass
+    return sum([supports_tls(x) for x in all_ips])
 
 
 if __name__ == "__main__":
