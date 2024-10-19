@@ -2,7 +2,15 @@
 Tests for the main script
 """
 
-from main import read_ip_addresses, str_has_abba, supports_tls, count_valid_ip
+from main import (
+    read_ip_addresses,
+    str_has_abba,
+    supports_tls,
+    count_valid_ip,
+    find_bab_grps,
+    supports_ssl,
+    count_valid_ssl,
+)
 
 
 def test_read_ip_addresses_exp1():
@@ -11,6 +19,15 @@ def test_read_ip_addresses_exp1():
         {"brack_txt": ["bddb"], "out_brack_txt": ["abcd", "xyyx"]},
         {"brack_txt": ["qwer"], "out_brack_txt": ["aaaa", "tyui"]},
         {"brack_txt": ["asdfgh"], "out_brack_txt": ["ioxxoj", "zxcvbn"]},
+    ]
+
+
+def test_read_ip_addresses_exp2():
+    assert read_ip_addresses("./data/example_02.txt") == [
+        {"brack_txt": ["bab"], "out_brack_txt": ["aba", "xyz"]},
+        {"brack_txt": ["xyx"], "out_brack_txt": ["xyx", "xyx"]},
+        {"brack_txt": ["kek"], "out_brack_txt": ["aaa", "eke"]},
+        {"brack_txt": ["bzb"], "out_brack_txt": ["zazbz", "cdb"]},
     ]
 
 
@@ -100,4 +117,50 @@ def test_count_valid_ip_exp1():
             ]
         )
         == 2
+    )
+
+
+def test_find_bab_grps_exp1():
+    assert find_bab_grps("aba") == ["aba"]
+
+
+def test_find_bab_grps_exp2():
+    assert find_bab_grps("aba", True) == ["bab"]
+
+
+def test_find_bab_grps_exp3():
+    assert find_bab_grps("zazbz", False) == ["zaz", "zbz"]
+
+
+def test_find_bab_grps_exp4():
+    assert find_bab_grps("zazbz", True) == ["aza", "bzb"]
+
+
+def test_suppports_ssl_exp1():
+    supports_ssl({"brack_txt": ["bab"], "out_brack_txt": ["aba", "xyz"]}) == True
+
+
+def test_suppports_ssl_exp2():
+    supports_ssl({"brack_txt": ["xyx"], "out_brack_txt": ["xyx", "xyx"]}) == False
+
+
+def test_suppports_ssl_exp3():
+    supports_ssl({"brack_txt": ["kek"], "out_brack_txt": ["aaa", "eke"]}) == True
+
+
+def test_suppports_ssl_exp4():
+    supports_ssl({"brack_txt": ["bzb"], "out_brack_txt": ["zazbz", "cdb"]}) == True
+
+
+def test_count_valid_ssl_exp1():
+    assert (
+        count_valid_ssl(
+            [
+                {"brack_txt": ["bab"], "out_brack_txt": ["aba", "xyz"]},
+                {"brack_txt": ["xyx"], "out_brack_txt": ["xyx", "xyx"]},
+                {"brack_txt": ["kek"], "out_brack_txt": ["aaa", "eke"]},
+                {"brack_txt": ["bzb"], "out_brack_txt": ["zazbz", "cdb"]},
+            ]
+        )
+        == 3
     )

@@ -12,10 +12,22 @@ abba. However, the IP also must not have an ABBA within any hypernet sequences,
 which are contained by square brackets.
 
 PART 1: How many IPs in your puzzle input support TLS?
+
+You would also like to know which IPs support SSL (super-secret listening).
+
+An IP supports SSL if it has an Area-Broadcast Accessor, or ABA, anywhere in
+the supernet sequences (outside any square bracketed sections), and a
+corresponding Byte Allocation Block, or BAB, anywhere in the hypernet
+sequences. An ABA is any three-character sequence which consists of the same
+character twice with a different character between them, such as xyx or aba. A
+corresponding BAB is the same characters but in reversed positions: yxy and
+bab, respectively.
+
+PART 2: How many IPs in your puzzle input support SSL?
 """
 
 
-def read_ip_addresses(file_path: str) -> list[dict[str:[str]]]:
+def read_ip_addresses(file_path: str) -> list[dict[str:str]]:
     """
     Read and parse an IP address file into a list of tuples of the
     three string parts of the address.
@@ -93,7 +105,7 @@ def str_has_abba(ip_part: str) -> bool:
         return False
 
 
-def supports_tls(ip_addr: dict[str:[str]]) -> bool:
+def supports_tls(ip_addr: dict[str:str]) -> bool:
     """
     Does a supplied IP address support TLS?
     """
@@ -113,11 +125,55 @@ def supports_tls(ip_addr: dict[str:[str]]) -> bool:
         return False
 
 
-def count_valid_ip(all_ips: list[(str, str, str)]) -> int:
+def count_valid_ip(all_ips: list[dict[str:str]]) -> int:
     """
     Count the number of IP addresses that support TLS.
     """
     return sum([supports_tls(x) for x in all_ips])
+
+
+def find_bab_grps(raw_addr: str, invert: bool = False) -> str:
+    """
+    Find the bab groups that exist in an address and return them one at a time.
+    """
+    grps = []
+
+    # Find the agroups in a part of an ip addresses
+    for idx in range(2, len(raw_addr)):
+        if raw_addr[idx] == raw_addr[idx - 2] and raw_addr[idx] != raw_addr[idx - 1]:
+
+            # Transform the bab groups to aba groups
+            if invert:
+                grps.append(raw_addr[idx - 1] + raw_addr[idx] + raw_addr[idx - 1])
+            else:
+                grps.append(raw_addr[idx - 2] + raw_addr[idx - 1] + raw_addr[idx])
+
+    return grps
+
+
+def supports_ssl(ip_addr: dict[str:str]) -> bool:
+    """
+    Determine if an ip address supports SSL by finding an aba group outside the
+    brackets and a bab group inside the brackets that are the inverse of each
+    other.
+    """
+    inter_grps = [x for xs in ip_addr["brack_txt"] for x in find_bab_grps(xs, False)]
+    exter_grps = [x for xs in ip_addr["out_brack_txt"] for x in find_bab_grps(xs, True)]
+
+    # Check if there are any matches
+    for grp_i in inter_grps:
+        for grp_e in exter_grps:
+            if grp_e == grp_i:
+                return True
+    else:
+        return False
+
+
+def count_valid_ssl(all_ips: list[dict[str:str]]) -> int:
+    """
+    Count the number of IP addresses that support SSL.
+    """
+    return sum([supports_ssl(x) for x in all_ips])
 
 
 if __name__ == "__main__":
