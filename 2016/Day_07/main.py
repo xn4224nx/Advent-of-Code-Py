@@ -179,3 +179,4 @@ def count_valid_ssl(all_ips: list[dict[str:str]]) -> int:
 if __name__ == "__main__":
     addr = read_ip_addresses("./data/input.txt")
     print(f"Part 1 = {count_valid_ip(addr)}")
+    print(f"Part 2 = {count_valid_ssl(addr)}")
