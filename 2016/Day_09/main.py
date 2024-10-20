@@ -26,7 +26,62 @@ def decompress_data(data_file: str) -> str:
     Take one sweep across the data file string and decompress it once according
     to the markers.
     """
-    pass
+    decomp = ""
+
+    with open(data_file) as fp:
+        initial = fp.read()
+
+    marker_active = False
+    marker_reading = False
+    marker_len = ""
+    marker_rep = ""
+    marker_dupli = ""
+
+    # Read the string line by line
+    for char in initial:
+        print(char)
+
+        if char.isspace():
+            pass
+
+        # Detect the start of a marker
+        elif not marker_active and char == "(":
+            marker_reading = True
+
+        # Detect the end of a marker
+        elif marker_reading and char == ")":
+            marker_reading = False
+            marker_active = True
+            marker_rep = int(marker_rep)
+
+        # Check for marker reading number changing
+        elif marker_reading and char == "x":
+            marker_len = int(marker_len)
+
+        # Parse the first marker values
+        elif marker_reading and type(marker_len) is str:
+            marker_len += char
+
+        # Parse the second marker values
+        elif marker_reading and type(marker_len) is int:
+            marker_rep += char
+
+        # Read the current char if a marker repetition is active
+        elif marker_active and marker_len > 0:
+            marker_dupli += char
+            marker_len -= 1
+
+            # Catch the end of a marker
+            if marker_len <= 0:
+                marker_active = False
+                decomp += marker_rep * marker_dupli
+                marker_len = ""
+                marker_rep = ""
+                marker_dupli = ""
+
+        # Read a normal character
+        else:
+            decomp += char
 
 
 if __name__ == "__main__":
