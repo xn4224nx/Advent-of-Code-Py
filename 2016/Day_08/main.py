@@ -36,6 +36,11 @@ on the back of the display tries to convince you, anyway.
 PART 1: There seems to be an intermediate check of the voltage used by the
         display: after you swipe your card, if the screen did work, how many
         pixels should be lit?
+
+You notice that the screen is only capable of displaying capital letters; in the
+font it uses, each letter is 5 pixels wide and 6 tall.
+
+PART 2: After you swipe your card, what code is the screen trying to display?
 """
 
 import numpy as np
@@ -140,4 +145,8 @@ class SecurityScreen:
 
 
 if __name__ == "__main__":
-    pass
+    door_auth = SecurityScreen((50, 6))
+    door_auth.read_instru("./data/input.txt")
+    door_auth.execute_all_instr()
+    print(f"Part 1 = {door_auth.count_on_pixels()}")
+    print(f"Part 2 = \n\n{door_auth.show_screen()}")
