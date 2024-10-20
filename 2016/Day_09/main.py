@@ -39,7 +39,6 @@ def decompress_data(data_file: str) -> str:
 
     # Read the string line by line
     for char in initial:
-        print(char)
 
         if char.isspace():
             pass
@@ -83,6 +82,7 @@ def decompress_data(data_file: str) -> str:
         else:
             decomp += char
 
+    return decomp
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {len(decompress_data('./data/input.txt'))}")
