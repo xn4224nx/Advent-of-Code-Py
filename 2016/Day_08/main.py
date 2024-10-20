@@ -39,36 +39,104 @@ PART 1: There seems to be an intermediate check of the voltage used by the
 """
 
 import numpy as np
+from collections import deque
+import re
 
 
 class SecurityScreen:
 
     def __init__(self, screen_size: (int, int)):
-        pass
+        # Define the screen and set every pixel as off
+        self.scrn = np.full(screen_size, False, dtype=bool)
+        self.instructs = []
 
     def read_instru(self, file_path):
-        pass
+        """
+        Open a file with screen change instructions and save a copy of the
+        raw lines into the class instance.
+        """
+        with open(file_path) as fp:
+            for line in fp.readlines():
+                self.instructs.append(line.strip())
 
     def turn_on_rect(self, A: int, B: int):
-        pass
+        """
+        Set a rectangle of the screen to be on, this rectangle starts from
+        the origin 0,0.
+        """
+        self.scrn[:A, :B] = True
 
     def rotate_row(self, A: int, B: int):
-        pass
+        """
+        Spin a row of the screen a set number of positions.
+        """
+        row = deque(self.scrn[:, A])
+
+        # Rotate the row
+        row.rotate(B)
+
+        # Set the new row
+        self.scrn[:, A] = row
 
     def rotate_col(self, A: int, B: int):
-        pass
+        """
+        Spin a column of the screen as set number of positions.
+        """
+        col = deque(self.scrn[A, :])
+
+        # Rotate the col
+        col.rotate(B)
+
+        # Set the new col
+        self.scrn[A, :] = col
 
     def show_screen(self) -> str:
-        pass
+        """
+        Return the screens current state as a string of . and #, where the
+        former is off and the latter is on. The coordinate 0,0 is in the top
+        left hand corner of the image.
+        """
+        screen = ""
 
-    def execute_instr(self, str):
-        pass
+        for x in range(self.scrn.shape[1]):
+            for y in range(self.scrn.shape[0]):
+                if self.scrn[y][x]:
+                    screen += "#"
+                else:
+                    screen += "."
+            screen += "\n"
+
+        return screen
+
+    def execute_instr(self, instr: str):
+        """
+        Take a string instruction and execute a method based on it.
+        """
+        nums = [int(x) for x in re.findall(r"[0-9]+", instr)]
+
+        if "rect" in instr:
+            self.turn_on_rect(nums[0], nums[1])
+
+        elif "rotate column" in instr:
+            self.rotate_col(nums[0], nums[1])
+
+        elif "rotate row" in instr:
+            self.rotate_row(nums[0], nums[1])
+        else:
+            raise Exception(f"Command '{instr}' not recognised!")
 
     def execute_all_instr(self):
-        pass
+        """
+        Execute all the string based instructions.
+        """
+        for instr in self.instructs:
+            self.execute_instr(instr)
 
     def count_on_pixels(self) -> int:
-        pass
+        """
+        Return the numerical count of the on pixels.
+        """
+        return np.sum(self.scrn)
 
 
 if __name__ == "__main__":
