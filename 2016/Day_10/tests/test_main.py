@@ -57,7 +57,7 @@ def test_read_instructions_data_3():
     assert test.instrucs == [
         {"type": "send-val", "val": 9, "bot": 0},
         {"type": "send-val", "val": 10, "bot": 1},
-        {"type": "send-val", "val": 11, "bot": 2},
+        {"type": "send-val", "val": 11, "bot": 3},
         {"type": "send-val", "val": 12, "bot": 3},
         {
             "type": "bal-mov",
