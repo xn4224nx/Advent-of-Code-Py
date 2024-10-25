@@ -108,11 +108,14 @@ class BalanceBots:
                     raise Exception(f"Line '{line}' could not be parsed!")
 
             # Define the bots and outputs as empty
-            self.bots = [[] for _ in range(max_bot)]
-            self.outputs = [[] for _ in range(max_output)]
+            self.bots = [[] for _ in range(max_bot + 1)]
+            self.outputs = [[] for _ in range(max_output + 1)]
 
     def send_val_to_bot(self, val: int, bot: int):
-        pass
+        """
+        Assign a value to a specific bot.
+        """
+        self.bots[bot].append(val)
 
     def balance_move(
         self,
@@ -122,7 +125,42 @@ class BalanceBots:
         high_dest_bot: bool,
         high_dest: int,
     ):
-        pass
+        """
+        Move the two two numbers from a bot, the highest one to one destination
+        and the lowest to another.
+        """
+        if len(self.bots[src_bot]) != 2:
+            return
+
+        val_0 = self.bots[src_bot][0]
+        val_1 = self.bots[src_bot][1]
+
+        # If the first is the smallest
+        if val_0 < val_1:
+            if low_dest_bot:
+                self.bots[low_dest].append(val_0)
+            else:
+                self.outputs[low_dest].append(val_0)
+
+            if high_dest_bot:
+                self.bots[high_dest].append(val_1)
+            else:
+                self.outputs[high_dest].append(val_1)
+
+        # Otherwise the second is smaller
+        else:
+            if low_dest_bot:
+                self.bots[low_dest].append(val_1)
+            else:
+                self.outputs[low_dest].append(val_1)
+
+            if high_dest_bot:
+                self.bots[high_dest].append(val_0)
+            else:
+                self.outputs[high_dest].append(val_0)
+
+        # Clear the source bot of its values
+        self.bots[src_bot] = []
 
     def find_comp_bot(self, val_0: int, val_1: int) -> int:
         pass

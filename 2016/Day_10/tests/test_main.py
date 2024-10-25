@@ -90,20 +90,7 @@ def test_send_val_to_bot_1():
     test = BalanceBots("./data/example_02.txt")
     test.execute_all_insrucs()
 
-    assert test.bots == [
-        [99],
-        [8],
-        [3],
-        [44],
-        [],
-        [7, 6],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [1, 2],
-    ]
+    assert test.bots == [[99], [8], [3], [44], [], [7, 6], [], [], [], [], [1, 2]]
 
 
 def test_send_val_to_bot_2():
@@ -119,86 +106,42 @@ def test_send_val_to_bot_2():
     test.send_val_to_bot(6, 5)
     test.send_val_to_bot(2, 10)
 
-    assert test.bots == [
-        [99],
-        [8],
-        [3],
-        [44],
-        [],
-        [7, 6],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [1, 2],
-    ]
+    assert test.bots == [[99], [8], [3], [44], [], [7, 6], [], [], [], [], [1, 2]]
 
 
 def test_send_val_to_bot_3():
     test = BalanceBots("./data/example_03.txt")
     test.execute_all_insrucs()
 
-    assert test.bots == [
-        [],
-        [],
-        [
-            11,
-            9,
-        ],
-        [],
-    ]
-
-    assert test.outputs == [
-        [
-            12,
-        ],
-        [
-            10,
-        ],
-    ]
+    assert test.bots == [[], [], [11, 9], []]
+    assert test.outputs == [[12], [10]]
 
 
 def test_send_val_to_bot_4():
     test = BalanceBots("")
+    test.bots = [[] for _ in range(4)]
+    test.outputs = [[] for _ in range(2)]
+
     test.send_val_to_bot(9, 0)
     test.send_val_to_bot(10, 1)
-    test.send_val_to_bot(11, 2)
+    test.send_val_to_bot(11, 3)
     test.send_val_to_bot(12, 3)
+
+    assert test.bots == [[9], [10], [], [11, 12]]
+
     test.balance_move(3, True, 1, True, 0)
     test.balance_move(1, False, 1, True, 2)
     test.balance_move(0, True, 2, False, 0)
 
-    assert test.bots == [
-        [],
-        [],
-        [
-            11,
-            9,
-        ],
-        [],
-    ]
-
-    assert test.outputs == [
-        [
-            12,
-        ],
-        [
-            10,
-        ],
-    ]
+    assert test.bots == [[], [], [11, 9], []]
+    assert test.outputs == [[12], [10]]
 
 
 def test_example_1():
     test = BalanceBots("./data/example_01.txt")
     test.execute_all_insrucs()
 
-    assert test.bots == [
-        [],
-        [],
-        [],
-    ]
-
+    assert test.bots == [[], [], []]
     assert test.outputs == [[5], [2], [3]]
 
 
