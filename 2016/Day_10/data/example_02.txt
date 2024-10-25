@@ -1,0 +1,8 @@
+value 99 goes to bot 0
+value 8 goes to bot 1
+value 3 goes to bot 2
+value 44 goes to bot 3
+value 7 goes to bot 5
+value 1 goes to bot 10
+value 6 goes to bot 5
+value 2 goes to bot 10
