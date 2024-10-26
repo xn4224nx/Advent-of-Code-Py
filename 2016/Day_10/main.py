@@ -219,4 +219,5 @@ class BalanceBots:
 
 
 if __name__ == "__main__":
-    pass
+    factory = BalanceBots("./data/input.txt")
+    print(f"Part 1 = {factory.find_comp_bot(61, 17)}")
