@@ -20,6 +20,9 @@ should do with its lower-value or higher-value chip.
 
 PART 1: Based on your instructions, what is the number of the bot that is
         responsible for comparing value-61 microchips with value-17 microchips?
+
+PART 2: What do you get if you multiply together the values of one chip in each of
+        outputs 0, 1, and 2?
 """
 
 import re
@@ -217,7 +220,11 @@ class BalanceBots:
         if val_0 is not None or val_1 is not None:
             raise Exception("Transaction not found!")
 
+        # Multiply together the values of outputs 0, 1, and 2 for Part 2.
+        return self.outputs[0][0] * self.outputs[1][0] * self.outputs[2][0]
+
 
 if __name__ == "__main__":
     factory = BalanceBots("./data/input.txt")
     print(f"Part 1 = {factory.find_comp_bot(61, 17)}")
+    print(f"Part 2 = {factory.find_comp_bot(None, None)}")
