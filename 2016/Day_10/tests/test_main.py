@@ -88,8 +88,7 @@ def test_read_instructions_data_3():
 
 def test_send_val_to_bot_1():
     test = BalanceBots("./data/example_02.txt")
-    test.execute_all_insrucs()
-
+    test.find_comp_bot(None, None)
     assert test.bots == [[99], [8], [3], [44], [], [7, 6], [], [], [], [], [1, 2]]
 
 
@@ -111,7 +110,7 @@ def test_send_val_to_bot_2():
 
 def test_send_val_to_bot_3():
     test = BalanceBots("./data/example_03.txt")
-    test.execute_all_insrucs()
+    test.find_comp_bot(None, None)
 
     assert test.bots == [[], [], [11, 9], []]
     assert test.outputs == [[12], [10]]
@@ -139,7 +138,7 @@ def test_send_val_to_bot_4():
 
 def test_example_1():
     test = BalanceBots("./data/example_01.txt")
-    test.execute_all_insrucs()
+    test.find_comp_bot(None, None)
 
     assert test.bots == [[], [], []]
     assert test.outputs == [[5], [2], [3]]
@@ -147,5 +146,9 @@ def test_example_1():
 
 def test_find_comp():
     test = BalanceBots("./data/example_01.txt")
-    assert test.find_comp_bot(5, 2) == 2
     assert test.find_comp_bot(2, 5) == 2
+
+
+def test_find_comp_reverse():
+    test = BalanceBots("./data/example_01.txt")
+    assert test.find_comp_bot(5, 2) == 2

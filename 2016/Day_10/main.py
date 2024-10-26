@@ -34,6 +34,8 @@ class BalanceBots:
         self.bots = []
         self.outputs = []
         self.instrucs = []
+        self.max_bot = None
+        self.outputs = None
 
         val_pat = re.compile(r"value ([0-9]+) goes to bot ([0-9]+)")
         bmv_pat = re.compile(
@@ -95,21 +97,21 @@ class BalanceBots:
                         # Check for greater bot or output indexes
                         if is_low_bot and low_dest > max_bot:
                             max_bot = low_dest
-                        elif low_dest > max_output:
+                        elif not is_low_bot and low_dest > max_output:
                             max_output = low_dest
 
                         if is_high_bot and high_dest > max_bot:
                             max_bot = high_dest
-                        elif high_dest > max_output:
+                        elif not is_high_bot and high_dest > max_output:
                             max_output = high_dest
 
                         continue
 
                     raise Exception(f"Line '{line}' could not be parsed!")
 
-            # Define the bots and outputs as empty
-            self.bots = [[] for _ in range(max_bot + 1)]
-            self.outputs = [[] for _ in range(max_output + 1)]
+            # Save the maximums found
+            self.max_bot = max_bot
+            self.max_output = max_output
 
     def send_val_to_bot(self, val: int, bot: int):
         """
@@ -126,7 +128,7 @@ class BalanceBots:
         high_dest: int,
     ):
         """
-        Move the two two numbers from a bot, the highest one to one destination
+        Move the two numbers from a bot, the highest to one destination
         and the lowest to another.
         """
         if len(self.bots[src_bot]) != 2:
@@ -163,10 +165,57 @@ class BalanceBots:
         self.bots[src_bot] = []
 
     def find_comp_bot(self, val_0: int, val_1: int) -> int:
-        pass
+        """
+        Execute all the instructions and find the number of the bot that
+        is responsible for comparing the two values; val_0 and val_1.
+        """
+        # Define the bots and outputs as empty
+        self.bots = [[] for _ in range(self.max_bot + 1)]
+        self.outputs = [[] for _ in range(self.max_output + 1)]
 
-    def execute_all_insrucs(self):
-        pass
+        # Keep a record of the instructions that have been used
+        used_instr = [False for _ in range(len(self.instrucs))]
+
+        # Execute the assignment instructions
+        for idx, instr in enumerate(self.instrucs):
+            if instr["type"] == "send-val":
+                self.send_val_to_bot(instr["val"], instr["bot"])
+                used_instr[idx] = True
+
+        # Try and execute instructions until none are left
+        while False in used_instr:
+
+            # Iterate over all the instructions in order
+            for idx, instr in enumerate(self.instrucs):
+
+                # If the instruction has been used skip it
+                if used_instr[idx]:
+                    continue
+
+                # Check the bot only has two values
+                if len(self.bots[instr["src-bot"]]) != 2:
+                    continue
+
+                # Check for the comparison
+                if val_0 is not None or val_1 is not None:
+                    if self.bots[instr["src-bot"]] == [val_0, val_1] or self.bots[
+                        instr["src-bot"]
+                    ] == [val_1, val_0]:
+                        return instr["src-bot"]
+
+                self.balance_move(
+                    instr["src-bot"],
+                    instr["low-bot"],
+                    instr["low-dest"],
+                    instr["high-bot"],
+                    instr["high-dest"],
+                )
+
+                used_instr[idx] = True
+
+        # Only crash if the numbers were not provided
+        if val_0 is not None or val_1 is not None:
+            raise Exception("Transaction not found!")
 
 
 if __name__ == "__main__":
