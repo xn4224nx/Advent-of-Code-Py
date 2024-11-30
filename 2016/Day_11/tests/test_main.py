@@ -20,12 +20,35 @@ def test_valid_moves_0():
 
     assert set(test_build.determine_valid_moves()) == set(
         [
-            {"E": 1, "HG": 1, "HM": 0, "LG": 0, "LM": 0},
             {"E": 1, "HG": 0, "HM": 1, "LG": 0, "LM": 0},
-            {"E": 1, "HG": 0, "HM": 0, "LG": 1, "LM": 0},
             {"E": 1, "HG": 0, "HM": 0, "LG": 0, "LM": 1},
-            {"E": 1, "HG": 0, "HM": 0, "LG": 1, "LM": 1},
+            {"E": 1, "HG": 0, "HM": 1, "LG": 0, "LM": 1},
             {"E": 1, "HG": 1, "HM": 0, "LG": 1, "LM": 0},
+            {"E": 1, "HG": 1, "HM": 1, "LG": 0, "LM": 0},
+            {"E": 1, "HG": 0, "HM": 0, "LG": 1, "LM": 1},
+        ]
+    )
+
+
+def test_valid_moves_1():
+    test_build = RTGMover("")
+    test_build.max_floor = 3
+    test_build.state = {"E": 1, "HG": 1, "HM": 1, "LG": 1, "LM": 1}
+
+    assert set(test_build.determine_valid_moves()) == set(
+        [
+            {"E": 2, "HG": 1, "HM": 2, "LG": 1, "LM": 1},
+            {"E": 2, "HG": 1, "HM": 1, "LG": 1, "LM": 2},
+            {"E": 2, "HG": 1, "HM": 2, "LG": 1, "LM": 2},
+            {"E": 2, "HG": 2, "HM": 1, "LG": 2, "LM": 1},
+            {"E": 2, "HG": 2, "HM": 2, "LG": 1, "LM": 1},
+            {"E": 2, "HG": 1, "HM": 1, "LG": 2, "LM": 2},
+            {"E": 0, "HG": 1, "HM": 0, "LG": 1, "LM": 1},
+            {"E": 0, "HG": 1, "HM": 1, "LG": 1, "LM": 0},
+            {"E": 0, "HG": 1, "HM": 0, "LG": 1, "LM": 0},
+            {"E": 0, "HG": 0, "HM": 1, "LG": 0, "LM": 1},
+            {"E": 0, "HG": 0, "HM": 0, "LG": 1, "LM": 1},
+            {"E": 0, "HG": 1, "HM": 1, "LG": 0, "LM": 0},
         ]
     )
 
