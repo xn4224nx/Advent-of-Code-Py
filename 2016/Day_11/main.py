@@ -52,6 +52,8 @@ PART 1: In your situation, what is the minimum number of steps required to
         bring all of the objects to the fourth floor?
 """
 
+import re
+
 
 class RTGMover:
     """
@@ -60,7 +62,23 @@ class RTGMover:
     """
 
     def __init__(self, data_file: str):
-        pass
+        self.data_file = data_file
+        self.state = {"E": 0}
+        self.max_floor = 0
+
+        # If the file exists iterate over it line by line
+        if self.data_file != "":
+            with open(self.data_file) as fp:
+                for idx, line in enumerate(fp):
+                    self.max_floor = idx
+
+                    # Find all the generators in the line
+                    for gen in re.findall(r"(\w+) generator", line):
+                        self.state[gen[0].upper() + "G"] = idx
+
+                    # Find all the microchips in the line
+                    for micr in re.findall(r"(\w+)-compatible microchip", line):
+                        self.state[micr[0].upper() + "M"] = idx
 
     def determine_valid_moves(self) -> list[dict[str, int]]:
         """
