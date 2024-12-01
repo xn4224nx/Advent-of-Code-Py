@@ -88,9 +88,28 @@ class RTGMover:
 
     def is_state_valid(self, state: dict[str, int]) -> bool:
         """
-        Determine if a state could be valid.
+        Determine if a state could be valid. This is primaraly done by ensuring
+        that no microchip is on a level with another generator unless its
+        matching one is on the same level.
         """
-        pass
+        for obj, level in state.items():
+            if obj == "E" or obj[1] == "G":
+                continue
+
+            # Check if a microchip is protected by its counterpart
+            if state[obj[0] + "G"] == level:
+                continue
+
+            # Otherwise check if another generator is on the same level
+            for obj_2, level_2 in state.items():
+                if obj_2 == "E" or obj_2[1] == "M":
+                    continue
+
+                if obj_2[1] == "G" and level_2 == level:
+                    return False
+
+        # If none of the microchips got fried this state is valid
+        return True
 
     def solve(self) -> int:
         """
