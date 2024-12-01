@@ -165,7 +165,7 @@ def test_solver():
 
 def test_show_0():
     test_build = RTGMover("")
-    test_build.state == {"E": 0, "HG": 1, "HM": 0, "LG": 2, "LM": 0}
+    test_build.state = {"E": 0, "HG": 1, "HM": 0, "LG": 2, "LM": 0}
     test_build.max_floor = 3
 
     assert test_build.show() == (
@@ -178,7 +178,7 @@ def test_show_0():
 
 def test_show_1():
     test_build = RTGMover("")
-    test_build.state == {"E": 1, "HG": 1, "HM": 1, "LG": 2, "LM": 0}
+    test_build.state = {"E": 1, "HG": 1, "HM": 1, "LG": 2, "LM": 0}
     test_build.max_floor = 3
 
     assert test_build.show() == (
@@ -191,7 +191,7 @@ def test_show_1():
 
 def test_show_2():
     test_build = RTGMover("")
-    test_build.state == {"E": 2, "HG": 2, "HM": 2, "LG": 2, "LM": 0}
+    test_build.state = {"E": 2, "HG": 2, "HM": 2, "LG": 2, "LM": 0}
     test_build.max_floor = 3
 
     assert test_build.show() == (
@@ -204,7 +204,7 @@ def test_show_2():
 
 def test_show_3():
     test_build = RTGMover("")
-    test_build.state == {"E": 1, "HG": 2, "HM": 1, "LG": 2, "LM": 0}
+    test_build.state = {"E": 1, "HG": 2, "HM": 1, "LG": 2, "LM": 0}
     test_build.max_floor = 3
 
     assert test_build.show() == (
@@ -217,7 +217,7 @@ def test_show_3():
 
 def test_show_4():
     test_build = RTGMover("")
-    test_build.state == {"E": 0, "HG": 2, "HM": 0, "LG": 2, "LM": 0}
+    test_build.state = {"E": 0, "HG": 2, "HM": 0, "LG": 2, "LM": 0}
     test_build.max_floor = 3
 
     assert test_build.show() == (
@@ -230,7 +230,7 @@ def test_show_4():
 
 def test_show_5():
     test_build = RTGMover("")
-    test_build.state == {"E": 1, "HG": 2, "HM": 1, "LG": 2, "LM": 1}
+    test_build.state = {"E": 1, "HG": 2, "HM": 1, "LG": 2, "LM": 1}
     test_build.max_floor = 3
 
     assert test_build.show() == (
@@ -243,7 +243,7 @@ def test_show_5():
 
 def test_show_6():
     test_build = RTGMover("")
-    test_build.state == {"E": 2, "HG": 2, "HM": 2, "LG": 2, "LM": 2}
+    test_build.state = {"E": 2, "HG": 2, "HM": 2, "LG": 2, "LM": 2}
     test_build.max_floor = 3
 
     assert test_build.show() == (
@@ -256,7 +256,7 @@ def test_show_6():
 
 def test_show_7():
     test_build = RTGMover("")
-    test_build.state == {"E": 3, "HG": 2, "HM": 3, "LG": 2, "LM": 3}
+    test_build.state = {"E": 3, "HG": 2, "HM": 3, "LG": 2, "LM": 3}
     test_build.max_floor = 3
 
     assert test_build.show() == (
@@ -269,7 +269,7 @@ def test_show_7():
 
 def test_show_8():
     test_build = RTGMover("")
-    test_build.state == {"E": 2, "HG": 2, "HM": 2, "LG": 2, "LM": 3}
+    test_build.state = {"E": 2, "HG": 2, "HM": 2, "LG": 2, "LM": 3}
     test_build.max_floor = 3
 
     assert test_build.show() == (
@@ -282,7 +282,7 @@ def test_show_8():
 
 def test_show_9():
     test_build = RTGMover("")
-    test_build.state == {"E": 3, "HG": 3, "HM": 2, "LG": 3, "LM": 3}
+    test_build.state = {"E": 3, "HG": 3, "HM": 2, "LG": 3, "LM": 3}
     test_build.max_floor = 3
 
     assert test_build.show() == (
@@ -295,7 +295,7 @@ def test_show_9():
 
 def test_show_10():
     test_build = RTGMover("")
-    test_build.state == {"E": 2, "HG": 3, "HM": 2, "LG": 3, "LM": 2}
+    test_build.state = {"E": 2, "HG": 3, "HM": 2, "LG": 3, "LM": 2}
     test_build.max_floor = 3
 
     assert test_build.show() == (
@@ -308,7 +308,7 @@ def test_show_10():
 
 def test_show_11():
     test_build = RTGMover("")
-    test_build.state == {"E": 3, "HG": 3, "HM": 3, "LG": 3, "LM": 3}
+    test_build.state = {"E": 3, "HG": 3, "HM": 3, "LG": 3, "LM": 3}
     test_build.max_floor = 3
 
     assert test_build.show() == (

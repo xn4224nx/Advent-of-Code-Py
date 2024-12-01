@@ -122,7 +122,34 @@ class RTGMover:
         """
         Return a string representation of the current state of the building
         """
-        pass
+        result = ""
+
+        # Iterate from the top floor to the lowest
+        for idx in range(self.max_floor, -1, -1):
+
+            # Add in the level details
+            result += f"F{idx+1} "
+
+            # Add in the elevator if it exists
+            if self.state["E"] == idx:
+                result += "E  "
+            else:
+                result += ".  "
+
+            # Add in the objects that are in
+            for obj, level in sorted(self.state.items()):
+                if obj == "E":
+                    continue
+
+                if level == idx:
+                    result += f"{obj} "
+                else:
+                    result += ".  "
+
+            # Add in the new line
+            result += "\n"
+
+        return result
 
 
 if __name__ == "__main__":
