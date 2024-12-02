@@ -18,16 +18,25 @@ def test_valid_moves_0():
     test_build.max_floor = 3
     test_build.state = {"E": 0, "HG": 0, "HM": 0, "LG": 0, "LM": 0}
 
-    assert set(test_build.determine_valid_moves()) == set(
-        [
-            {"E": 1, "HG": 0, "HM": 1, "LG": 0, "LM": 0},
-            {"E": 1, "HG": 0, "HM": 0, "LG": 0, "LM": 1},
-            {"E": 1, "HG": 0, "HM": 1, "LG": 0, "LM": 1},
-            {"E": 1, "HG": 1, "HM": 0, "LG": 1, "LM": 0},
-            {"E": 1, "HG": 1, "HM": 1, "LG": 0, "LM": 0},
-            {"E": 1, "HG": 0, "HM": 0, "LG": 1, "LM": 1},
-        ]
-    )
+    test_viable_mvs = test_build.determine_valid_moves()
+    true_viable_mvs = [
+        {"E": 1, "HG": 0, "HM": 1, "LG": 0, "LM": 0},
+        {"E": 1, "HG": 0, "HM": 0, "LG": 0, "LM": 1},
+        {"E": 1, "HG": 0, "HM": 1, "LG": 0, "LM": 1},
+        {"E": 1, "HG": 1, "HM": 0, "LG": 1, "LM": 0},
+        {"E": 1, "HG": 1, "HM": 1, "LG": 0, "LM": 0},
+        {"E": 1, "HG": 0, "HM": 0, "LG": 1, "LM": 1},
+    ]
+
+    assert len(test_viable_mvs) == len(true_viable_mvs)
+
+    # Assert that every new viable state is in the true set
+    for ts_state in test_viable_mvs:
+        assert ts_state in true_viable_mvs
+
+    # Assert that every true state is in the test set
+    for tr_state in true_viable_mvs:
+        assert tr_state in test_viable_mvs
 
 
 def test_valid_moves_1():
@@ -35,22 +44,31 @@ def test_valid_moves_1():
     test_build.max_floor = 3
     test_build.state = {"E": 1, "HG": 1, "HM": 1, "LG": 1, "LM": 1}
 
-    assert set(test_build.determine_valid_moves()) == set(
-        [
-            {"E": 2, "HG": 1, "HM": 2, "LG": 1, "LM": 1},
-            {"E": 2, "HG": 1, "HM": 1, "LG": 1, "LM": 2},
-            {"E": 2, "HG": 1, "HM": 2, "LG": 1, "LM": 2},
-            {"E": 2, "HG": 2, "HM": 1, "LG": 2, "LM": 1},
-            {"E": 2, "HG": 2, "HM": 2, "LG": 1, "LM": 1},
-            {"E": 2, "HG": 1, "HM": 1, "LG": 2, "LM": 2},
-            {"E": 0, "HG": 1, "HM": 0, "LG": 1, "LM": 1},
-            {"E": 0, "HG": 1, "HM": 1, "LG": 1, "LM": 0},
-            {"E": 0, "HG": 1, "HM": 0, "LG": 1, "LM": 0},
-            {"E": 0, "HG": 0, "HM": 1, "LG": 0, "LM": 1},
-            {"E": 0, "HG": 0, "HM": 0, "LG": 1, "LM": 1},
-            {"E": 0, "HG": 1, "HM": 1, "LG": 0, "LM": 0},
-        ]
-    )
+    test_viable_mvs = test_build.determine_valid_moves()
+    true_viable_mvs = [
+        {"E": 2, "HG": 1, "HM": 2, "LG": 1, "LM": 1},
+        {"E": 2, "HG": 1, "HM": 1, "LG": 1, "LM": 2},
+        {"E": 2, "HG": 1, "HM": 2, "LG": 1, "LM": 2},
+        {"E": 2, "HG": 2, "HM": 1, "LG": 2, "LM": 1},
+        {"E": 2, "HG": 2, "HM": 2, "LG": 1, "LM": 1},
+        {"E": 2, "HG": 1, "HM": 1, "LG": 2, "LM": 2},
+        {"E": 0, "HG": 1, "HM": 0, "LG": 1, "LM": 1},
+        {"E": 0, "HG": 1, "HM": 1, "LG": 1, "LM": 0},
+        {"E": 0, "HG": 1, "HM": 0, "LG": 1, "LM": 0},
+        {"E": 0, "HG": 0, "HM": 1, "LG": 0, "LM": 1},
+        {"E": 0, "HG": 0, "HM": 0, "LG": 1, "LM": 1},
+        {"E": 0, "HG": 1, "HM": 1, "LG": 0, "LM": 0},
+    ]
+
+    assert len(test_viable_mvs) == len(true_viable_mvs)
+
+    # Assert that every new viable state is in the true set
+    for ts_state in test_viable_mvs:
+        assert ts_state in true_viable_mvs
+
+    # Assert that every true state is in the test set
+    for tr_state in true_viable_mvs:
+        assert tr_state in test_viable_mvs
 
 
 def test_is_state_valid_0():

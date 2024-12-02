@@ -53,6 +53,7 @@ PART 1: In your situation, what is the minimum number of steps required to
 """
 
 import re
+from itertools import combinations
 
 
 class RTGMover:
@@ -80,12 +81,6 @@ class RTGMover:
                     for micr in re.findall(r"(\w+)-compatible microchip", line):
                         self.state[micr[0].upper() + "M"] = idx
 
-    def determine_valid_moves(self) -> list[dict[str, int]]:
-        """
-        Provide a list of the next possible states the instance could be in.
-        """
-        pass
-
     def is_state_valid(self, state: dict[str, int]) -> bool:
         """
         Determine if a state could be valid. This is primaraly done by ensuring
@@ -110,6 +105,68 @@ class RTGMover:
 
         # If none of the microchips got fried this state is valid
         return True
+
+    def determine_valid_moves(self) -> list[dict[str, int]]:
+        """
+        Provide a list of the next possible states the instance could be in.
+        """
+        new_positions = []
+        pos_objs = [x for x in self.state.keys() if x != "E"]
+
+        # Create one item shift up or down
+        for obj in combinations(pos_objs, 1):
+            obj = obj[0]
+
+            # An object needs to be on the same floor as the elevator
+            if self.state[obj] != self.state["E"]:
+                continue
+
+            # A move down
+            if self.state[obj] > 0:
+                new_state = self.state.copy()
+                new_state[obj] -= 1
+                new_state["E"] -= 1
+
+                if self.is_state_valid(new_state):
+                    new_positions.append(new_state)
+
+            # A move up
+            if self.state[obj] < self.max_floor:
+                new_state = self.state.copy()
+                new_state[obj] += 1
+                new_state["E"] += 1
+
+                if self.is_state_valid(new_state):
+                    new_positions.append(new_state)
+
+        # Create two items shift up or down
+        for obj_0, obj_1 in combinations(pos_objs, 2):
+
+            # Ensure both objects and the elevator are on the same floor
+            if self.state[obj_0] == self.state["E"] == self.state[obj_1]:
+
+                # A double up move
+                if self.state[obj_0] > 0:
+                    new_state = self.state.copy()
+                    new_state[obj_0] -= 1
+                    new_state[obj_1] -= 1
+                    new_state["E"] -= 1
+
+                    if self.is_state_valid(new_state):
+                        new_positions.append(new_state)
+
+                # A double down move
+                if self.state[obj_0] < self.max_floor:
+                    new_state = self.state.copy()
+                    new_state[obj_0] += 1
+                    new_state[obj_1] += 1
+                    new_state["E"] += 1
+
+                    if self.is_state_valid(new_state):
+                        new_positions.append(new_state)
+        print(new_positions)
+
+        return new_positions
 
     def solve(self) -> int:
         """
