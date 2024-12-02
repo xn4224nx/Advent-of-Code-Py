@@ -54,6 +54,8 @@ PART 1: In your situation, what is the minimum number of steps required to
 
 import re
 from itertools import combinations
+import sys
+import random
 
 
 class RTGMover:
@@ -164,16 +166,8 @@ class RTGMover:
 
                     if self.is_state_valid(new_state):
                         new_positions.append(new_state)
-        print(new_positions)
 
         return new_positions
-
-    def solve(self) -> int:
-        """
-        Find the minimum number of moves to transfer all the objects to the
-        top floor.
-        """
-        pass
 
     def show(self) -> str:
         """
@@ -207,6 +201,58 @@ class RTGMover:
             result += "\n"
 
         return result
+
+    def avg_state_height(self, state) -> float:
+        """
+        Calculate the average height of each object in the state.
+        """
+        return sum(state.values()) / len(state.values())
+
+    def solve(self) -> int:
+        """
+        Find the minimum number of moves to transfer all the objects to the
+        top floor.
+        """
+        curr_min_mvs = sys.maxsize
+        start_state = self.state
+        num_iters = 1_000_000
+
+        for _ in range(num_iters):
+            tmp_mv_cnt = 0
+            self.state = start_state
+
+            # Iterate until a solution is reached or there are no possible moves
+            while True:
+
+                # Find the next possible states
+                nxt_states = self.determine_valid_moves()
+
+                # Check there are possible states
+                if not nxt_states:
+                    break
+
+                # Pick a random state and apply it
+                self.state = random.choice(nxt_states)
+                tmp_mv_cnt += 1
+
+                # Check to see if all the objects are on the top floor
+                for obj, level in self.state.items():
+                    if level != self.max_floor:
+                        break
+
+                # If this point is reached a solution has been found
+                else:
+                    if tmp_mv_cnt < curr_min_mvs:
+                        print(f"New minimum found {tmp_mv_cnt}")
+                        curr_min_mvs = tmp_mv_cnt
+                    break
+
+                # Make sure this run doesn't go over the length of an already
+                # existing record.
+                if tmp_mv_cnt >= curr_min_mvs:
+                    break
+
+        return curr_min_mvs
 
 
 if __name__ == "__main__":
