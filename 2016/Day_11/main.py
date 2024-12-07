@@ -50,6 +50,23 @@ first floor.
 
 PART 1: In your situation, what is the minimum number of steps required to
         bring all of the objects to the fourth floor?
+
+You step into the cleanroom separating the lobby from the isolated area and put
+on the hazmat suit.
+
+Upon entering the isolated containment area, however, you notice some extra
+parts on the first floor that weren't listed on the record outside:
+
+    -   An elerium generator.
+    -   An elerium-compatible microchip.
+    -   A dilithium generator.
+    -   A dilithium-compatible microchip.
+
+These work just like the other generators and microchips. You'll have to get
+them up to assembly as well.
+
+PART 2: What is the minimum number of steps required to bring all of the
+        objects, including these four new ones, to the fourth floor?
 """
 
 import re
@@ -64,7 +81,7 @@ class RTGMover:
     and generators to the top floor.
     """
 
-    def __init__(self, data_file: str):
+    def __init__(self, data_file: str, extra_ele=False):
         self.data_file = data_file
         self.max_floor = 0
 
@@ -85,6 +102,13 @@ class RTGMover:
                     # Find all the microchips in the line
                     for micr_nm in re.findall(r"(\w+)-compatible microchip", line):
                         micrs[micr_nm] = idx
+
+            #  Extra parts on the first floor
+            if extra_ele:
+                micrs["elerium"] = 0
+                gens["elerium"] = 0
+                micrs["dilithium"] = 0
+                gens["dilithium"] = 0
 
             # Construct the state tuple
             g_state = []
@@ -276,3 +300,6 @@ class RTGMover:
 if __name__ == "__main__":
     facility = RTGMover("./data/input.txt")
     print(f"Part 1 = {facility.solve_bfs()}")
+
+    ex_facility = RTGMover("./data/input.txt", True)
+    print(f"Part 2 = {ex_facility.solve_bfs()}")
