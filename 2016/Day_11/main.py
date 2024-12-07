@@ -66,106 +66,111 @@ class RTGMover:
 
     def __init__(self, data_file: str):
         self.data_file = data_file
-        self.state = {"E": 0}
         self.max_floor = 0
 
         # If the file exists iterate over it line by line
         if self.data_file != "":
+            micrs = {}
+            gens = {}
+
+            # Find the key parts of the data file
             with open(self.data_file) as fp:
                 for idx, line in enumerate(fp):
                     self.max_floor = idx
 
                     # Find all the generators in the line
-                    for gen in re.findall(r"(\w+) generator", line):
-                        self.state[gen[0].upper() + "G"] = idx
+                    for gen_nm in re.findall(r"(\w+) generator", line):
+                        gens[gen_nm] = idx
 
                     # Find all the microchips in the line
-                    for micr in re.findall(r"(\w+)-compatible microchip", line):
-                        self.state[micr[0].upper() + "M"] = idx
+                    for micr_nm in re.findall(r"(\w+)-compatible microchip", line):
+                        micrs[micr_nm] = idx
 
-    def is_state_valid(self, state: dict[str, int]) -> bool:
+            # Construct the state tuple
+            g_state = []
+            m_state = []
+            self.names = []
+
+            for element in sorted(gens.keys()):
+                g_state.append(int(gens[element]))
+                m_state.append(int(micrs[element]))
+                self.names.append(element)
+
+            self.state = [0] + g_state + m_state
+            self.num_ele = int((len(self.state) - 1) / 2)
+
+    def is_state_valid(self, state: list[int]) -> bool:
         """
         Determine if a state could be valid. This is primaraly done by ensuring
         that no microchip is on a level with another generator unless its
         matching one is on the same level.
         """
-        for obj, level in state.items():
-            if obj == "E" or obj[1] == "G":
+        for ele_idx in range(self.num_ele):
+
+            # microchips and generators on the same level are safe
+            if state[ele_idx + 1] == state[ele_idx + self.num_ele + 1]:
                 continue
 
-            # Check if a microchip is protected by its counterpart
-            if state[obj[0] + "G"] == level:
-                continue
-
-            # Otherwise check if another generator is on the same level
-            for obj_2, level_2 in state.items():
-                if obj_2 == "E" or obj_2[1] == "M":
-                    continue
-
-                if obj_2[1] == "G" and level_2 == level:
+            # Otherwise check no other generator is on the same level
+            for gen_lvl in state[1 : self.num_ele + 1]:
+                if gen_lvl == state[ele_idx + self.num_ele + 1]:
                     return False
 
-        # If none of the microchips got fried this state is valid
         return True
 
-    def determine_valid_moves(self) -> list[dict[str, int]]:
+    def determine_valid_moves(self) -> list[str]:
         """
         Provide a list of the next possible states the instance could be in.
         """
         new_positions = []
-        pos_objs = [x for x in self.state.keys() if x != "E"]
 
         # Create one item shift up or down
-        for obj in combinations(pos_objs, 1):
-            obj = obj[0]
+        for idx in range(1, len(self.state)):
 
-            # An object needs to be on the same floor as the elevator
-            if self.state[obj] != self.state["E"]:
+            # Check the elevator is on the same level
+            if self.state[idx] != self.state[0]:
                 continue
 
-            # A move down
-            if self.state[obj] > 0:
-                new_state = self.state.copy()
-                new_state[obj] -= 1
-                new_state["E"] -= 1
+            # Move down
+            if self.state[idx] > 0:
+                tmp_state = self.state.copy()
+                tmp_state[0] -= 1
+                tmp_state[idx] -= 1
+                if self.is_state_valid(tmp_state):
+                    new_positions.append(tmp_state)
 
-                if self.is_state_valid(new_state):
-                    new_positions.append(new_state)
-
-            # A move up
-            if self.state[obj] < self.max_floor:
-                new_state = self.state.copy()
-                new_state[obj] += 1
-                new_state["E"] += 1
-
-                if self.is_state_valid(new_state):
-                    new_positions.append(new_state)
+            # Move up
+            if self.state[idx] < self.max_floor:
+                tmp_state = self.state.copy()
+                tmp_state[0] += 1
+                tmp_state[idx] += 1
+                if self.is_state_valid(tmp_state):
+                    new_positions.append(tmp_state)
 
         # Create two items shift up or down
-        for obj_0, obj_1 in combinations(pos_objs, 2):
+        for idx_0, idx_1 in combinations([x for x in range(1, len(self.state))], 2):
 
-            # Ensure both objects and the elevator are on the same floor
-            if self.state[obj_0] == self.state["E"] == self.state[obj_1]:
+            # Check the elevator is on the same level as both elements
+            if self.state[idx_0] != self.state[0] or self.state[idx_1] != self.state[0]:
+                continue
 
-                # A double up move
-                if self.state[obj_0] > 0:
-                    new_state = self.state.copy()
-                    new_state[obj_0] -= 1
-                    new_state[obj_1] -= 1
-                    new_state["E"] -= 1
+            # Move down
+            if self.state[idx_0] > 0:
+                tmp_state = self.state.copy()
+                tmp_state[0] -= 1
+                tmp_state[idx_0] -= 1
+                tmp_state[idx_1] -= 1
+                if self.is_state_valid(tmp_state):
+                    new_positions.append(tmp_state)
 
-                    if self.is_state_valid(new_state):
-                        new_positions.append(new_state)
-
-                # A double down move
-                if self.state[obj_0] < self.max_floor:
-                    new_state = self.state.copy()
-                    new_state[obj_0] += 1
-                    new_state[obj_1] += 1
-                    new_state["E"] += 1
-
-                    if self.is_state_valid(new_state):
-                        new_positions.append(new_state)
+            # Move up
+            if self.state[idx_0] < self.max_floor:
+                tmp_state = self.state.copy()
+                tmp_state[0] += 1
+                tmp_state[idx_0] += 1
+                tmp_state[idx_1] += 1
+                if self.is_state_valid(tmp_state):
+                    new_positions.append(tmp_state)
 
         return new_positions
 
@@ -182,18 +187,23 @@ class RTGMover:
             result += f"F{idx+1} "
 
             # Add in the elevator if it exists
-            if self.state["E"] == idx:
+            if self.state[0] == idx:
                 result += "E  "
             else:
                 result += ".  "
 
-            # Add in the objects that are in
-            for obj, level in sorted(self.state.items()):
-                if obj == "E":
-                    continue
+            # Complete each element in turn
+            for ele_idx, ele_name in enumerate(self.names):
 
-                if level == idx:
-                    result += f"{obj} "
+                # Lookup the generator
+                if self.state[1 + ele_idx] == idx:
+                    result += f"{ele_name.upper()[0]}G "
+                else:
+                    result += ".  "
+
+                # Lookup the microchip
+                if self.state[1 + ele_idx + self.num_ele] == idx:
+                    result += f"{ele_name.upper()[0]}M "
                 else:
                     result += ".  "
 
@@ -202,58 +212,57 @@ class RTGMover:
 
         return result
 
-    def avg_state_height(self, state) -> float:
+    def overall_level(self) -> int:
         """
-        Calculate the average height of each object in the state.
+        Calculate the total level of the elements in the levels
         """
-        return sum(state.values()) / len(state.values())
+        return sum(self.state)
 
     def solve(self) -> int:
         """
         Find the minimum number of moves to transfer all the objects to the
         top floor.
         """
-        curr_min_mvs = sys.maxsize
         start_state = self.state
         num_iters = 1_000_000
+        max_moves = 1000
+        old_level = 0
 
-        for _ in range(num_iters):
-            tmp_mv_cnt = 0
-            self.state = start_state
+        # Test minumum move length from one till the maximum
+        for curr_max_move in range(10, max_moves + 1):
 
-            # Iterate until a solution is reached or there are no possible moves
-            while True:
+            # Try random moves
+            for idx in range(num_iters):
+                self.state = start_state
 
-                # Find the next possible states
-                nxt_states = self.determine_valid_moves()
+                for move_idx in range(curr_max_move):
 
-                # Check there are possible states
-                if not nxt_states:
-                    break
+                    # Find the next possible states
+                    nxt_states = self.determine_valid_moves()
 
-                # Pick a random state and apply it
-                self.state = random.choice(nxt_states)
-                tmp_mv_cnt += 1
-
-                # Check to see if all the objects are on the top floor
-                for obj, level in self.state.items():
-                    if level != self.max_floor:
+                    # Check there are possible states
+                    if not nxt_states:
                         break
 
-                # If this point is reached a solution has been found
-                else:
-                    if tmp_mv_cnt < curr_min_mvs:
-                        print(f"New minimum found {tmp_mv_cnt}")
-                        curr_min_mvs = tmp_mv_cnt
-                    break
+                    # Pick a random state and apply it
+                    self.state = random.choice(nxt_states)
 
-                # Make sure this run doesn't go over the length of an already
-                # existing record.
-                if tmp_mv_cnt >= curr_min_mvs:
-                    break
+                    # Check to see if all the objects are on the top floor
+                    if sum(self.state) == len(self.state) * self.max_floor:
+                        return move_idx + 1
+
+                    # Check that overall levels are increasing
+                    if move_idx % 10 == 0 and move_idx > 0:
+
+                        # Ensure that the level is going up
+                        if old_level > sum(self.state):
+                            break
+                        else:
+                            old_level = sum(self.state)
 
         return curr_min_mvs
 
 
 if __name__ == "__main__":
-    pass
+    facility = RTGMover("./data/input.txt")
+    print(f"Part 1 = {facility.solve()}")
