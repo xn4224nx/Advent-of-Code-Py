@@ -19,8 +19,7 @@ def test_valid_moves_0():
     test_build = RTGMover("")
     test_build.max_floor = 3
     test_build.num_ele = 2
-    test_build.state = [0, 0, 0, 0, 0]
-    test_states = test_build.determine_valid_moves()
+    test_states = test_build.determine_valid_moves([0, 0, 0, 0, 0])
 
     true_states = [
         [1, 0, 0, 0, 1],
@@ -42,8 +41,7 @@ def test_valid_moves_1():
     test_build = RTGMover("")
     test_build.max_floor = 3
     test_build.num_ele = 2
-    test_build.state = [1, 1, 1, 1, 1]
-    test_states = test_build.determine_valid_moves()
+    test_states = test_build.determine_valid_moves([1, 1, 1, 1, 1])
 
     true_states = [
         [2, 1, 1, 1, 2],
@@ -159,7 +157,7 @@ def test_is_state_valid_13():
 
 def test_solver():
     test_build = RTGMover("./data/example_01.txt")
-    assert test_build.solve() == 11
+    assert test_build.solve_bfs() == 11
 
 
 def test_show_0():

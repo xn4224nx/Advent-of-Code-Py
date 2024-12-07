@@ -118,45 +118,45 @@ class RTGMover:
 
         return True
 
-    def determine_valid_moves(self) -> list[str]:
+    def determine_valid_moves(self, state: list[int]) -> list[str]:
         """
         Provide a list of the next possible states the instance could be in.
         """
         new_positions = []
 
         # Create one item shift up or down
-        for idx in range(1, len(self.state)):
+        for idx in range(1, len(state)):
 
             # Check the elevator is on the same level
-            if self.state[idx] != self.state[0]:
+            if state[idx] != state[0]:
                 continue
 
             # Move down
-            if self.state[idx] > 0:
-                tmp_state = self.state.copy()
+            if state[idx] > 0:
+                tmp_state = state.copy()
                 tmp_state[0] -= 1
                 tmp_state[idx] -= 1
                 if self.is_state_valid(tmp_state):
                     new_positions.append(tmp_state)
 
             # Move up
-            if self.state[idx] < self.max_floor:
-                tmp_state = self.state.copy()
+            if state[idx] < self.max_floor:
+                tmp_state = state.copy()
                 tmp_state[0] += 1
                 tmp_state[idx] += 1
                 if self.is_state_valid(tmp_state):
                     new_positions.append(tmp_state)
 
         # Create two items shift up or down
-        for idx_0, idx_1 in combinations([x for x in range(1, len(self.state))], 2):
+        for idx_0, idx_1 in combinations([x for x in range(1, len(state))], 2):
 
             # Check the elevator is on the same level as both elements
-            if self.state[idx_0] != self.state[0] or self.state[idx_1] != self.state[0]:
+            if state[idx_0] != state[0] or state[idx_1] != state[0]:
                 continue
 
             # Move down
-            if self.state[idx_0] > 0:
-                tmp_state = self.state.copy()
+            if state[idx_0] > 0:
+                tmp_state = state.copy()
                 tmp_state[0] -= 1
                 tmp_state[idx_0] -= 1
                 tmp_state[idx_1] -= 1
@@ -164,8 +164,8 @@ class RTGMover:
                     new_positions.append(tmp_state)
 
             # Move up
-            if self.state[idx_0] < self.max_floor:
-                tmp_state = self.state.copy()
+            if state[idx_0] < self.max_floor:
+                tmp_state = state.copy()
                 tmp_state[0] += 1
                 tmp_state[idx_0] += 1
                 tmp_state[idx_1] += 1
@@ -212,57 +212,67 @@ class RTGMover:
 
         return result
 
-    def overall_level(self) -> int:
+    def convert_state(self, state: list[int]) -> str:
         """
-        Calculate the total level of the elements in the levels
+        Convert the integer list state into a string one with ordered
+        subsections of microchips and generators
         """
-        return sum(self.state)
+        return "".join([str(x) for x in state])
 
-    def solve(self) -> int:
+    def deconvert_state(self, state: str) -> list[int]:
         """
-        Find the minimum number of moves to transfer all the objects to the
-        top floor.
+        Convert a string state to a list version
         """
-        start_state = self.state
-        num_iters = 1_000_000
-        max_moves = 1000
-        old_level = 0
+        return [int(x) for x in state]
 
-        # Test minumum move length from one till the maximum
-        for curr_max_move in range(10, max_moves + 1):
+    def solve_bfs(self) -> int:
+        """
+        Attempt to find the solution with a breadth first search.
+        """
+        seen_states = set()
+        curr_state = set()
+        moves = 0
 
-            # Try random moves
-            for idx in range(num_iters):
-                self.state = start_state
+        seen_states.add(self.convert_state(self.state))
+        curr_state.add(self.convert_state(self.state))
 
-                for move_idx in range(curr_max_move):
+        while True:
+            moves += 1
+            next_states = set()
 
-                    # Find the next possible states
-                    nxt_states = self.determine_valid_moves()
+            for stored_state in curr_state:
 
-                    # Check there are possible states
-                    if not nxt_states:
-                        break
+                # Convert to a list version
+                state = self.deconvert_state(stored_state)
 
-                    # Pick a random state and apply it
-                    self.state = random.choice(nxt_states)
+                # Find the next possible states
+                for nxt_state in self.determine_valid_moves(state):
 
-                    # Check to see if all the objects are on the top floor
-                    if sum(self.state) == len(self.state) * self.max_floor:
-                        return move_idx + 1
+                    # Check for a solution
+                    if sum(nxt_state) == len(nxt_state) * self.max_floor:
+                        return moves
 
-                    # Check that overall levels are increasing
-                    if move_idx % 10 == 0 and move_idx > 0:
+                    # Convert to a string form
+                    stored_nxt_state = self.convert_state(nxt_state)
 
-                        # Ensure that the level is going up
-                        if old_level > sum(self.state):
-                            break
-                        else:
-                            old_level = sum(self.state)
+                    # Check it has not been seem or store the state
+                    if stored_nxt_state in seen_states:
+                        continue
+                    else:
+                        seen_states.add(stored_nxt_state)
 
-        return curr_min_mvs
+                    # Record the state for the next iteration
+                    next_states.add(stored_nxt_state)
+
+            # Check there are possible states
+            if not next_states:
+                raise Exception("No possible next moves possible!")
+
+            # Overwrite the current states
+            else:
+                curr_state = next_states
 
 
 if __name__ == "__main__":
     facility = RTGMover("./data/input.txt")
-    print(f"Part 1 = {facility.solve()}")
+    print(f"Part 1 = {facility.solve_bfs()}")
