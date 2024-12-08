@@ -38,6 +38,12 @@ instruction.
 
 PART 1: After executing the assembunny code in your puzzle input, what value is
         left in register a?
+
+As you head down the fire escape to the monorail, you notice it didn't start;
+register c needs to be initialized to the position of the ignition key.
+
+PART 2: If you instead initialize register c to be 1, what value is now left in
+        register a?
 """
 
 import re
@@ -130,6 +136,7 @@ class Computer:
         """
         Iterate over all the commands from the datafile.
         """
+        self.curr_instruc = 0
         while self.curr_instruc < len(self.instruc) and self.curr_instruc >= 0:
             self.execute_command(self.instruc[self.curr_instruc])
 
@@ -138,3 +145,7 @@ if __name__ == "__main__":
     monorail = Computer("./data/input.txt")
     monorail.exe_all_commands()
     print(f"Part 1 = {monorail.register['a']}")
+
+    monorail.register = {"a": 0, "b": 0, "c": 1, "d": 0}
+    monorail.exe_all_commands()
+    print(f"Part 2 = {monorail.register['a']}")
