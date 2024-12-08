@@ -40,28 +40,86 @@ PART 1: After executing the assembunny code in your puzzle input, what value is
         left in register a?
 """
 
+import re
+
 
 class Computer:
     def __init__(self, datafile: str):
-        pass
+        self.register = {"a": 0, "b": 0, "c": 0, "d": 0}
+        self.curr_instruc = 0
+        self.datafile = datafile
 
-    def copy(self, value: str | int, dest: str):
-        pass
+        with open(datafile, "r") as fp:
+            self.instruc = fp.read().splitlines()
+
+    def copy(self, value: str, dest: str):
+        """
+        Set a value of a register to an integer or the value of another
+        register.
+        """
+        try:
+            self.register[dest] = int(value)
+        except:
+            self.register[dest] = self.register[value]
 
     def incr(self, dest: str):
-        pass
+        """
+        Increase a register by one.
+        """
+        self.register[dest] += 1
 
     def decr(self, dest: str):
-        pass
+        """
+        Decrease a register by one.
+        """
+        self.register[dest] -= 1
 
     def zero_jump(self, dest: str, move: str):
-        pass
+        """
+        Move to a different instruction if the specified register is not equal
+        to zero.
+        """
+        if self.register[dest] != 0:
+            self.curr_instruc += move
 
     def execute_command(self, raw_cmd: str):
-        pass
+        """
+        Parse a raw string command and execute a command.
+        """
+
+        # Detect copy command
+        cp_match = re.search(r"cpy (-?\d+|a|b|c|d) (a|b|c|d)", raw_cmd)
+        if cp_match is not None:
+            self.copy(cp_match.group(1), cp_match.group(2))
+            return
+
+        # Detect increment command
+        inc_match = re.search(r"inc (a|b|c|d)", raw_cmd)
+        if inc_match is not None:
+            self.incr(inc_match.group(1))
+            return
+
+        # Detect decrease command
+        dec_match = re.search(r"dec (a|b|c|d)", raw_cmd)
+        if dec_match is not None:
+            self.decr(dec_match.group(1))
+            return
+
+        # Detect a jump command
+        jmp_match = re.search(r"jnz (a|b|c|d) (-?\d+)", raw_cmd)
+        if jmp_match is not None:
+            self.zero_jump(jmp_match.group(1), int(jmp_match.group(2)))
+            return
+
+        raise Exception('Command "{raw_cmd}" not recognised!!')
 
     def exe_all_commands(self):
-        pass
+        """
+        Iterate over all the commands from the datafile.
+        """
+        while self.curr_instruc < len(self.instruc):
+            self.execute_command(self.instruc[self.curr_instruc])
+            self.curr_instruc += 1
 
 
 if __name__ == "__main__":
