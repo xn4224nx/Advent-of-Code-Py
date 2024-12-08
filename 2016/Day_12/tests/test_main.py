@@ -60,23 +60,26 @@ def test_decrease_command():
 
 def test_jump_command():
     test = Computer("./data/example_01.txt")
-    test.curr_instruc = 5
 
     test.zero_jump("a", 3)
-    assert test.curr_instruc == 5
+    assert test.curr_instruc == 1
 
     test.execute_command("jnz b 3")
-    assert test.curr_instruc == 5
-
-    test.register["d"] = 1
-    test.zero_jump("d", -3)
     assert test.curr_instruc == 2
 
-    test.execute_command("jnz d 30")
-    assert test.curr_instruc == 32
+    test.register["d"] = 1
+    test.zero_jump("d", "3")
+    assert test.curr_instruc == 5
+
+    test.execute_command("jnz d 3")
+    assert test.curr_instruc == 8
+
+    test.execute_command("jnz 1 -3")
+    assert test.curr_instruc == 5
 
 
 def test_example_01():
     test = Computer("./data/example_01.txt")
     test.exe_all_commands()
     assert test.register == {"a": 42, "b": 0, "c": 0, "d": 0}
+    assert test.curr_instruc == 6

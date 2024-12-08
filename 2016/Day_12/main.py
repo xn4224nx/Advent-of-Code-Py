@@ -61,26 +61,39 @@ class Computer:
             self.register[dest] = int(value)
         except:
             self.register[dest] = self.register[value]
+        self.curr_instruc += 1
 
     def incr(self, dest: str):
         """
         Increase a register by one.
         """
         self.register[dest] += 1
+        self.curr_instruc += 1
 
     def decr(self, dest: str):
         """
         Decrease a register by one.
         """
         self.register[dest] -= 1
+        self.curr_instruc += 1
 
     def zero_jump(self, dest: str, move: str):
         """
         Move to a different instruction if the specified register is not equal
         to zero.
         """
-        if self.register[dest] != 0:
-            self.curr_instruc += move
+
+        # Account for an integer rather than a register
+        try:
+            value = int(dest)
+        except:
+            value = self.register[dest]
+
+        # A jump only happens when the value is not zero
+        if value != 0:
+            self.curr_instruc += int(move)
+        else:
+            self.curr_instruc += 1
 
     def execute_command(self, raw_cmd: str):
         """
@@ -106,21 +119,22 @@ class Computer:
             return
 
         # Detect a jump command
-        jmp_match = re.search(r"jnz (a|b|c|d) (-?\d+)", raw_cmd)
+        jmp_match = re.search(r"jnz (a|b|c|d|-?\d+) (-?\d+)", raw_cmd)
         if jmp_match is not None:
             self.zero_jump(jmp_match.group(1), int(jmp_match.group(2)))
             return
 
-        raise Exception('Command "{raw_cmd}" not recognised!!')
+        raise Exception(f'Command "{raw_cmd}" not recognised!!')
 
     def exe_all_commands(self):
         """
         Iterate over all the commands from the datafile.
         """
-        while self.curr_instruc < len(self.instruc):
+        while self.curr_instruc < len(self.instruc) and self.curr_instruc >= 0:
             self.execute_command(self.instruc[self.curr_instruc])
-            self.curr_instruc += 1
 
 
 if __name__ == "__main__":
-    pass
+    monorail = Computer("./data/input.txt")
+    monorail.exe_all_commands()
+    print(f"Part 1 = {monorail.register['a']}")
