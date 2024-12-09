@@ -28,24 +28,86 @@ PART 1: Given the actual salt in your puzzle input, what index produces your
         64th one-time pad key?
 """
 
+import hashlib
+from collections import deque
+
 
 class KeyGenerator:
     def __init__(self, salt: str):
-        pass
+        self.salt = salt
+        self.index = 0
+        self.key_idxs = []
 
     def salted_hash(self) -> str:
         """
         Create a MD5 hash according to the current index and the pre-definined
         salt.
         """
-        pass
+        raw_msg = self.salt + str(self.index)
+        return hashlib.md5(raw_msg.encode()).hexdigest()
+
+    def extract_trips_quints(self, digest: str) -> dict[str:[str]]:
+        """
+        Find the first triple in a message digest and return the character that
+        get repeated. Also find the quintets in the digest and return those.
+        Everything is packages in a dictionary of labeled parts
+        """
+        trips = []
+        quints = []
+
+        for idx in range(len(digest)):
+
+            # Catch a triplet
+            if (
+                idx >= 2
+                and not trips
+                and all(x == digest[idx - 2] for x in digest[idx - 2 : idx + 1])
+            ):
+                trips.append(digest[idx])
+
+            # Catch a quintlet
+            if idx >= 4 and all(x == digest[idx] for x in digest[idx - 4 : idx + 1]):
+                quints.append(digest[idx])
+
+        return {"trips": trips, "quints": quints}
 
     def scan_for_keys(self, num_required: int) -> int:
         """
         Search for keys that match the criteria and return the index of the last
         key found.
         """
-        pass
+        pot_keys = deque()
+        while len(self.key_idxs) < num_required:
+
+            # Remove potential keys that have expired
+            for idx_pkey in range(len(pot_keys)):
+
+                if pot_keys[idx_pkey]["index"] < self.index - 1000:
+                    pot_keys.popleft()
+                else:
+                    break
+
+            # Generate the digest for this index
+            digest = self.salted_hash()
+
+            # Look for triplets and quintets
+            idents = self.extract_trips_quints(digest)
+
+            # Check for a comformation of an existing key
+            for pkey in pot_keys:
+                for quint in idents["quints"]:
+
+                    # Check for a validated key
+                    if quint == pkey["char"]:
+                        self.key_idxs.append(pkey["index"])
+
+            # Check for a new key and record its details
+            if idents["trips"]:
+                pot_keys.append({"index": self.index, "char": idents["trips"][0][0]})
+
+            self.index += 1
+
+        return self.key_idxs[-1]
 
 
 if __name__ == "__main__":

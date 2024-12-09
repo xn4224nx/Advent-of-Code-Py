@@ -24,6 +24,21 @@ def test_hash_generator():
     assert "99999" in test.salted_hash()
 
 
+def test_duplicate_extractor():
+    test = KeyGenerator("")
+
+    assert test.extract_trips_quints("cc38887a5") == {"trips": ["8"], "quints": []}
+    assert test.extract_trips_quints("23eeeb434") == {"trips": ["e"], "quints": []}
+    assert test.extract_trips_quints("d4621d373ccccc4e832627b4f6") == {
+        "trips": ["c"],
+        "quints": ["c"],
+    }
+    assert test.extract_trips_quints("ddd1d373ccccc4e832627bbbbb") == {
+        "trips": ["d"],
+        "quints": ["c", "b"],
+    }
+
+
 def test_key_scanner():
     test = KeyGenerator("abc")
     assert test.scan_for_keys(64) == 22728
