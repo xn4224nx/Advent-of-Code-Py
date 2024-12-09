@@ -43,13 +43,25 @@ def test_duplicate_extractor():
     }
 
 
-def test_key_scanner():
+def test_key_scanner_example():
     test = KeyGenerator("abc")
     assert test.scan_for_keys(64) == 22728
 
-def test_key_scanner():
+
+def test_key_scanner_example_stretch():
+    test = KeyGenerator("abc")
+    assert test.scan_for_keys(64, True) == 22551
+
+
+def test_key_scanner_extern():
     test = KeyGenerator("zpqevtbw")
     assert test.scan_for_keys(64) == 16106
+
+
+def test_key_scanner_extern_stretch():
+    test = KeyGenerator("zpqevtbw")
+    assert test.scan_for_keys(64, True) == 22423
+
 
 def test_key_finder():
     test = KeyGenerator("abc")

@@ -26,6 +26,24 @@ always resume testing for keys starting with the very next hash.
 
 PART 1: Given the actual salt in your puzzle input, what index produces your
         64th one-time pad key?
+
+Of course, in order to make this process even more secure, you've also
+implemented key stretching.
+
+Key stretching forces attackers to spend more time generating hashes.
+Unfortunately, it forces everyone else to spend more time, too.
+
+To implement key stretching, whenever you generate a hash, before you use it,
+you first find the MD5 hash of that hash, then the MD5 hash of that hash, and so
+on, a total of 2016 additional hashings. Always use lowercase hexadecimal
+representations of hashes.
+
+The rest of the process remains the same, but now the keys are entirely
+different.
+
+PART 2: Given the actual salt in your puzzle input and using 2016 extra MD5
+        calls of key stretching, what index now produces your 64th one-time pad
+        key?
 """
 
 import hashlib
@@ -71,18 +89,24 @@ class KeyGenerator:
 
         return {"trips": trips, "quints": quints}
 
-    def scan_for_keys(self, num_required: int) -> int:
+    def scan_for_keys(self, num_required: int, stretching=False) -> int:
         """
         Search for keys that match the criteria and return the index of the last
         key found.
         """
+        self.index = 0
+        self.key_idxs = set()
         pos_keys = {}
-        max_search_idx = None
 
         while len(self.key_idxs) < num_required + 20:
 
             # Generate the digest for this index
             digest = self.salted_hash()
+
+            # Does this generator use key stretching?
+            if stretching:
+                for _ in range(2016):
+                    digest = hashlib.md5(digest.encode()).hexdigest()
 
             # Look for triplets and quintets
             idents = self.extract_trips_quints(digest)
@@ -95,9 +119,8 @@ class KeyGenerator:
                     for k_idx in pos_keys[quint]:
 
                         # If the triple index is in range, save it
-                        if self.index - k_idx  <= 1000:
-                            self.key_idxs.add(k_idx )
-
+                        if self.index - k_idx <= 1000:
+                            self.key_idxs.add(k_idx)
 
             # Check for a new key and record its details
             if idents["trips"]:
@@ -114,10 +137,10 @@ class KeyGenerator:
         self.key_idxs = list(self.key_idxs)
         self.key_idxs.sort()
 
-        return self.key_idxs[num_required-1]
+        return self.key_idxs[num_required - 1]
 
 
 if __name__ == "__main__":
     otpad = KeyGenerator("qzyelonm")
     print(f"Part 1 = {otpad.scan_for_keys(64)}")
-
+    print(f"Part 1 = {otpad.scan_for_keys(64, True)}")
