@@ -27,6 +27,9 @@ a wall or an open space using a simple system:
             -   If the number of bits that are 1 is odd, it's a wall.
 
 PART 1: What is the fewest number of steps required for you to reach 31,39?
+
+PART 2: How many locations (distinct x,y coordinates, including your starting
+        location) can you reach in at most 50 steps?
 """
 
 
@@ -114,7 +117,39 @@ class Maze:
 
         return total_moves
 
+    def reached_locations(self, max_moves: int) -> int:
+        """
+        Find the unique locations that are reached within a maximum number of
+        moves.
+        """
+        curr_pnts = [(1, 1)]
+        seen_pnts = set()
+
+        for mv_idx in range(max_moves):
+            nxt_pnts = []
+
+            # Find the possible next moves and mark the current ones as seen
+            for pnt in curr_pnts:
+                seen_pnts.add(pnt)
+
+                # If a point has been visited before don't visit it again
+                for np_pnt in self.poss_moves(pnt):
+                    if np_pnt not in seen_pnts:
+                        nxt_pnts.append(np_pnt)
+
+            if not nxt_pnts:
+                raise Exception("There are no viable next moves!")
+
+            curr_pnts = nxt_pnts
+
+        # Add in the final set of points
+        for pnt in curr_pnts:
+            seen_pnts.add(pnt)
+
+        return len(seen_pnts)
+
 
 if __name__ == "__main__":
     cubicles = Maze(1358)
     print(f"Part 1 = {cubicles.find_min_path_len((31,39))}")
+    print(f"Part 2 = {cubicles.reached_locations(50)}")
