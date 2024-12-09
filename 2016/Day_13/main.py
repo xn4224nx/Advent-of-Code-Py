@@ -97,7 +97,11 @@ class Maze:
             # Find the possible next moves and mark the current ones as seen
             for pnt in curr_pnts:
                 seen_pnts.add(pnt)
-                nxt_pnts += self.poss_moves(pnt)
+
+                # If a point has been visited before don't visit it again
+                for np_pnt in self.poss_moves(pnt):
+                    if np_pnt not in seen_pnts:
+                        nxt_pnts.append(np_pnt)
 
             if not nxt_pnts:
                 raise Exception("There are no viable next moves!")
@@ -112,4 +116,5 @@ class Maze:
 
 
 if __name__ == "__main__":
-    pass
+    cubicles = Maze(1358)
+    print(f"Part 1 = {cubicles.find_min_path_len((31,39))}")
