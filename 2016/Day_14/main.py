@@ -36,7 +36,7 @@ class KeyGenerator:
     def __init__(self, salt: str):
         self.salt = salt
         self.index = 0
-        self.key_idxs = []
+        self.key_idxs = set()
 
     def salted_hash(self) -> str:
         """
@@ -76,16 +76,10 @@ class KeyGenerator:
         Search for keys that match the criteria and return the index of the last
         key found.
         """
-        pot_keys = deque()
-        while len(self.key_idxs) < num_required:
+        pos_keys = {}
+        max_search_idx = None
 
-            # Remove potential keys that have expired
-            for idx_pkey in range(len(pot_keys)):
-
-                if pot_keys[idx_pkey]["index"] < self.index - 1000:
-                    pot_keys.popleft()
-                else:
-                    break
+        while len(self.key_idxs) < num_required + 20:
 
             # Generate the digest for this index
             digest = self.salted_hash()
@@ -94,21 +88,36 @@ class KeyGenerator:
             idents = self.extract_trips_quints(digest)
 
             # Check for a comformation of an existing key
-            for pkey in pot_keys:
-                for quint in idents["quints"]:
+            for quint in idents["quints"]:
 
-                    # Check for a validated key
-                    if quint == pkey["char"]:
-                        self.key_idxs.append(pkey["index"])
+                # If the triple char has been seen before
+                if quint in pos_keys:
+                    for k_idx in pos_keys[quint]:
+
+                        # If the triple index is in range, save it
+                        if self.index - k_idx  <= 1000:
+                            self.key_idxs.add(k_idx )
+
 
             # Check for a new key and record its details
             if idents["trips"]:
-                pot_keys.append({"index": self.index, "char": idents["trips"][0][0]})
+                char = idents["trips"][0][0]
+
+                if char in pos_keys:
+                    pos_keys[char].append(self.index)
+                else:
+                    pos_keys[char] = [self.index]
 
             self.index += 1
 
-        return self.key_idxs[-1]
+        # Deduplicate and sort the found keys
+        self.key_idxs = list(self.key_idxs)
+        self.key_idxs.sort()
+
+        return self.key_idxs[num_required-1]
 
 
 if __name__ == "__main__":
-    pass
+    otpad = KeyGenerator("qzyelonm")
+    print(f"Part 1 = {otpad.scan_for_keys(64)}")
+

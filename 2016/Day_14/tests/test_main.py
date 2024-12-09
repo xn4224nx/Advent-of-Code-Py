@@ -37,12 +37,19 @@ def test_duplicate_extractor():
         "trips": ["d"],
         "quints": ["c", "b"],
     }
+    assert test.extract_trips_quints("8ddc9c7ce4aaff3266d20e18b12df21c") == {
+        "trips": [],
+        "quints": [],
+    }
 
 
 def test_key_scanner():
     test = KeyGenerator("abc")
     assert test.scan_for_keys(64) == 22728
 
+def test_key_scanner():
+    test = KeyGenerator("zpqevtbw")
+    assert test.scan_for_keys(64) == 16106
 
 def test_key_finder():
     test = KeyGenerator("abc")
