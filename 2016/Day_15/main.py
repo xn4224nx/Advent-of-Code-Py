@@ -72,3 +72,4 @@ def find_first_drop_time(sculp: list[tuple[int, int]]) -> int:
 if __name__ == "__main__":
     kinetic = read_sculp_data("./data/input.txt")
     print(f"Part 1 = {find_first_drop_time(kinetic)}")
+    print(f"Part 2 = {find_first_drop_time(kinetic + [(11, 0)])}")
