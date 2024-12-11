@@ -28,28 +28,47 @@ allowed.
 PART 1: What is the first time you can press the button to get a capsule?
 """
 
+import re
 
-def read_sculp_data(data_file: str) -> list[dict[str:int]]:
+
+def read_sculp_data(data_file: str) -> list[tuple[int, int]]:
     """
     Parse the disk data for a structure each element in the list is a disk.
     """
-    pass
+    disks = []
+
+    with open(data_file) as fp:
+        for line in fp:
+            nums = re.findall(r"\d+", line)
+            disks.append((int(nums[1]), int(nums[3])))
+
+    return disks
 
 
-def simulate_pass_through(sculp: list[dict[str:int]], drop_time: int) -> bool:
+def simulate_pass_through(sculp: list[tuple[int, int]], drop_time: int) -> bool:
     """
     Determine if a capsule could fall through the disks of the sculpture.
     """
-    pass
+    for time_diff, disk in enumerate(sculp):
+        if (disk[1] + drop_time + time_diff + 1) % disk[0] != 0:
+            return False
+    else:
+        return True
 
 
-def find_first_drop_time(sculp: list[dict[str:int]]) -> int:
+def find_first_drop_time(sculp: list[tuple[int, int]]) -> int:
     """
     Determine the first drop time that causes the capsule to fall straight
     through all the disks.
     """
-    pass
+    time = 0
+
+    while True:
+        if simulate_pass_through(sculp, time):
+            return time
+        time += 1
 
 
 if __name__ == "__main__":
-    pass
+    kinetic = read_sculp_data("./data/input.txt")
+    print(f"Part 1 = {find_first_drop_time(kinetic)}")
