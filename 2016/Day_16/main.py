@@ -112,4 +112,4 @@ def disk_fill_checksum(seed_data: str, fill_size: int) -> str:
 
 if __name__ == "__main__":
     print(f"Part 1 = {disk_fill_checksum('10111011111001111', 272)}")
-    print(f"Part 1 = {disk_fill_checksum('10111011111001111', 35651584)}")
+    print(f"Part 2 = {disk_fill_checksum('10111011111001111', 35651584)}")
