@@ -41,28 +41,55 @@ def reverse_number(data: str) -> str:
     """
     Reverse a string representation of a binary number.
     """
-    pass
+    return data[::-1]
 
 
 def invert_number(data: str) -> str:
     """
     In the supplied number swap every zero for a one and vice versa.
     """
-    pass
+    new_data = []
+
+    for char in data:
+        if char == "0":
+            new_data.append("1")
+        else:
+            new_data.append("0")
+
+    return "".join(new_data)
 
 
 def dragon_fold(data: str) -> str:
     """
     Transform the initial data one step using the dragon curve technique.
     """
-    pass
+    return data + "0" + invert_number(reverse_number(data))
 
 
 def checksum(data: str) -> str:
     """
     Calculate the checksum for a piece of binary data.
     """
-    pass
+    ch_sum = [x for x in data]
+
+    # Keep halving the checksum until its length is odd
+    while True:
+        new_ch_sum = []
+
+        # evaluate the pairs of the checksum
+        for idx in range(1, len(ch_sum), 2):
+            if ch_sum[idx] == ch_sum[idx - 1]:
+                new_ch_sum.append("1")
+            else:
+                new_ch_sum.append("0")
+
+        # Overwrite the old checksum
+        ch_sum = new_ch_sum
+
+        if len(ch_sum) % 2 != 0:
+            break
+
+    return "".join(ch_sum)
 
 
 def disk_fill_checksum(seed_data: str, fill_size: int) -> str:
@@ -70,7 +97,17 @@ def disk_fill_checksum(seed_data: str, fill_size: int) -> str:
     Determine what the checksum will be for the data that would fill the
     specified size.
     """
-    pass
+    data = seed_data[:]
+
+    # Expand the data until it is at or above the fill size
+    while len(data) < fill_size:
+        data = dragon_fold(data)
+
+    # Only include the exact number of bits we need
+    data = data[:fill_size]
+
+    # Calculate the checksum of this data
+    return checksum(data)
 
 
 if __name__ == "__main__":

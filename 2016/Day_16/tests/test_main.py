@@ -20,11 +20,11 @@ def test_reverse_number():
 
 
 def test_invert_number():
-    assert reverse_number("100") == "011"
-    assert reverse_number("100101") == "011010"
-    assert reverse_number("111110") == "000001"
-    assert reverse_number("10101") == "01010"
-    assert reverse_number("10010100") == "01101011"
+    assert invert_number("100") == "011"
+    assert invert_number("100101") == "011010"
+    assert invert_number("111110") == "000001"
+    assert invert_number("10101") == "01010"
+    assert invert_number("10010100") == "01101011"
 
 
 def test_dragon_fold():
