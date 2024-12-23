@@ -37,30 +37,28 @@ PART 1: The first disk you have to fill has length 272. Using the initial state
 """
 
 
-def convert_2_bin(number: str) -> int:
+def reverse_number(data: str) -> str:
     """
-    Get the true number from a string of ones and zeros that represent a binary
-    number.
-    """
-    pass
-
-
-def convert_2_str(number: int) -> str:
-    """
-    Convert a raw binary number to its string representation comprised of ones
-    and zeros.
+    Reverse a string representation of a binary number.
     """
     pass
 
 
-def dragon_fold(data: int) -> int:
+def invert_number(data: str) -> str:
+    """
+    In the supplied number swap every zero for a one and vice versa.
+    """
+    pass
+
+
+def dragon_fold(data: str) -> str:
     """
     Transform the initial data one step using the dragon curve technique.
     """
     pass
 
 
-def checksum(data: int) -> int:
+def checksum(data: str) -> str:
     """
     Calculate the checksum for a piece of binary data.
     """
