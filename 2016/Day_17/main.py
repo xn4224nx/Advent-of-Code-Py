@@ -158,4 +158,4 @@ class Route:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {Route('vkjiggvb').find_shortest_path()}")
