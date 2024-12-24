@@ -35,6 +35,12 @@ def test_detect_next_steps():
 
 
 def test_shortest_path():
-    assert Route("ihgpwlah").find_shortest_path() == "DDRRRD"
-    assert Route("kglvqrro").find_shortest_path() == "DDUDRLRRUDRD"
-    assert Route("ulqzkmiv").find_shortest_path() == "DRURDRUDDLLDLUURRDULRLDUUDDDRR"
+    assert Route("ihgpwlah").find_path_vault(True) == "DDRRRD"
+    assert Route("kglvqrro").find_path_vault(True) == "DDUDRLRRUDRD"
+    assert Route("ulqzkmiv").find_path_vault(True) == "DRURDRUDDLLDLUURRDULRLDUUDDDRR"
+
+
+def test_longest_path():
+    assert len(Route("ihgpwlah").find_path_vault(False)) == 370
+    assert len(Route("kglvqrro").find_path_vault(False)) == 492
+    assert len(Route("ulqzkmiv").find_path_vault(False)) == 830

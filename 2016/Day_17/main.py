@@ -51,6 +51,13 @@ not hijkl).
 
 PART 1: Given your vault's passcode, what is the shortest path (the actual
         path, not just the length) to reach the vault?
+
+You're curious how robust this security solution really is, and so you decide to
+find longer and longer paths which still provide access to the vault. You
+remember that paths always end the first time they reach the bottom-right room
+(that is, they can never pass through it, only end in it).
+
+PART 2: What is the length of the longest path that reaches the vault?
 """
 
 import hashlib
@@ -115,12 +122,13 @@ class Route:
 
         return curr_pnt
 
-    def find_shortest_path(self) -> str:
+    def find_path_vault(self, min_path: bool) -> str:
         """
         Find and return the path that will get from the start point to the
         vault in the smallest number of steps.
         """
         viable_paths = {""}
+        last_path = ""
 
         # Make steps in the maze until the end point is found
         while True:
@@ -145,17 +153,25 @@ class Route:
 
                     # Check for a solution
                     if pnt == self.vault:
-                        return n_path
+                        if min_path:
+                            return n_path
+                        else:
+                            last_path = n_path
+                            continue
 
                     # Otherwise save it for the next iteration
                     new_paths.add(n_path)
 
             # Prepare for the next iteration
             if not new_paths:
-                raise Exception("No viable path found!")
-            else:
-                viable_paths = new_paths
+                if min_path:
+                    raise Exception("No viable path found!")
+                else:
+                    return last_path
+
+            viable_paths = new_paths
 
 
 if __name__ == "__main__":
-    print(f"Part 1 = {Route('vkjiggvb').find_shortest_path()}")
+    print(f"Part 1 = {Route('vkjiggvb').find_path_vault(True)}")
+    print(f"Part 2 = {len(Route('vkjiggvb').find_path_vault(False))}")
