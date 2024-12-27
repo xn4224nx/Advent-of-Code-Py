@@ -33,7 +33,19 @@ presents.
 
 PART 1: With the number of Elves given in your puzzle input, which Elf gets all
         the presents?
+
+Realizing the folly of their present-exchange rules, the Elves agree to instead
+steal presents from the Elf directly across the circle. If two Elves are across
+the circle, the one on the left (from the perspective of the stealer) is stolen
+from. The other rules remain unchanged: Elves with no presents are removed from
+the circle entirely, and the other elves move in slightly to keep the circle
+evenly spaced.
+
+PART 2: With the number of Elves given in your puzzle input, which Elf now gets
+        all the presents?
 """
+
+from math import log
 
 
 def find_final_elf(num_elves: int) -> int:
@@ -52,5 +64,15 @@ def find_final_elf(num_elves: int) -> int:
     return int(num, 2)
 
 
+def find_final_elf_half(num_elves: int) -> int:
+    """
+    A white elephant party where the Elf the otherside of the current one gets
+    all their presents stolen.
+    """
+    p = 3 ** int(log(num_elves - 1, 3))
+    return num_elves - p + max(num_elves - 2 * p, 0)
+
+
 if __name__ == "__main__":
     print(f"Part 1 = {find_final_elf(3018458)}")
+    print(f"Part 2 = {find_final_elf_half(3018458)}")
