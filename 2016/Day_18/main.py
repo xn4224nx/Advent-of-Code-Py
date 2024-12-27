@@ -122,4 +122,6 @@ class TrapRoom:
 
 
 if __name__ == "__main__":
-    pass
+    rogue = TrapRoom("./data/input.txt")
+    rogue.gen_next_row(39)
+    print(f"Part 1 = {rogue.count_safe_tiles()}")
