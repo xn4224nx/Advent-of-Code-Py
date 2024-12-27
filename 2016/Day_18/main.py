@@ -46,7 +46,11 @@ class TrapRoom:
         """
         Read the first row of floor tiles from the data file.
         """
-        pass
+        self.safe = "."
+        self.trap = "^"
+
+        with open(data_file, "r") as fp:
+            self.tiles = fp.read().splitlines()
 
     def show(self) -> str:
         """
@@ -58,13 +62,63 @@ class TrapRoom:
         """
         Create the next row of tiles in the room
         """
-        pass
+        for _ in range(rows):
+            new_row = []
+
+            for t_idx in range(len(self.tiles[0])):
+
+                # The left wall is always considered safe
+                if t_idx == 0:
+                    left_safe = True
+                else:
+                    if self.tiles[-1][t_idx - 1] == self.safe:
+                        left_safe = True
+                    else:
+                        left_safe = False
+
+                # Is the center tile safe?
+                if self.tiles[-1][t_idx] == self.safe:
+                    cent_safe = True
+                else:
+                    cent_safe = False
+
+                # The right wall is always considered safe
+                if t_idx == len(self.tiles[0]) - 1:
+                    righ_safe = True
+                else:
+                    if self.tiles[-1][t_idx + 1] == self.safe:
+                        righ_safe = True
+                    else:
+                        righ_safe = False
+
+                # Its left and center tiles are traps, but its right tile is not.
+                if not left_safe and not cent_safe and righ_safe:
+                    new_row.append(self.trap)
+
+                # Its center and right tiles are traps, but its left tile is not.
+                elif left_safe and not cent_safe and not righ_safe:
+                    new_row.append(self.trap)
+
+                # Only its left tile is a trap.
+                elif not left_safe and cent_safe and righ_safe:
+                    new_row.append(self.trap)
+
+                # Only its right tile is a trap.
+                elif left_safe and cent_safe and not righ_safe:
+                    new_row.append(self.trap)
+
+                # Otherwise its safe
+                else:
+                    new_row.append(self.safe)
+
+            # Add the new row of tiles to the rest
+            self.tiles.append("".join(new_row))
 
     def count_safe_tiles(self) -> int:
         """
         Return the total number of safe tiles in the trap room.
         """
-        pass
+        return sum([x.count(self.safe) for x in self.tiles])
 
 
 if __name__ == "__main__":

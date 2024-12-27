@@ -39,4 +39,5 @@ def test_row_generation_exp2():
 
 def test_count_safe_tiles():
     test = TrapRoom("./data/example_02.txt")
+    test.gen_next_row(9)
     assert test.count_safe_tiles() == 38
