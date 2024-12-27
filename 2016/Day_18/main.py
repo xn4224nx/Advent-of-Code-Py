@@ -50,19 +50,15 @@ class TrapRoom:
         self.trap = "^"
 
         with open(data_file, "r") as fp:
-            self.tiles = fp.read().splitlines()
+            self.start_tiles = fp.read().splitlines()
 
-    def show(self) -> str:
-        """
-        Provide a string representation of the trap room in its current state.
-        """
-        pass
-
-    def gen_next_row(self, rows: int):
+    def gen_total_rows(self, rows: int):
         """
         Create the next row of tiles in the room
         """
-        for _ in range(rows):
+        self.tiles = self.start_tiles.copy()
+
+        for _ in range(rows-1):
             new_row = []
 
             for t_idx in range(len(self.tiles[0])):
@@ -123,5 +119,7 @@ class TrapRoom:
 
 if __name__ == "__main__":
     rogue = TrapRoom("./data/input.txt")
-    rogue.gen_next_row(39)
+    rogue.gen_total_rows(40)
     print(f"Part 1 = {rogue.count_safe_tiles()}")
+    rogue.gen_total_rows(400000)
+    print(f"Part 2 = {rogue.count_safe_tiles()}")
