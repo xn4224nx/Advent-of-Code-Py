@@ -58,7 +58,7 @@ class TrapRoom:
         """
         self.tiles = self.start_tiles.copy()
 
-        for _ in range(rows-1):
+        for _ in range(rows - 1):
             new_row = []
 
             for t_idx in range(len(self.tiles[0])):

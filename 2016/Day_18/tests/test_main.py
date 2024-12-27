@@ -12,7 +12,6 @@ def test_parse_data():
 
 def test_row_generation_exp1():
     test = TrapRoom("./data/example_01.txt")
-
     test.gen_total_rows(3)
     assert test.tiles[0] == "..^^."
     assert test.tiles[1] == ".^^^^"
