@@ -32,27 +32,46 @@ class Firewall:
         """
         Parse the rules from disk and contain them in structured format.
         """
-        pass
+        self.allowed_rng = allowed_rng
+        self.rules = []
 
-    def blacklist_range(self, blck_range: (int, int)):
-        """
-        Modify the current allowed list of IPs blocking all the IP addresses
-        specified in the aforementioned range.
-        """
-        pass
+        if datafile != "":
+            with open(datafile) as fp:
+                for line in fp.readlines():
+                    num1, num2 = line.split("-")
 
-    def blacklist_all_ranges(self):
-        """
-        Using the supplied datafile backlist all the ranges specified in it.
-        """
-        pass
+                    nums = [int(num1), int(num2)]
+                    low = min(nums)
+                    hig = max(nums)
+
+                    # Check the numbers are valid and overwrite if not
+                    if low < self.allowed_rng[0]:
+                        low = self.allowed_rng[0]
+
+                    if hig > self.allowed_rng[1]:
+                        hig = self.allowed_rng[1]
+
+                    self.rules.append((low, hig))
+
+            # Sort the rules
+            self.rules.sort()
 
     def lowest_allowed_address(self) -> int:
         """
         Find the lowest unblocked IP address in the firewall currently.
         """
-        pass
+        min_ip = 0
+
+        # Find the first rule to allow the current min_ip
+        for rl_idx in range(len(self.rules)):
+            low, high = self.rules[rl_idx]
+
+            if low <= min_ip <= high:
+                min_ip = high + 1
+
+        return min_ip
 
 
 if __name__ == "__main__":
-    pass
+    obs_comp = Firewall("./data/input.txt", (0, 4294967295))
+    print(f"Part 1 = {obs_comp.lowest_allowed_address()}")
