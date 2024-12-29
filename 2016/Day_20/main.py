@@ -24,6 +24,8 @@ and 9, since those are the only numbers not in any range.
 
 PART 1: Given the list of blocked IPs you retrieved from the firewall (your
         puzzle input), what is the lowest-valued IP that is not blocked?
+
+PART 2: How many IPs are allowed by the blacklist?
 """
 
 
@@ -71,7 +73,30 @@ class Firewall:
 
         return min_ip
 
+    def count_allowed_ips(self) -> int:
+        """
+        Count the total number of allowed IP addresses by the block list.
+        """
+        total = 0
+        curr_ip = 0
+        rl_idx = 0
+
+        while curr_ip < self.allowed_rng[1]:
+            low, high = self.rules[rl_idx]
+
+            if curr_ip >= low:
+                if curr_ip <= high:
+                    curr_ip = high + 1
+                    continue
+                rl_idx += 1
+            else:
+                total += low - curr_ip
+                curr_ip = low
+
+        return total
+
 
 if __name__ == "__main__":
     obs_comp = Firewall("./data/input.txt", (0, 4294967295))
     print(f"Part 1 = {obs_comp.lowest_allowed_address()}")
+    print(f"Part 2 = {obs_comp.count_allowed_ips()}")

@@ -11,6 +11,6 @@ def test_class_initialisation():
     assert test.allowed_rng == (0, 9)
 
 
-def test_lowest_allowed_address_exp2():
+def test_lowest_allowed_address_exp1():
     test = Firewall("./data/example_01.txt", (0, 9))
     assert test.lowest_allowed_address() == 3
