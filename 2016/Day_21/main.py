@@ -38,8 +38,15 @@ follows:
 PART 1: Now, you just need to generate a new scrambled password and you can
         access the system. Given the list of scrambling operations in your
         puzzle input, what is the result of scrambling abcdefgh?
+
+You scrambled the password correctly, but you discover that you can't actually
+modify the password file on the system. You'll need to un-scramble one of the
+existing passwords by reversing the scrambling process.
+
+PART 2: What is the un-scrambled version of the scrambled password fbgdceah?
 """
 
+from itertools import permutations
 from collections import deque
 import re
 
@@ -157,6 +164,26 @@ class Scambler:
 
         return "".join(self.seed)
 
+    def brute_force_result(self, result: str) -> str:
+        """
+        Find the intial seed that would create the following resultant string
+        using the defined instructions and return the initial seed.
+        """
+        possible_chars = "".join(self.seed)
+
+        # Try every possible permutation of the starting seed
+        for pos_seed in permutations(possible_chars):
+            self.seed = deque(pos_seed)
+
+            if self.execute_all_commands() == result:
+                return "".join(pos_seed)
+
+        else:
+            raise Exception("Starting seed could not be found")
+
 
 if __name__ == "__main__":
     print(f"Part 1 = {Scambler('./data/input.txt', 'abcdefgh').execute_all_commands()}")
+    print(
+        f"Part 2 = {Scambler('./data/input.txt', 'abcdefgh').brute_force_result('fbgdceah')}"
+    )
