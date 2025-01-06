@@ -42,7 +42,7 @@ def test_rotate_left():
 def test_rotate_right():
     test = Scambler("./data/example_01.txt", "abcde")
     test.rotate_right(1)
-    assert test.seed == deque(["e", "a", "b", "c", "d", "e"])
+    assert test.seed == deque(["e", "a", "b", "c", "d"])
 
 
 def test_rotate_by_letter_pos():
