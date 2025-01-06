@@ -126,7 +126,6 @@ class Scambler:
 
         matches = re.search(r"rotate (left|right) (\d+) steps?", command)
         if matches is not None:
-            print(matches)
             if matches.group(1) == "left":
 
                 self.rotate_left(int(matches.group(2)))
@@ -160,4 +159,4 @@ class Scambler:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {Scambler('./data/input.txt', 'abcdefgh').execute_all_commands()}")
