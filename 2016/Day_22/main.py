@@ -36,17 +36,60 @@ such that:
 PART 1: How many viable pairs of nodes are there?
 """
 
+import re
+from itertools import permutations
+
 
 class NodeGrid:
     def __init__(self, datafile: str):
-        pass
+        node_pat = r"(\S+)\s+([0-9]+)T\s+([0-9]+)T\s+([0-9]+)T\s+([0-9]+)%"
+
+        self.nodes = []
+
+        with open(datafile, "r") as fp:
+            for idx, line in enumerate(fp):
+                if idx < 2:
+                    continue
+
+                # Extract the details of the node
+                matches = re.search(node_pat, line)
+
+                if matches is not None:
+                    self.nodes.append(
+                        {
+                            "Addr": matches.group(1),
+                            "Size": int(matches.group(2)),
+                            "Used": int(matches.group(3)),
+                            "Avail": int(matches.group(4)),
+                        }
+                    )
 
     def viable_pairs(self) -> list[(int, int)]:
         """
         Determine the viable node pairs in the grid in its current
         state.
         """
-        pass
+        node_idxs = [x for x in range(len(self.nodes))]
+        pairs = []
+
+        # Each permuation of node indexes assess viability
+        for idx_a, idx_b in permutations(node_idxs, 2):
+
+            # Node A is not empty (its Used is not zero).
+            if self.nodes[idx_a]["Used"] == 0:
+                continue
+
+            # Nodes A and B are not the same node.
+            if idx_a == idx_b:
+                continue
+
+            # The data on node A (its Used) would fit on node B (its Avail).
+            if self.nodes[idx_a]["Used"] > self.nodes[idx_b]["Avail"]:
+                continue
+
+            pairs.append((idx_a, idx_b))
+
+        return pairs
 
 
 if __name__ == "__main__":
