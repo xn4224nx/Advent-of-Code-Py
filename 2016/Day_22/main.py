@@ -93,4 +93,4 @@ class NodeGrid:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {len(NodeGrid('./data/input.txt').viable_pairs())}")
