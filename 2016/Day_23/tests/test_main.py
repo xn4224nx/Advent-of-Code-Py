@@ -23,7 +23,7 @@ def test_computer_initialisation():
 
 def test_extract_var():
     test = Computer("./data/example_01.txt", 1)
-    assert test.register == {"a": 1, "b": -3, "c": 5, "d": 6}
+    test.register = {"a": 1, "b": -3, "c": 5, "d": 6}
     assert test.extract_var("-7") == -7
     assert test.extract_var("a") == 1
     assert test.extract_var("b") == -3
@@ -41,9 +41,9 @@ def test_cpy_cmd():
 
     test.cpy("4", "a", True)
     test.cpy("a", "b", True)
-    test.cpy("c", "-9", False)
+    test.cpy("c", "9", False)
     assert test.register == {"a": 4, "b": 4, "c": -9, "d": 0}
-    assert test.curr_cmd == 8
+    assert test.curr_cmd == 12
 
 
 def test_inc_cmd():
@@ -97,29 +97,37 @@ def test_jnz_cmd():
     test.jnz("14", "3")
     assert test.curr_cmd == 8
 
+    test.jnz("-1", "a", True)
+    test.jnz("c", "b", True)
+    test.jnz("0", "3", True)
+    test.jnz("b", "3", True)
+
+    assert test.curr_cmd == 12
+    assert test.register == {"a": -1, "b": 0, "c": 0, "d": 7}
+
 
 def test_tgl_cmd():
     test = Computer("./data/example_01.txt", 0)
     test.register["d"] = 4
 
     test.tgl("0")
-    assert test.insr_invert[0] == True
+    assert test.inverted[0] == True
 
     test.tgl("d")
-    assert test.insr_invert[5] == True
+    assert test.inverted[5] == True
 
     test.tgl("-1")
-    assert test.insr_invert[1] == True
+    assert test.inverted[1] == True
 
     test.tgl("1000")
-    assert test.insr_invert == [True, True, False, False, False, False, False]
+    assert test.inverted == [True, True, False, False, False, True, False]
     assert test.curr_cmd == 4
 
     test.tgl("1", True)
     test.tgl("b", True)
     test.tgl("c", True)
     test.register = {"a": 0, "b": 1, "c": 1, "d": 0}
-    assert test.curr_cmd == 8
+    assert test.curr_cmd == 7
 
 
 def test_parse_instruc():

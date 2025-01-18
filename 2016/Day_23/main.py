@@ -50,46 +50,87 @@ PART 1: What value should be sent to the safe?
 
 class Computer:
     def __init__(self, datafile: str, a_start: int):
-        pass
+        self.register = {"a": a_start, "b": 0, "c": 0, "d": 0}
+        self.curr_cmd = 0
+
+        with open(datafile) as fp:
+            self.insruc = fp.read().splitlines()
+
+        # Each instruction defaults to not being inverted
+        self.inverted = [False] * len(self.insruc)
 
     def extract_var(self, raw_var: str) -> int:
         """
         Test if the variable or a registry reference. Then either parse it or
         extract the current registary value.
         """
-        pass
+        if raw_var[0].isdigit() or raw_var[0] == "-":
+            return int(raw_var)
+        else:
+            return self.register[raw_var]
 
     def cpy(self, x_value: str, y_reg: str, invert: bool = False):
         """
         Copies x (either an integer or the value of a register) into register y.
         """
-        pass
+        if invert:
+            self.jnz(x_value, y_reg)
+
+        else:
+            # Ensure that the command can be executed
+            if y_reg in self.register:
+                self.register[y_reg] = self.extract_var(x_value)
+            self.curr_cmd += 1
 
     def inc(self, x_reg: str, invert: bool = False):
         """
         Increases the value of register x by one.
         """
-        pass
+        if invert:
+            self.register[x_reg] -= 1
+        else:
+            self.register[x_reg] += 1
+        self.curr_cmd += 1
 
     def dec(self, x_reg: str, invert: bool = False):
         """
         Decreases the value of register x by one.
         """
-        pass
+        if invert:
+            self.register[x_reg] += 1
+        else:
+            self.register[x_reg] -= 1
+        self.curr_cmd += 1
 
     def jnz(self, x_test: str, y_jump: str, invert: bool = False):
         """
         Jumps to an instruction y away (positive means forward; negative means
         backward), but only if x is not zero.
         """
-        pass
+        if invert:
+            self.cpy(x_test, y_jump)
+        else:
+            if self.extract_var(x_test) != 0:
+                self.curr_cmd += self.extract_var(y_jump)
+            else:
+                self.curr_cmd += 1
 
     def tgl(self, x_dist: str, invert: bool = False):
         """
         Toggles the instruction x away (pointing at instructions like jnz does:
-        positive means forward; negative means backward)
+        positive means forward; negative means backward).
         """
-        pass
+        if invert:
+            if x_dist in self.register:
+                self.register[x_dist] += 1
+
+        else:
+            idx_invert = self.extract_var(x_dist) + self.curr_cmd
+
+            if 0 <= idx_invert < len(self.inverted):
+                self.inverted[idx_invert] = not self.inverted[idx_invert]
+
+        self.curr_cmd += 1
 
     def parse_instruc(self, instruc_idx: int):
         """
