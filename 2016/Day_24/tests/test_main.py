@@ -23,7 +23,7 @@ def test_next_steps():
     test = HVAC("./data/example_01.txt")
     assert test.next_steps((1, 1)) == {(2, 1), (1, 2)}
     assert test.next_steps((1, 2)) == {(1, 1), (1, 3)}
-    assert test.next_steps((3, 5)) == {(3, 4), (3, 6)}
+    assert test.next_steps((5, 3)) == {(4, 3), (6, 3)}
 
 
 def test_fewest_steps_from_nodes():
