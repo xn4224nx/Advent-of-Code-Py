@@ -129,4 +129,4 @@ class HVAC:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {HVAC('./data/input.txt').fewest_steps()}")
