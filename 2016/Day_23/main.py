@@ -129,8 +129,6 @@ class Computer:
         else:
             idx_invert = self.extract_var(x_dist) + self.curr_cmd
 
-            print(idx_invert)
-
             if 0 <= idx_invert < len(self.inverted):
                 self.inverted[idx_invert] = not self.inverted[idx_invert]
 
@@ -167,4 +165,4 @@ class Computer:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {Computer('./data/input.txt', 7).final_register_val('a')}")
