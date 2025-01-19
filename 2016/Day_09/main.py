@@ -131,4 +131,5 @@ def calc_len(file_path: str, recursive: bool) -> int:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {calc_len('./data/input.txt', False)}")
+    print(f"Part 2 = {calc_len('./data/input.txt', True)}")
