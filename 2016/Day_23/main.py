@@ -45,6 +45,20 @@ The rest of the electronics seem to place the keypad entry (the number of eggs,
 the safe.
 
 PART 1: What value should be sent to the safe?
+
+The safe doesn't open, but it does make several angry noises to express its
+frustration.
+
+You're quite sure your logic is working correctly, so the only other thing is...
+you check the painting again. As it turns out, colored eggs are still eggs. Now
+you count 12.
+
+As you run the program with this new input, the prototype computer begins to
+overheat. You wonder what's taking so long, and whether the lack of any
+instruction more powerful than "add one" has anything to do with it. Don't
+bunnies usually multiply?
+
+PART 2: Anyway, what value should actually be sent to the safe?
 """
 
 import re
@@ -166,3 +180,4 @@ class Computer:
 
 if __name__ == "__main__":
     print(f"Part 1 = {Computer('./data/input.txt', 7).final_register_val('a')}")
+    print(f"Part 2 = {Computer('./data/input.txt', 12).final_register_val('a')}")
