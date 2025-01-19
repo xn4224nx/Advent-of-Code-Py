@@ -26,6 +26,12 @@ location at least once.
 PART 1: Given your actual map, and starting from location 0, what is the fewest
         number of steps required to visit every non-0 number marked on the map
         at least once?
+
+Of course, if you leave the cleaning robot somewhere weird, someone is bound to
+notice.
+
+PART 2: What is the fewest number of steps required to start at 0, visit every
+        non-0 number marked on the map at least once, and then return to 0?
 """
 
 from itertools import combinations, permutations
@@ -99,7 +105,7 @@ class HVAC:
 
         return mv_idx
 
-    def fewest_steps(self) -> int:
+    def fewest_steps(self, return_bot: bool = False) -> int:
         """
         Find the smallest number steps required to reach all of the  nodes.
         """
@@ -116,6 +122,9 @@ class HVAC:
         for node_route in permutations(other_nodes):
             nroute = [0] + list(node_route)
 
+            if return_bot:
+                nroute.append(0)
+
             # Calculate the distance this route would take by linking the nodes
             route_lens.append(
                 sum(
@@ -130,3 +139,4 @@ class HVAC:
 
 if __name__ == "__main__":
     print(f"Part 1 = {HVAC('./data/input.txt').fewest_steps()}")
+    print(f"Part 2 = {HVAC('./data/input.txt').fewest_steps(True)}")
