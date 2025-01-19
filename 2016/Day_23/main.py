@@ -47,6 +47,8 @@ the safe.
 PART 1: What value should be sent to the safe?
 """
 
+import re
+
 
 class Computer:
     def __init__(self, datafile: str, a_start: int):
@@ -127,6 +129,8 @@ class Computer:
         else:
             idx_invert = self.extract_var(x_dist) + self.curr_cmd
 
+            print(idx_invert)
+
             if 0 <= idx_invert < len(self.inverted):
                 self.inverted[idx_invert] = not self.inverted[idx_invert]
 
@@ -136,14 +140,30 @@ class Computer:
         """
         Execute the instruction in the particular index.
         """
-        pass
+        cmd = self.insruc[instruc_idx].split()
+
+        if cmd[0] == "cpy":
+            self.cpy(cmd[1], cmd[2], self.inverted[instruc_idx])
+        elif cmd[0] == "inc":
+            self.inc(cmd[1], self.inverted[instruc_idx])
+        elif cmd[0] == "dec":
+            self.dec(cmd[1], self.inverted[instruc_idx])
+        elif cmd[0] == "jnz":
+            self.jnz(cmd[1], cmd[2], self.inverted[instruc_idx])
+        elif cmd[0] == "tgl":
+            self.tgl(cmd[1], self.inverted[instruc_idx])
+        else:
+            raise Exception(f"Unknown command: '{self.insruc[instruc_idx]}'")
 
     def final_register_val(self, register: str):
         """
         Calculate the final value of the register after all instructions have
         been run.
         """
-        pass
+        while 0 <= self.curr_cmd < len(self.insruc):
+            self.parse_instruc(self.curr_cmd)
+
+        return self.register[register]
 
 
 if __name__ == "__main__":

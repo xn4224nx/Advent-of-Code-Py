@@ -29,6 +29,7 @@ def test_extract_var():
     assert test.extract_var("b") == -3
     assert test.extract_var("90") == 90
     assert test.extract_var("9") == 9
+    assert test.extract_var("-109") == -109
 
 
 def test_cpy_cmd():
@@ -144,27 +145,37 @@ def test_parse_instruc():
         "dec d",
         "dec d",
         "inc c",
+        "cpy -3 a",
         "tgl a",
     ]
+    test.inverted = [False] * len(test.insruc)
 
     test.parse_instruc(0)
     assert test.curr_cmd == 1
-    assert test.test.register["a"] == 41
+    assert test.register["a"] == 41
 
     test.parse_instruc(3)
     assert test.curr_cmd == 2
-    assert test.test.register["b"] == 1
+    assert test.register["b"] == 1
 
     test.parse_instruc(4)
     assert test.curr_cmd == 3
-    assert test.test.register["b"] == 0
+    assert test.register["b"] == 0
 
     test.parse_instruc(5)
     assert test.curr_cmd == 5
 
     test.parse_instruc(11)
-    assert test.insr_invert[0] == True
+    assert test.register["a"] == -3
     assert test.curr_cmd == 6
+
+    test.parse_instruc(12)
+    assert test.inverted[3] == True
+    assert test.curr_cmd == 7
+
+    test.parse_instruc(3)
+    assert test.register["b"] == -1
+    assert test.curr_cmd == 8
 
 
 def test_final_register_val():
