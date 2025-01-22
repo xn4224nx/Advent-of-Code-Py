@@ -54,23 +54,147 @@ Comm = Enum("Comm", [("CPY", 1), ("INC", 2), ("DEC", 3), ("JNZ", 4), ("OUT", 5)]
 
 class SignalGenerator:
     def __init__(self, data_file: str):
-        pass
+        self.commands = []
+        self.register = [0, 0, 0, 0]
+        self.command_idx = 0
+        self.outputs = []
+
+        with open(data_file, "r") as fp:
+            for line in fp.readlines():
+                parts = []
+
+                # Parse the numbers and convert register accesses to 1000 nums
+                for idx, prt in enumerate(line.split()):
+                    if idx == 0:
+                        parts.append(prt)
+                    else:
+                        if prt[0].isalpha():
+                            parts.append(ord(prt[0]) - ord("a") + 1000)
+                        else:
+                            parts.append(int(prt))
+
+                # Match the command to the enum
+                if parts[0] == "cpy":
+                    self.commands.append((Comm.CPY, parts[1], parts[2]))
+
+                elif parts[0] == "inc":
+                    self.commands.append((Comm.INC, parts[1]))
+
+                elif parts[0] == "dec":
+                    self.commands.append((Comm.DEC, parts[1]))
+
+                elif parts[0] == "jnz":
+                    self.commands.append((Comm.JNZ, parts[1], parts[2]))
+
+                elif parts[0] == "out":
+                    self.commands.append((Comm.OUT, parts[1]))
+
+                else:
+                    raise Exception(f"Unknown instruction '{parts[0]}'!")
+
+    def access_val(self, val: int) -> int:
+        """
+        Extract a register value or return the original number
+        """
+        if val < 1000:
+            return val
+        else:
+            return self.register[val - 1000]
 
     def parse_instruc(self, instruct: tuple):
         """
         Execute an instruction based on the instruction.
         """
-        pass
+        if instruct[0] == Comm.CPY:
+            self.register[instruct[2] - 1000] = self.access_val(instruct[1])
+
+        elif instruct[0] == Comm.INC:
+            self.register[instruct[1] - 1000] += 1
+
+        elif instruct[0] == Comm.DEC:
+            self.register[instruct[1] - 1000] -= 1
+
+        elif instruct[0] == Comm.JNZ:
+            if self.access_val(instruct[1]) != 0:
+                self.command_idx += self.access_val(instruct[2])
+                return
+
+        elif instruct[0] == Comm.OUT:
+            self.outputs.append(self.register[instruct[1] - 1000])
+
+        self.command_idx += 1
 
     def confirm_next_n_outputs(self, n_outs: int) -> bool:
         """
         Determine if the next n outputs match the expected output.
         """
-        pass
+        start_out_cnt = len(self.outputs)
+        curr_out_cnt = len(self.outputs)
+
+        # Generate the outputs from the current state
+        while len(self.outputs) < start_out_cnt + n_outs:
+            self.parse_instruc(self.commands[self.command_idx])
+
+            # If a new output has been added check its the right one
+            if len(self.outputs) > curr_out_cnt:
+
+                # All even outputs should be one
+                if len(self.outputs) % 2 == 0:
+                    if self.outputs[len(self.outputs) - 1] != 1:
+                        return False
+
+                # All odd outputs should be zero
+                else:
+                    if self.outputs[len(self.outputs) - 1] != 0:
+                        return False
+
+                # Reset the output count
+                curr_out_cnt = len(self.outputs)
+
+        return True
 
     def lowest_int_for_rep(self) -> int:
         """
         Find the lowest integer that creates an alternating pattern of zeros
         and ones.
         """
-        pass
+        curr_test_value = 0
+        max_test_outputs = 100
+
+        while True:
+            self.register = [curr_test_value, 0, 0, 0]
+            self.command_idx = 0
+            self.outputs = []
+            curr_out_cnt = len(self.outputs)
+
+            # Generate the outputs from the current state
+            while len(self.outputs) < max_test_outputs:
+
+                self.parse_instruc(self.commands[self.command_idx])
+
+                # If a new output has been added check its the right one
+                if len(self.outputs) > curr_out_cnt:
+
+                    # All even outputs should be one
+                    if len(self.outputs) % 2 == 0:
+                        if self.outputs[len(self.outputs) - 1] != 1:
+                            break
+
+                    # All odd outputs should be zero
+                    else:
+                        if self.outputs[len(self.outputs) - 1] != 0:
+                            break
+
+                    # Reset the output count
+                    curr_out_cnt = len(self.outputs)
+
+            # If the loop is uninterupted then a solution has been found
+            else:
+                return curr_test_value
+
+            # Otherwise prepare to test the next number
+            curr_test_value += 1
+
+
+if __name__ == "__main__":
+    print(f"Part 1 = {SignalGenerator('./data/input.txt').lowest_int_for_rep()}")
