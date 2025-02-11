@@ -32,104 +32,19 @@ PART 2: What is the decompressed length of the file using this improved format?
 import re
 
 
-def read_data(data_file: str) -> str:
-    """
-    Read the compressed data file and remove the trailing whitespace.
-    """
-    with open(data_file) as fp:
-        return fp.read().strip()
+class CompressedData:
+    def __init__(self, datafile: str):
+        pass
 
-
-def find_markers(compressed_data: str, recursive: bool) -> dict:
-    """
-    Determine the marker groups and their statistics. If the the groups are not
-    recursive remove the ones that are treated as data.
-    """
-    marker_pat = re.compile(r"\(([0-9]+)x([0-9]+)\)")
-
-    # Find the location, magnitude and range of all markers
-    markers = [
-        {
-            "len": int(x.group(1)),
-            "rep": int(x.group(2)),
-            "start": x.start(),
-            "end": x.end(),
-            "copies": 1,
-        }
-        for x in marker_pat.finditer(compressed_data)
-    ]
-
-    # Remove markers that are treated as data
-    rm_mkr_idx = []
-    markers_to_rm = []
-    for mkr_idx in range(len(markers)):
-
-        # If a marker will be removed it can't remove other markers.
-        if not recursive and mkr_idx in rm_mkr_idx:
-            continue
-
-        # Check every other marker to see if it get copied by the current one or
-        # ignored because it gets treated as data.
-        for nxt_mkr_idx in range(mkr_idx + 1, len(markers)):
-
-            end_of_mkr = markers[mkr_idx]["len"] + markers[mkr_idx]["end"]
-
-            # Ensure the next marker is in range
-            if end_of_mkr < markers[nxt_mkr_idx]["start"]:
-                break
-
-            # Increase the next marker by the current copies size
-            if recursive:
-                markers[nxt_mkr_idx]["copies"] *= markers[mkr_idx]["rep"]
-
-            # Or set this marker to be treated as data ie remove its record
-            else:
-                markers_to_rm.append(nxt_mkr_idx)
-
-    # Remove the markers that are treated as data
-    for mkr_idx in markers_to_rm:
-        if mkr_idx < len(markers):
-            del markers[mkr_idx]
-
-    return markers
-
-
-def calc_len(file_path: str, recursive: bool) -> int:
-    """
-    Calculate the decompressed length of a raw string, optionally implementing
-    recursive decompression.
-    """
-    uncompr = read_data(file_path)
-    marks = find_markers(uncompr, recursive)
-
-    # Deal with there being no markers
-    if not marks:
-        return len(uncompr)
-
-    # Record the characters at the start of the string that never get duplicated
-    total_len = marks[0]["start"]
-
-    # Calculate the contribution each marker makes
-    for mkr_idx in range(len(marks)):
-
-        # At what index does the next marker or the end of string occur
-        if mkr_idx < len(marks) - 1:
-            nxt_mkr_idx = marks[mkr_idx + 1]["start"]
-        else:
-            nxt_mkr_idx = len(uncompr)
-
-        # Determine what length of chars get multiplied by the current marker
-        char_diff = min(nxt_mkr_idx - marks[mkr_idx]["end"], marks[mkr_idx]["len"])
-
-        # Add in the characters that get multiplied
-        total_len += char_diff * marks[mkr_idx]["rep"] * marks[mkr_idx]["copies"]
-
-        # Add in characters that are at the end but don't get multiplied
-        total_len += max(0, nxt_mkr_idx - char_diff - marks[mkr_idx]["end"])
-
-    return total_len
+    def decomp_len(self, recursive: bool) -> int:
+        """
+        Calculate the length of the data when it is decompressed, either
+        recursively or ignoring markers within other markers.
+        """
+        pass
 
 
 if __name__ == "__main__":
-    print(f"Part 1 = {calc_len('./data/input.txt', False)}")
-    print(f"Part 2 = {calc_len('./data/input.txt', True)}")
+    sec_data = CompressedData("./data/input.txt")
+    print(f"Part 1 = {sec_data.decomp_len(False)}")
+    print(f"Part 2 = {sec_data.decomp_len(True)}")
