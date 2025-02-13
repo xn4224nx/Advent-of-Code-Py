@@ -150,13 +150,12 @@ class NodeGrid:
 
     def moves_empty_to_data(self) -> int:
         """
-        Find the shortest path to move the empty space to the node just left of
-        the cruical data node. Return the minimum moves required to get there
-        and the state of the disk usage in the grid after this move.
+        Find the shortest path to move the empty space to the node with
+        the cruical data. Return the minimum moves required to get there.
         """
         unvisted_nodes = set([x for x in range(len(self.nodes))])
         dist_to_nodes = {x: sys.maxsize for x in range(len(self.nodes))}
-        dest_node = self.nodes.index("G") - 1
+        dest_node = self.nodes.index("G")
 
         # Start at the empty node
         dist_to_nodes[self.nodes.index("_")] = 0
@@ -184,16 +183,16 @@ class NodeGrid:
 
         return dist_to_nodes[dest_node]
 
-    def data_extact_min_moves(self) -> int:
+    def data_extract_min_moves(self) -> int:
         """
         Calculate the total number of moves to get the target data 'G' to the
         access node at 0,0.
         """
         moves_for_empty = self.moves_empty_to_data()
-        return moves_for_empty + 5 * (self.node_loc[self.nodes.index("G")][0] - 1) + 1
+        return moves_for_empty + 5 * self.node_loc[self.nodes.index("G")][0] + 1
 
 
 if __name__ == "__main__":
     cluster = NodeGrid("./data/input.txt")
     print(f"Part 1 = {len(cluster.viable_pairs(cluster.nodes))}")
-    print(f"Part 2 = {cluster.data_extact_min_moves()}")
+    print(f"Part 2 = {cluster.data_extract_min_moves()}")

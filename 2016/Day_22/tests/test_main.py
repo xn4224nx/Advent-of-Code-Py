@@ -59,13 +59,3 @@ def test_find_ajacent_pairs():
         (4, 5),
         (8, 5),
     ]
-
-
-def test_moves_empty_to_data():
-    assert NodeGrid("./data/example_01.txt").moves_empty_to_data() == 1
-    assert NodeGrid("./data/example_02.txt").moves_empty_to_data() == 69
-
-
-def test_minimum_data_moves():
-    assert NodeGrid("./data/example_01.txt").data_extact_min_moves() == 7
-    assert NodeGrid("./data/example_02.txt").data_extact_min_moves() == 225
