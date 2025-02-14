@@ -43,9 +43,32 @@ For example:
         the last digit, 9.
 
 PART 1: What is the solution to your captcha?
-"""
 
-from collections import deque
+You notice a progress bar that jumps to 50% completion. Apparently, the door
+isn't yet satisfied, but it did emit a star as encouragement. The instructions
+change:
+
+Now, instead of considering the next digit, it wants you to consider the digit
+halfway around the circular list. That is, if your list contains 10 items, only
+include a digit in your sum if the digit 10/2 = 5 steps forward matches it.
+Fortunately, your list has an even number of elements.
+
+For example:
+
+    -   1212 produces 6: the list contains 4 items, and all four digits match
+        the digit 2 items ahead.
+
+    -   1221 produces 0, because every comparison is between a 1 and a 2.
+
+    -   123425 produces 4, because both 2s match each other, but no other digit
+        has a match.
+
+    -   123123 produces 12.
+
+    -   12131415 produces 4.
+
+PART 2: What is the solution to your new captcha?
+"""
 
 
 class InverseCaptcha:
@@ -53,9 +76,9 @@ class InverseCaptcha:
         with open(data_file, "r") as fp:
             raw_nums = fp.read().strip()
 
-        self.ring = deque([int(x) for x in raw_nums])
+        self.ring = [int(x) for x in raw_nums]
 
-    def adjacent_sum(self) -> int:
+    def comparison_sum(self, prev: bool = True) -> int:
         """
         Assuming the numbers are arranged in a ring calculate the sum of numbers
         that are adjacent to each other.
@@ -63,11 +86,17 @@ class InverseCaptcha:
         ring_sum = 0
 
         for idx in range(len(self.ring)):
-            if idx == 0:
-                prev_idx = len(self.ring) - 1
-            else:
-                prev_idx = idx - 1
 
+            # Determine which number get compared to this one
+            if prev:
+                if idx == 0:
+                    prev_idx = len(self.ring) - 1
+                else:
+                    prev_idx = idx - 1
+            else:
+                prev_idx = (idx + len(self.ring) // 2) % len(self.ring)
+
+            # If the numbers are the same it gets summed
             if self.ring[prev_idx] == self.ring[idx]:
                 ring_sum += self.ring[idx]
 
@@ -75,4 +104,7 @@ class InverseCaptcha:
 
 
 if __name__ == "__main__":
-    print(f"Part 1 = {InverseCaptcha("./data/input.txt").adjacent_sum()}")
+    anti_human = InverseCaptcha("./data/input.txt")
+
+    print(f"Part 1 = {anti_human.comparison_sum(True)}")
+    print(f"Part 1 = {anti_human.comparison_sum(False)}")
