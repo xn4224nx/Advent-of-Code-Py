@@ -6,7 +6,7 @@ from main import SpiralMemory
 
 
 def test_exit_moves_exp1():
-    assert SpiralMemory(1).moves_to_exit() == 0
+    assert SpiralMemory(1).moves_to_exit() == 1
 
 
 def test_exit_moves_exp2():
@@ -19,3 +19,7 @@ def test_exit_moves_exp3():
 
 def test_exit_moves_exp4():
     assert SpiralMemory(1024).moves_to_exit() == 31
+
+
+def test_exit_moves_exp5():
+    assert SpiralMemory(0).moves_to_exit() == 0

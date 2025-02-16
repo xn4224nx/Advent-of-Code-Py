@@ -34,15 +34,28 @@ PART 1: How many steps are required to carry the data from the square identified
 
 class SpiralMemory:
     def __init__(self, max_val: int):
-        pass
+        self.max_val = max_val
 
     def moves_to_exit(self) -> int:
         """
         Calculate the manhattan distance that a square at `max_val` would need
         to travel to get to the exit square at one.
         """
-        pass
+        if self.max_val in [0, 1]:
+            return self.max_val
+
+        # What ring in the spiral is the number located?
+        ring = -(-(self.max_val**0.5) // 1) // 2
+
+        # What is the remaining steps to take from the start point in the ring?
+        rem_steps = self.max_val - ((2 * ring - 1) ** 2) % (4 * (2 * ring - 1) + 4)
+
+        # What is the offset from the centre of each ring side
+        offset = abs(((rem_steps % (2 * ring))) - ring)
+
+        # What is the manhattan distance to the centre?
+        return int(offset + ring)
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {SpiralMemory(325489).moves_to_exit()}")
