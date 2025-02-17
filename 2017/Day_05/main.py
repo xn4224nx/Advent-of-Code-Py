@@ -50,21 +50,34 @@ PART 1: How many steps does it take to reach the exit?
 
 class Jumps:
     def __init__(self, instruct_file: str):
-        pass
+        self.curr_instr = 0
+
+        with open(instruct_file, "r") as fp:
+            self.states = [int(x) for x in fp.readlines()]
 
     def execute_curr_jump(self):
         """
         Change the state based on the current instruction that is selected.
         """
-        pass
+
+        # Increase the value at the current jump offset
+        self.states[self.curr_instr] += 1
+
+        # Move to the new jump offset
+        self.curr_instr += self.states[self.curr_instr] - 1
 
     def steps_to_exit(self) -> int:
         """
         Calculate the number of jumps required to escape the set of
         instructions.
         """
-        pass
+        step_cnt = 0
+        while 0 <= self.curr_instr < len(self.states):
+            self.execute_curr_jump()
+            step_cnt += 1
+
+        return step_cnt
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {Jumps("./data/input.txt").steps_to_exit()}")
