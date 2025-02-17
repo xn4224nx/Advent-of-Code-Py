@@ -20,21 +20,30 @@ PART 1: The system's full passphrase list is available as your puzzle input. How
 
 class SecuritySystem:
     def __init__(self, passphrase_file: str):
-        pass
+        self.all_passphrases = []
+
+        with open(passphrase_file, "r") as fp:
+            for line in fp.readlines():
+                self.all_passphrases.append(line.strip())
 
     def valid_phrase_dupe(self, passphrase: str) -> bool:
         """
         Extract the words in a passphrase and determine if there are any
         duplicates, if so the passphrase is not valid.
         """
-        pass
+        words = passphrase.split()
+        num_words = len(words)
+        unique_words = len(set(words))
+
+        return num_words == unique_words
 
     def count_valid_passphrases(self) -> int:
         """
         Count the number of passphrases that contain no duplicate words.
         """
-        pass
+        return sum([self.valid_phrase_dupe(x) for x in self.all_passphrases])
 
 
 if __name__ == "__main__":
-    pass
+    sec_sys = SecuritySystem("./data/input.txt")
+    print(f"Part 1 = {sec_sys.count_valid_passphrases()}")
