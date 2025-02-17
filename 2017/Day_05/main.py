@@ -45,12 +45,21 @@ would be taken before an exit is found:
 In this example, the exit is reached in 5 steps.
 
 PART 1: How many steps does it take to reach the exit?
+
+Now, the jumps are even stranger: after each jump, if the offset was three or
+more, instead decrease it by 1. Otherwise, increase it by 1 as before.
+
+Using this rule with the above example, the process now takes 10 steps, and the
+offset values after finding the exit are left as 2 3 2 3 -1.
+
+PART 2: How many steps does it now take to reach the exit?
 """
 
 
 class Jumps:
-    def __init__(self, instruct_file: str):
+    def __init__(self, instruct_file: str, strange_jumps: bool):
         self.curr_instr = 0
+        self.strange_jumps = strange_jumps
 
         with open(instruct_file, "r") as fp:
             self.states = [int(x) for x in fp.readlines()]
@@ -59,12 +68,18 @@ class Jumps:
         """
         Change the state based on the current instruction that is selected.
         """
-
-        # Increase the value at the current jump offset
-        self.states[self.curr_instr] += 1
+        old_instruc_idx = self.curr_instr
 
         # Move to the new jump offset
-        self.curr_instr += self.states[self.curr_instr] - 1
+        self.curr_instr += self.states[self.curr_instr]
+
+        # If the offset was three or more, instead decrease it by 1
+        if self.strange_jumps and self.states[old_instruc_idx] >= 3:
+            self.states[old_instruc_idx] -= 1
+
+        # Increase the value at the old jump offset
+        else:
+            self.states[old_instruc_idx] += 1
 
     def steps_to_exit(self) -> int:
         """
@@ -80,4 +95,5 @@ class Jumps:
 
 
 if __name__ == "__main__":
-    print(f"Part 1 = {Jumps("./data/input.txt").steps_to_exit()}")
+    print(f"Part 1 = {Jumps("./data/input.txt", False).steps_to_exit()}")
+    print(f"Part 2 = {Jumps("./data/input.txt", True).steps_to_exit()}")
