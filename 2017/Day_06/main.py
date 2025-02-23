@@ -56,27 +56,63 @@ PART 1: Given the initial block counts in your puzzle input, how many
 
 class MemoryBank:
     def __init__(self, initial_state_file: str):
-        pass
+        self.state = []
+
+        with open(initial_state_file, "r") as fp:
+            for mem in fp.read().strip().split():
+                self.state.append(int(mem))
 
     def max_bank(self) -> int:
         """
         Find the index of largest memory bank.
         """
-        pass
+        curr_max = 0
+        curr_max_idx = 0
+
+        for idx in range(len(self.state)):
+            if self.state[idx] > curr_max:
+                curr_max = self.state[idx]
+                curr_max_idx = idx
+
+        return curr_max_idx
 
     def redistribute(self):
         """
         Take the memory from the largest bank and incrementally redistribute it
         to every other memory bank.
         """
-        pass
+        max_idx = self.max_bank()
+        max_value = self.state[max_idx]
+
+        # Set the max value to zero
+        self.state[max_idx] = 0
+
+        # Increase the other banks in order from the one that was reduced
+        for bnk_idx in range(1, max_value + 1):
+            incres_idx = (max_idx + bnk_idx) % len(self.state)
+            self.state[incres_idx] += 1
 
     def steps_unti_loop(self) -> int:
         """
         Find the redistribution steps required to see a state of the memory bank
         that has already been seen before.
         """
-        pass
+        num_steps = 0
+        seen_states = set()
+
+        # Loop until a previously seen state is encountered
+        while True:
+            seen_states.add(tuple(self.state))
+
+            # Increment the state
+            self.redistribute()
+            num_steps += 1
+
+            # Check if the new state has been seen before
+            if tuple(self.state) in seen_states:
+                break
+
+        return num_steps
 
 
 if __name__ == "__main__":

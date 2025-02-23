@@ -33,9 +33,21 @@ def test_max_bank_exp04():
     assert test.max_bank() == 3
 
 
+def test_max_bank_exp06():
+    test = MemoryBank("./data/example_01.txt")
+    test.state = [0, 2, 3, 4]
+    assert test.max_bank() == 3
+
+
 def test_max_bank_exp05():
     test = MemoryBank("./data/example_01.txt")
     test.state = [1, 3, 4, 1]
+    assert test.max_bank() == 2
+
+
+def test_max_bank_exp06():
+    test = MemoryBank("./data/example_01.txt")
+    test.state = [0, 2, 4, 4]
     assert test.max_bank() == 2
 
 
@@ -71,7 +83,7 @@ def test_redistribute_exp05():
     test = MemoryBank("./data/example_01.txt")
     test.state = [1, 3, 4, 1]
     test.redistribute()
-    assert test.state == [0, 2, 7, 0]
+    assert test.state == [2, 4, 1, 2]
 
 
 def test_steps_unti_loop():
