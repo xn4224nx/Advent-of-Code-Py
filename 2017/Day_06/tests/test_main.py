@@ -86,5 +86,5 @@ def test_redistribute_exp05():
     assert test.state == [2, 4, 1, 2]
 
 
-def test_steps_unti_loop():
-    assert MemoryBank("./data/example_01.txt").steps_unti_loop() == 5
+def test_steps_until_loop():
+    assert MemoryBank("./data/example_01.txt").steps_until_loop() == (5, 4)

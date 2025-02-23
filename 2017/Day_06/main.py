@@ -51,6 +51,16 @@ and so the answer in this example is 5.
 PART 1: Given the initial block counts in your puzzle input, how many
         redistribution cycles must be completed before a configuration is
         produced that has been seen before?
+
+Out of curiosity, the debugger would also like to know the size of the loop:
+starting from a state that has already been seen, how many block redistribution
+cycles must be performed before that same state is seen again?
+
+In the example above, 2 4 1 2 is seen again after four cycles, and so the answer
+in that example would be 4.
+
+PART 2: How many cycles are in the infinite loop that arises from the
+        configuration in your puzzle input?
 """
 
 
@@ -92,28 +102,32 @@ class MemoryBank:
             incres_idx = (max_idx + bnk_idx) % len(self.state)
             self.state[incres_idx] += 1
 
-    def steps_unti_loop(self) -> int:
+    def steps_until_loop(self) -> (int, int):
         """
         Find the redistribution steps required to see a state of the memory bank
-        that has already been seen before.
+        that has already been seen before. Return the steps take to detect a
+        loop and the loop size
         """
         num_steps = 0
-        seen_states = set()
+        seen_states = {}
 
         # Loop until a previously seen state is encountered
         while True:
-            seen_states.add(tuple(self.state))
-
-            # Increment the state
-            self.redistribute()
-            num_steps += 1
 
             # Check if the new state has been seen before
             if tuple(self.state) in seen_states:
                 break
 
-        return num_steps
+            # Record the step when this state was encountered
+            seen_states[tuple(self.state)] = num_steps
+
+            self.redistribute()
+            num_steps += 1
+
+        return num_steps, num_steps - seen_states[tuple(self.state)]
 
 
 if __name__ == "__main__":
-    print(f"Part 1 = {MemoryBank('./data/input.txt').steps_unti_loop()}")
+    steps_to_loop, loop_len = MemoryBank("./data/input.txt").steps_until_loop()
+    print(f"Part 1 = {steps_to_loop}")
+    print(f"Part 2 = {loop_len}")
