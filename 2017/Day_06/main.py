@@ -116,4 +116,4 @@ class MemoryBank:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {MemoryBank('./data/input.txt').steps_unti_loop()}")
