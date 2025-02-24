@@ -66,17 +66,59 @@ PART 1: Before you're ready to help them, you need to make sure your
         information is correct. What is the name of the bottom program?
 """
 
+import re
+
 
 class ProgramTower:
     def __init__(self, tower_status: str):
-        pass
+        self.disks = {}
+        re_grp = re.compile(r"([a-z]+) \(([0-9]+)\)( -> )?([a-z, ]+)?")
+
+        # Iterate over lines in the file
+        with open(tower_status, "r") as fp:
+            for line in fp.readlines():
+                parts = re_grp.match(line)
+
+                # Extract the name and weight
+                self.disks[parts.group(1)] = {}
+                self.disks[parts.group(1)]["weight"] = int(parts.group(2))
+
+                # Detect disks above this one
+                if parts.group(3) is not None:
+                    tmp_above = [x.strip() for x in parts.group(4).split(",")]
+                else:
+                    tmp_above = []
+
+                self.disks[parts.group(1)]["above"] = tmp_above
 
     def bottom_disk(self) -> str:
         """
-        Determine the name of the disk at the bottom of the program tower.
+        Determine the name of the disk at the bottom of the program tower. Do
+        this by finding a key that doesn't appear in any other disks above
+        list while still having disks above itself.
         """
-        pass
+        disks_with_above = [
+            disk for disk, disk_dets in self.disks.items() if disk_dets["above"]
+        ]
+
+        # Check each disk to make sure no other disk is above it
+        for disk_bot in disks_with_above:
+            for disk_ch in disks_with_above:
+                if disk_bot == disk_ch:
+                    continue
+
+                # If the potential bottom disk appears in any other it is not
+                if disk_bot in self.disks[disk_ch]["above"]:
+                    break
+
+            # If the loop completes then this disk is at the bottom
+            else:
+                return disk_bot
+        else:
+            raise Exception("No viable disk found to be at the bottom!")
 
 
 if __name__ == "__main__":
-    pass
+    print(
+        f"Part 1 = {ProgramTower('./data/input.txt').bottom_disk()}",
+    )
