@@ -36,6 +36,12 @@ are named, and leaves that to you to determine.
 
 PART 1: What is the largest value in any register after completing the
         instructions in your puzzle input?
+
+PART 2: To be safe, the CPU also needs to know the highest value held in any
+        register during this process so that it can decide how much memory to
+        allocate to these operations. For example, in the above instructions,
+        the highest value ever held was 10 (in register c after the third
+        instruction was evaluated).
 """
 
 import re
@@ -94,12 +100,22 @@ class CPU:
     def final_largest_value(self) -> int:
         """
         Execute all instructions and find the largest value in the register.
+        Return the final max value and the overall max value through out the
+        process.
         """
+        overall_max = 0
+
         for cmd_idx in range(len(self.cmds)):
             self.execute_command(cmd_idx)
+            curr_max = max(self.register.values())
 
-        return max(self.register.values())
+            # Check for a new highest maximum
+            if curr_max > overall_max:
+                overall_max = curr_max
+
+        return (overall_max, curr_max)
 
 
 if __name__ == "__main__":
-    print(f"Part 1 = {CPU("./data/input.txt").final_largest_value()}")
+    overall_max, curr_max = CPU("./data/input.txt").final_largest_value()
+    print(f"Part 1 = {curr_max}\nPart 2 = {overall_max}")
