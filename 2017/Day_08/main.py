@@ -38,24 +38,68 @@ PART 1: What is the largest value in any register after completing the
         instructions in your puzzle input?
 """
 
+import re
+
 
 class CPU:
     def __init__(self, datafile: str):
-        pass
+        instruc_re = re.compile(
+            r"([a-z]+) (inc|dec) (\-?[0-9]+) if ([a-z]+) (>=|<=|==|<|>|!=) (\-?[0-9]+)"
+        )
+        self.register = {}
+        self.cmds = []
+
+        with open(datafile, "r") as fp:
+            for line in fp.readlines():
+
+                # Check this line for a match
+                result = instruc_re.match(line)
+
+                if result is None:
+                    raise Exception(f"Line not parsed: '{line}'")
+
+                # Save the named registers
+                self.register[result.group(1)] = 0
+                self.register[result.group(4)] = 0
+
+                # Determine the register change
+                if result.group(2) == "inc":
+                    change = int(result.group(3))
+                else:
+                    change = -1 * int(result.group(3))
+
+                # Save the command
+                self.cmds.append(
+                    [
+                        result.group(1),
+                        change,
+                        result.group(4),
+                        result.group(5),
+                        int(result.group(6)),
+                    ]
+                )
 
     def execute_command(self, cmd_idx: int):
         """
         Execute an instruction specified by the index, only modify the register
         if the condition is met.
         """
-        pass
+        if eval(
+            f"{self.register[self.cmds[cmd_idx][2]]} "
+            f"{self.cmds[cmd_idx][3]} "
+            f"{self.cmds[cmd_idx][4]}"
+        ):
+            self.register[self.cmds[cmd_idx][0]] += self.cmds[cmd_idx][1]
 
     def final_largest_value(self) -> int:
         """
         Execute all instructions and find the largest value in the register.
         """
-        pass
+        for cmd_idx in range(len(self.cmds)):
+            self.execute_command(cmd_idx)
+
+        return max(self.register.values())
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {CPU("./data/input.txt").final_largest_value()}")
