@@ -62,6 +62,23 @@ immediately contains it. (The outermost group gets a score of 1.)
     -   {{<a!>},{<a!>},{<a!>},{<ab>}}, score of 1 + 2 = 3.
 
 PART 1: What is the total score for all groups in your input?
+
+Now, you're ready to remove the garbage.
+
+To prove you've removed it, you need to count all of the characters within
+the garbage. The leading and trailing < and > don't count, nor do any
+canceled characters or the ! doing the canceling.
+
+    -   <>, 0 characters.
+    -   <random characters>, 17 characters.
+    -   <<<<>, 3 characters.
+    -   <{!>}>, 2 characters.
+    -   <!!>, 0 characters.
+    -   <!!!>>, 0 characters.
+    -   <{o"i!a,<{i<a>, 10 characters.
+
+PART 2: How many non-canceled characters are within the garbage in your
+        puzzle input?
 """
 
 from pathlib import Path
@@ -80,14 +97,16 @@ class CharStream:
         else:
             self.stream = stream
 
-    def score(self) -> int:
+    def score(self) -> (int, int):
         """
-        Calculate the total score of all the groups in the stream.
+        Calculate the total score of all the groups in the stream and
+        calculate and the number of non-canceled garbage characters.
         """
         char_idx = 0
         within_garbage = False
         group_level = 0
         score = 0
+        garbage_cnt = 0
 
         # Iterate over the chars in the
         while char_idx < len(self.stream):
@@ -108,7 +127,7 @@ class CharStream:
 
             # Ignore all characters within garbage
             elif within_garbage:
-                pass
+                garbage_cnt += 1
 
             # Detect the start of the a group
             elif char == "{":
@@ -119,8 +138,9 @@ class CharStream:
                 score += group_level
                 group_level -= 1
 
-        return score
+        return score, garbage_cnt
 
 
 if __name__ == "__main__":
-    print(f"Part 1 = {CharStream("./data/input.txt").score()}")
+    grp_score, gbg_cnt = CharStream("./data/input.txt").score()
+    print(f"Part 1 = {grp_score}\nPart 2 = {gbg_cnt}")
