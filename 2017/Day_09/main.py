@@ -64,17 +64,63 @@ immediately contains it. (The outermost group gets a score of 1.)
 PART 1: What is the total score for all groups in your input?
 """
 
+from pathlib import Path
+
 
 class CharStream:
     def __init__(self, stream):
-        pass
+        self.negate_char = "!"
+
+        # Test to see if the supplied stream is a file to be read
+        if Path(stream).is_file():
+            with open(stream, "r") as fp:
+                self.stream = fp.read().strip()
+
+        # Otherwise set the supplied variable as the stream
+        else:
+            self.stream = stream
 
     def score(self) -> int:
         """
         Calculate the total score of all the groups in the stream.
         """
-        pass
+        char_idx = 0
+        within_garbage = False
+        group_level = 0
+        score = 0
+
+        # Iterate over the chars in the
+        while char_idx < len(self.stream):
+            char = self.stream[char_idx]
+            char_idx += 1
+
+            # Skip the next char if the current one is the skip char
+            if char == self.negate_char:
+                char_idx += 1
+
+            # Detect the start of a garbage group
+            elif char == "<" and not within_garbage:
+                within_garbage = True
+
+            # Detect the end of a garbage group
+            elif char == ">" and within_garbage:
+                within_garbage = False
+
+            # Ignore all characters within garbage
+            elif within_garbage:
+                pass
+
+            # Detect the start of the a group
+            elif char == "{":
+                group_level += 1
+
+            # Detect the end of a group and calculate the resultant score
+            elif char == "}":
+                score += group_level
+                group_level -= 1
+
+        return score
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {CharStream("./data/input.txt").score()}")
