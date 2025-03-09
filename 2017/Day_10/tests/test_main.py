@@ -62,5 +62,9 @@ def test_reverse_exp4():
     assert test.skip_size == 4
 
 
-def test_final_result():
+def test_final_result_exp1():
     assert KnotHash(4, "./data/example_01.txt").final_result() == 12
+
+
+def test_final_result_exp2():
+    assert KnotHash(255, "./data/example_02.txt").final_result() == 4480

@@ -89,38 +89,15 @@ class KnotHash:
         """
         Reverse the specified elements in the rope.
         """
-        b_idx = self.pos
-        e_idx = (self.pos + rev_len) % len(self.rope)
+        # Select the values in the slice
+        spl_slice = [self.rope[(self.pos + x) % len(self.rope)] for x in range(rev_len)]
 
-        print(e_idx)
-        print(b_idx)
+        # Reverse the values
+        spl_slice = spl_slice[::-1]
 
-        # One internal slice gets reversed
-        if b_idx < e_idx:
-            self.rope[b_idx:e_idx] = self.rope[b_idx:e_idx][::-1]
-
-        # The entire rope
-        elif b_idx == e_idx:
-            idx = len(self.rope) - b_idx
-            spl_slice = self.rope[b_idx:] + self.rope[:e_idx]
-
-            # Reverse it
-            spl_slice = spl_slice[::-1]
-
-            # Put the reversed slice back in
-            self.rope[:b_idx] = spl_slice[idx:]
-            self.rope[b_idx:] = spl_slice[:idx]
-
-        # The beginning of rope and the end of the rope
-        else:
-            spl_slice = self.rope[:e_idx] + self.rope[b_idx:]
-
-            # Reverse it
-            spl_slice = spl_slice[::-1]
-
-            # Put the reversed slice back in
-            self.rope[:e_idx] = spl_slice[:e_idx]
-            self.rope[b_idx:] = spl_slice[b_idx - 1 :]
+        # Reinsert the values
+        for idx in range(rev_len):
+            self.rope[(self.pos + idx) % len(self.rope)] = spl_slice[idx]
 
         # Increase the position and skip size
         self.pos = (self.pos + rev_len + self.skip_size) % len(self.rope)
@@ -137,4 +114,4 @@ class KnotHash:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {KnotHash(255, "./data/input.txt").final_result()}")
