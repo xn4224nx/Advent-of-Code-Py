@@ -6,12 +6,27 @@ from main import KnotHash
 from collections import deque
 
 
-def test_data_ingestion():
+def test_data_ingestion_exp1():
     test = KnotHash(4, "./data/example_01.txt")
     assert test.rope == [0, 1, 2, 3, 4]
-    assert test.skips == [3, 4, 1, 5]
+    assert test.lengths == [3, 4, 1, 5]
     assert test.pos == 0
     assert test.skip_size == 0
+
+
+def test_data_ingestion_exp3():
+    test = KnotHash(4, "./data/example_03.txt", True)
+    assert test.lengths == [17, 31, 73, 47, 23]
+
+
+def test_data_ingestion_exp4():
+    test = KnotHash(4, "./data/example_04.txt", True)
+    assert test.lengths == [65, 111, 67, 32, 50, 48, 49, 55, 17, 31, 73, 47, 23]
+
+
+def test_data_ingestion_exp5():
+    test = KnotHash(4, "./data/example_05.txt", True)
+    assert test.lengths == [49, 44, 50, 44, 51, 17, 31, 73, 47, 23]
 
 
 def test_reverse_exp1():
@@ -68,3 +83,31 @@ def test_final_result_exp1():
 
 def test_final_result_exp2():
     assert KnotHash(255, "./data/example_02.txt").final_result() == 4480
+
+
+def test_calc_digest_exp3():
+    assert (
+        KnotHash(255, "./data/example_03.txt", True).calc_digest()
+        == "a2582a3a0e66e6e86e3812dcb672a272"
+    )
+
+
+def test_calc_digest_exp4():
+    assert (
+        KnotHash(255, "./data/example_04.txt", True).calc_digest()
+        == "33efeb34ea91902bb2f59c9920caa6cd"
+    )
+
+
+def test_calc_digest_exp5():
+    assert (
+        KnotHash(255, "./data/example_05.txt", True).calc_digest()
+        == "3efbe78a8d82f29979031a4aa0b16a9d"
+    )
+
+
+def test_calc_digest_exp6():
+    assert (
+        KnotHash(255, "./data/example_06.txt", True).calc_digest()
+        == "63960835bcdc130f0b66d7ff4f6a5a8e"
+    )
