@@ -1,4 +1,4 @@
-"""
+r"""
 --- Day 10: Knot Hash ---
 
 You come across some programs that are trying to implement a software emulation
@@ -78,19 +78,62 @@ PART 1: However, you should instead use the standard list size of 256 (with
 
 class KnotHash:
     def __init__(self, max_element: int, lengths_file: str):
-        pass
+        self.pos = 0
+        self.skip_size = 0
+        self.rope = [x for x in range(max_element + 1)]
 
-    def reverse(self, rev_idx: int, rev_len: int):
+        with open(lengths_file, "r") as fp:
+            self.skips = [int(x) for x in fp.read().strip().split(",")]
+
+    def reverse(self, rev_len: int):
         """
         Reverse the specified elements in the rope.
         """
-        pass
+        b_idx = self.pos
+        e_idx = (self.pos + rev_len) % len(self.rope)
+
+        print(e_idx)
+        print(b_idx)
+
+        # One internal slice gets reversed
+        if b_idx < e_idx:
+            self.rope[b_idx:e_idx] = self.rope[b_idx:e_idx][::-1]
+
+        # The entire rope
+        elif b_idx == e_idx:
+            idx = len(self.rope) - b_idx
+            spl_slice = self.rope[b_idx:] + self.rope[:e_idx]
+
+            # Reverse it
+            spl_slice = spl_slice[::-1]
+
+            # Put the reversed slice back in
+            self.rope[:b_idx] = spl_slice[idx:]
+            self.rope[b_idx:] = spl_slice[:idx]
+
+        # The beginning of rope and the end of the rope
+        else:
+            spl_slice = self.rope[:e_idx] + self.rope[b_idx:]
+
+            # Reverse it
+            spl_slice = spl_slice[::-1]
+
+            # Put the reversed slice back in
+            self.rope[:e_idx] = spl_slice[:e_idx]
+            self.rope[b_idx:] = spl_slice[b_idx - 1 :]
+
+        # Increase the position and skip size
+        self.pos = (self.pos + rev_len + self.skip_size) % len(self.rope)
+        self.skip_size += 1
 
     def final_result(self) -> int:
         """
         Calculate the result of finding the first two numbers in the rope.
         """
-        pass
+        for skip in self.skips:
+            self.reverse(skip)
+
+        return self.rope[0] * self.rope[1]
 
 
 if __name__ == "__main__":
