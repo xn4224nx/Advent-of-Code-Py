@@ -30,24 +30,24 @@ def test_read_path_exp06():
 
 
 def test_min_path_len_exp01():
-    assert HexGrid("./data/example_01.txt").min_len_path() == 3
+    assert HexGrid("./data/example_01.txt").min_len_path()[0] == 3
 
 
 def test_min_path_len_exp02():
-    assert HexGrid("./data/example_02.txt").min_len_path() == 0
+    assert HexGrid("./data/example_02.txt").min_len_path()[0] == 0
 
 
 def test_min_path_len_exp03():
-    assert HexGrid("./data/example_03.txt").min_len_path() == 2
+    assert HexGrid("./data/example_03.txt").min_len_path()[0] == 2
 
 
 def test_min_path_len_exp04():
-    assert HexGrid("./data/example_04.txt").min_len_path() == 3
+    assert HexGrid("./data/example_04.txt").min_len_path()[0] == 3
 
 
 def test_min_path_len_exp05():
-    assert HexGrid("./data/example_05.txt").min_len_path() == 2
+    assert HexGrid("./data/example_05.txt").min_len_path()[0] == 2
 
 
 def test_min_path_len_exp06():
-    assert HexGrid("./data/example_06.txt").min_len_path() == 3
+    assert HexGrid("./data/example_06.txt").min_len_path()[0] == 3

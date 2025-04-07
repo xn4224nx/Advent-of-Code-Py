@@ -33,23 +33,29 @@ For example:
 
 PART 1: Starting where he started, you need to determine the fewest number of
         steps required to reach him.
+
+PART 2: How many steps away is the furthest he ever got from his starting
+        position?
 """
 
 from pathlib import Path
-from collections import Counter
 
 
 class HexGrid:
     def __init__(self, direction_file: str):
         self.path = Path(direction_file).read_text().strip().split(",")
 
-    def min_len_path(self) -> int:
+    def min_len_path(self) -> (int, int):
         """
         Find the minimum length required to reach the final destination of the
-        path through the hex grid.
+        path through the hex grid. Also find the maximum distance from the
+        center the path takes.
+
+        return the minimum and maximum.
 
         Algorithm taken from: https://www.redblobgames.com/grids/hexagons/
         """
+        max_dist = 0
         n_dir = 0
         se_dir = 0
 
@@ -79,9 +85,15 @@ class HexGrid:
             else:
                 raise Exception(f'Unknown direction "{curr_p}"')
 
-        return int((abs(n_dir) + abs(se_dir) + abs(n_dir - se_dir)) / 2)
+            curr_dist = int((abs(n_dir) + abs(se_dir) + abs(n_dir - se_dir)) / 2)
+
+            # Check for a maximum distance
+            if curr_dist > max_dist:
+                max_dist = curr_dist
+
+        return curr_dist, max_dist
 
 
 if __name__ == "__main__":
-    find_child = HexGrid("./data/input.txt")
-    print(f"Part 1 = {find_child.min_len_path()}")
+    min_dist, max_dist = HexGrid("./data/input.txt").min_len_path()
+    print(f"Part 1 = {min_dist}\nPart 2 = {max_dist}")
