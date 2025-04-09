@@ -9,7 +9,7 @@ def test_read_path_exp01():
     assert ProgramNetwork("./data/example_01.txt").conns == {
         0: {2},
         1: set(),
-        2: {0, 2, 3, 4},
+        2: {0, 3, 4},
         3: {2, 4},
         4: {2, 3, 6},
         5: {6},

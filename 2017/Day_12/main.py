@@ -50,16 +50,63 @@ a pipe that connects it to itself.
 PART 1: How many programs are in the group that contains program ID 0?
 """
 
+import re
+
 
 class ProgramNetwork:
     def __init__(self, connections_file: str):
-        pass
+        self.conns = {}
+
+        with open(connections_file, "r") as fp:
+            for line in fp.readlines():
+                prog, prog_links = line.split(" <-> ", 1)
+
+                # Extract the program links
+                prog_links = [int(x.strip()) for x in prog_links.split(",")]
+                prog = int(prog)
+
+                # Add in missing programs
+                if prog not in self.conns:
+                    self.conns[prog] = set()
+
+                # Add in links in this record
+                self.conns[prog].update(prog_links)
+
+                # Add in the reverse links
+                for c_prog in prog_links:
+                    if c_prog not in self.conns:
+                        self.conns[c_prog] = set()
+                    self.conns[c_prog].add(prog)
+
+        # Remove self referential links
+        for prog in self.conns:
+            if prog in self.conns[prog]:
+                self.conns[prog].remove(prog)
 
     def group_size(self, program_id: int) -> int:
         """
         Find the size of the group that contains the specified program.
         """
-        pass
+        conn_progs = set()
+        next_progs = {program_id}
+
+        # Start at the initial program and count every other program it links to
+        while len(next_progs) > 0:
+            new_next_progs = set()
+
+            # Get the connected programs
+            for prog in next_progs:
+                conn_progs.add(prog)
+
+                # Prepare to check programs in the next loop
+                for c_prog in self.conns[prog]:
+                    if c_prog not in conn_progs:
+                        new_next_progs.add(c_prog)
+
+            # Prepare for the next loop iteration
+            next_progs = new_next_progs
+
+        return len(conn_progs)
 
 
 if __name__ == "__main__":
