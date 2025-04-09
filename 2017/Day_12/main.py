@@ -110,4 +110,4 @@ class ProgramNetwork:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {ProgramNetwork("./data/input.txt").group_size(0)}")
