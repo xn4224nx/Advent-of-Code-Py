@@ -18,28 +18,32 @@ def test_read_path_exp01():
 
 
 def test_group_size_exp1():
-    assert ProgramNetwork("./data/example_01.txt").group_size(0) == 6
+    assert len(ProgramNetwork("./data/example_01.txt").group_contents(0)) == 6
 
 
 def test_group_size_exp2():
-    assert ProgramNetwork("./data/example_01.txt").group_size(2) == 6
+    assert len(ProgramNetwork("./data/example_01.txt").group_contents(2)) == 6
 
 
 def test_group_size_exp3():
-    assert ProgramNetwork("./data/example_01.txt").group_size(3) == 6
+    assert len(ProgramNetwork("./data/example_01.txt").group_contents(3)) == 6
 
 
 def test_group_size_exp4():
-    assert ProgramNetwork("./data/example_01.txt").group_size(4) == 6
+    assert len(ProgramNetwork("./data/example_01.txt").group_contents(4)) == 6
 
 
 def test_group_size_exp5():
-    assert ProgramNetwork("./data/example_01.txt").group_size(5) == 6
+    assert len(ProgramNetwork("./data/example_01.txt").group_contents(5)) == 6
 
 
 def test_group_size_exp6():
-    assert ProgramNetwork("./data/example_01.txt").group_size(6) == 6
+    assert len(ProgramNetwork("./data/example_01.txt").group_contents(6)) == 6
 
 
 def test_group_size_exp7():
-    assert ProgramNetwork("./data/example_01.txt").group_size(1) == 1
+    assert len(ProgramNetwork("./data/example_01.txt").group_contents(1)) == 1
+
+
+def test_group_count_exp1():
+    assert ProgramNetwork("./data/example_01.txt").group_count() == 2
