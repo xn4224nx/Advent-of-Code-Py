@@ -189,28 +189,80 @@ PART 1: Given the details of the firewall you've recorded, if you leave
 
 class Firewall:
     def __init__(self, conf_file: str):
-        pass
+        self.sc_info = []  # Scanner Infomation
+        self.sc_level = []  # Current Scanner Level
+        self.sc_desc = []  # Current Scanner Directions
+        self.packet_loc = 0  # Packet location
 
-    def cycle_before_launch(self, time_period: int):
+        with open(conf_file, "r") as fp:
+            for line in fp.readlines():
+                val_0, val_1 = line.split(": ")
+                self.sc_info.append((int(val_0), int(val_1)))
+                self.sc_level.append(0)
+                self.sc_desc.append(True)
+
+    def increment_scanners(self):
         """
-        Cycle through the firewall and simulate it running for a set time
-        period
+        Move the scanners one step.
         """
-        pass
+        for sc_idx in range(len(self.sc_level)):
+            # Move the scanner up or down
+            if self.sc_desc[sc_idx]:
+                self.sc_level[sc_idx] += 1
+            else:
+                self.sc_level[sc_idx] -= 1
+
+            # Reverse the movement direction
+            if self.sc_level[sc_idx] == 0:
+                self.sc_desc[sc_idx] = True
+
+            elif self.sc_level[sc_idx] == self.sc_info[sc_idx][1] - 1:
+                self.sc_desc[sc_idx] = False
 
     def trip_severity(self) -> int:
         """
         With the firewall in its current state calculate the total severity
         of the trip.
         """
-        pass
+        total_severity = 0
+
+        # Move the packet until it reaches the end
+        while self.packet_loc <= self.sc_info[-1][0]:
+
+            # Check for packet detection
+            for sc_idx in range(len(self.sc_info)):
+
+                # Check to see if the packet is in this scanners column and
+                # that the scanner is at the top of the column.
+                if (
+                    self.sc_info[sc_idx][0] == self.packet_loc
+                    and self.sc_level[sc_idx] == 0
+                ):
+                    total_severity += self.sc_info[sc_idx][0] * self.sc_info[sc_idx][1]
+
+            print(self.packet_loc)
+
+            # Move the scanners
+            self.increment_scanners()
+
+            # Move the packet along
+            self.packet_loc += 1
+
+        return total_severity
 
     def traverse(self, start_time: int) -> int:
         """
         Move across the filewall at the specified start time and return
         the total severity of the traversal.
         """
-        pass
+        self.sc_level = [0 for _ in range(len(self.sc_info))]
+        self.sc_desc = [True for _ in range(len(self.sc_info))]
+        self.packet_loc = 0
+
+        for _ in range(start_time):
+            self.increment_scanners()
+
+        return self.trip_severity()
 
 
 if __name__ == "__main__":
