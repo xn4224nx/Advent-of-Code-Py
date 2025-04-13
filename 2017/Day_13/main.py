@@ -184,84 +184,78 @@ severity is 0*3 + 6*4 = 24.
 
 PART 1: Given the details of the firewall you've recorded, if you leave
         immediately, what is the severity of your whole trip?
+
+Now, you need to pass through the firewall without being caught - easier said
+than done.
+
+You can't control the speed of the packet, but you can delay it any number of
+picoseconds. For each picosecond you delay the packet before beginning your
+trip, all security scanners move one step. You're not in the firewall during
+this time; you don't enter layer 0 until you stop delaying the packet.
+
+In the example above, if you delay 10 picoseconds (picoseconds 0 - 9), you
+won't get caught. Because all smaller delays would get you caught, the fewest
+number of picoseconds you would need to delay to get through safely is 10.
+
+PART 2: What is the fewest number of picoseconds that you need to delay the
+        packet to pass through the firewall without being caught?
 """
 
 
 class Firewall:
     def __init__(self, conf_file: str):
-        self.sc_info = []  # Scanner Infomation
-        self.sc_level = []  # Current Scanner Level
-        self.sc_desc = []  # Current Scanner Directions
-        self.packet_loc = 0  # Packet location
-
         with open(conf_file, "r") as fp:
-            for line in fp.readlines():
-                val_0, val_1 = line.split(": ")
-                self.sc_info.append((int(val_0), int(val_1)))
-                self.sc_level.append(0)
-                self.sc_desc.append(True)
+            raw = [line.split(": ") for line in fp.readlines()]
+            self.sc_info = {int(val_0): int(val_1) for val_0, val_1 in raw}
 
-    def increment_scanners(self):
+    def scanner_position(self, sc_idx: int, time: int) -> int:
         """
-        Move the scanners one step.
+        What is the position of a scanner after a certain time interval?
         """
-        for sc_idx in range(len(self.sc_level)):
-            # Move the scanner up or down
-            if self.sc_desc[sc_idx]:
-                self.sc_level[sc_idx] += 1
-            else:
-                self.sc_level[sc_idx] -= 1
+        sc_height = self.sc_info[sc_idx]
+        sc_offset = time % ((sc_height - 1) * 2)
 
-            # Reverse the movement direction
-            if self.sc_level[sc_idx] == 0:
-                self.sc_desc[sc_idx] = True
-
-            elif self.sc_level[sc_idx] == self.sc_info[sc_idx][1] - 1:
-                self.sc_desc[sc_idx] = False
+        if sc_offset > sc_height - 1:
+            return 2 * (sc_height - 1) - sc_offset
+        else:
+            return sc_offset
 
     def trip_severity(self) -> int:
         """
-        With the firewall in its current state calculate the total severity
-        of the trip.
+        With the firewall in its starting state calculate the total severity
+        of the trip accross it.
         """
         total_severity = 0
 
-        # Move the packet until it reaches the end
-        while self.packet_loc <= self.sc_info[-1][0]:
-
-            # Check for packet detection
-            for sc_idx in range(len(self.sc_info)):
-
-                # Check to see if the packet is in this scanners column and
-                # that the scanner is at the top of the column.
-                if (
-                    self.sc_info[sc_idx][0] == self.packet_loc
-                    and self.sc_level[sc_idx] == 0
-                ):
-                    total_severity += self.sc_info[sc_idx][0] * self.sc_info[sc_idx][1]
-
-            # Move the scanners
-            self.increment_scanners()
-
-            # Move the packet along
-            self.packet_loc += 1
+        for sc_idx in self.sc_info.keys():
+            if self.scanner_position(sc_idx, sc_idx) == 0:
+                total_severity += sc_idx * self.sc_info[sc_idx]
 
         return total_severity
 
-    def traverse(self, start_time: int) -> int:
+    def find_clear_path(self) -> int:
         """
-        Move across the filewall at the specified start time and return
-        the total severity of the traversal.
+        Find the delay in picosecods that allows the packet to pass without any
+        severity.
         """
-        self.sc_level = [0 for _ in range(len(self.sc_info))]
-        self.sc_desc = [True for _ in range(len(self.sc_info))]
-        self.packet_loc = 0
+        delay = 0
 
-        for _ in range(start_time):
-            self.increment_scanners()
+        # Test each delay
+        while True:
 
-        return self.trip_severity()
+            # Check to see if a firewall catches any of the packets
+            for sc_idx in self.sc_info.keys():
+                if self.scanner_position(sc_idx, sc_idx + delay) == 0:
+                    break
+            # If none catch the packet this is the solution
+            else:
+                return delay
+
+            delay += 1
 
 
 if __name__ == "__main__":
-    print(f"Part 1 = {Firewall("./data/input.txt").trip_severity()}")
+    print(
+        f"Part 1 = {Firewall("./data/input.txt").trip_severity()}\n"
+        f"Part 2 = {Firewall("./data/input.txt").find_clear_path()}\n"
+    )
