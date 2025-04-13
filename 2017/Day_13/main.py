@@ -240,8 +240,6 @@ class Firewall:
                 ):
                     total_severity += self.sc_info[sc_idx][0] * self.sc_info[sc_idx][1]
 
-            print(self.packet_loc)
-
             # Move the scanners
             self.increment_scanners()
 
@@ -266,4 +264,4 @@ class Firewall:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {Firewall("./data/input.txt").trip_severity()}")
