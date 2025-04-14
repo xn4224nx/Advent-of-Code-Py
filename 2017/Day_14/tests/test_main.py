@@ -43,3 +43,7 @@ def test_defrag_init_exp01():
 
 def test_num_used_sqrs_exp01():
     assert DiskDefrag("flqrgnkx").num_used_sqrs() == 8108
+
+
+def test_group_count_exp01():
+    assert DiskDefrag("flqrgnkx").group_count() == 1242
