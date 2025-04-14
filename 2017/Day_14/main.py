@@ -53,10 +53,12 @@ from knothash import KnotHash
 
 class DiskDefrag:
     def __init__(self, seed: str):
-        pass
+        self.rows = [KnotHash(f"{seed}-{x}").calc_digest() for x in range(128)]
+        self.rows = [f"{int(x, base=16):0128b}" for x in self.rows]
+        self.rows = [[int(x) for x in y] for y in self.rows]
 
     def num_used_sqrs(self) -> int:
-        pass
+        return sum([sum(x) for x in self.rows])
 
 
 if __name__ == "__main__":

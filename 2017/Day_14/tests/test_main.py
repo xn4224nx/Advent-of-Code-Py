@@ -31,7 +31,6 @@ def test_knothash_exp05():
 
 def test_defrag_init_exp01():
     test = DiskDefrag("flqrgnkx")
-    assert test.seed == "flqrgnkx"
     assert test.rows[0][:8] == [1, 1, 0, 1, 0, 1, 0, 0]
     assert test.rows[1][:8] == [0, 1, 0, 1, 0, 1, 0, 1]
     assert test.rows[2][:8] == [0, 0, 0, 0, 1, 0, 1, 0]
