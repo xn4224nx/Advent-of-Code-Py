@@ -62,4 +62,4 @@ class DiskDefrag:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {DiskDefrag('ffayrhll').num_used_sqrs()}")
