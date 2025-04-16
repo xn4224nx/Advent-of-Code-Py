@@ -46,23 +46,34 @@ def test_pair_iteration_exp05():
 
 
 def test_pair_comp_exp01():
-    assert GeneratorDuel(1092455, 430625591).compare_pair() == False
+    assert GeneratorDuel(1092455, 430625591).compare_pair(1092455, 430625591) == False
 
 
 def test_pair_comp_exp02():
-    assert GeneratorDuel(1181022009, 1233683848).compare_pair() == False
+    assert (
+        GeneratorDuel(1181022009, 1233683848).compare_pair(1181022009, 1233683848)
+        == False
+    )
 
 
 def test_pair_comp_exp03():
-    assert GeneratorDuel(245556042, 1431495498).compare_pair() == True
+    assert (
+        GeneratorDuel(245556042, 1431495498).compare_pair(245556042, 1431495498) == True
+    )
 
 
 def test_pair_comp_exp04():
-    assert GeneratorDuel(1744312007, 137874439).compare_pair() == False
+    assert (
+        GeneratorDuel(1744312007, 137874439).compare_pair(1744312007, 137874439)
+        == False
+    )
 
 
 def test_pair_comp_exp05():
-    assert GeneratorDuel(1352636452, 285222916).compare_pair() == False
+    assert (
+        GeneratorDuel(1352636452, 285222916).compare_pair(1352636452, 285222916)
+        == False
+    )
 
 
 def test_matching_pairs_exp01():
@@ -71,3 +82,15 @@ def test_matching_pairs_exp01():
 
 def test_matching_pairs_exp02():
     assert GeneratorDuel(65, 8921).matching_pairs(40_000_000) == 588
+
+
+def test_detatched_matching_pairs_exp01():
+    assert GeneratorDuel(65, 8921).detatched_matching_pairs(5) == 0
+
+
+def test_detatched_matching_pairs_exp02():
+    assert GeneratorDuel(65, 8921).detatched_matching_pairs(1056) == 1
+
+
+def test_detatched_matching_pairs_exp03():
+    assert GeneratorDuel(65, 8921).detatched_matching_pairs(5_000_000) == 309
