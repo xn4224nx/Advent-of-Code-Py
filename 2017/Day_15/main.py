@@ -60,27 +60,43 @@ PART 1: After 40 million pairs, what is the judge's final count?
 
 class GeneratorDuel:
     def __init__(self, gen_a: int, gen_b: int):
-        pass
+        self.gen_a = gen_a
+        self.gen_b = gen_b
 
     def iterate(self):
         """
         Move onto the next pair of values.
         """
-        pass
+        self.gen_a = (16807 * self.gen_a) % 2147483647
+        self.gen_b = (48271 * self.gen_b) % 2147483647
 
     def compare_pair(self) -> bool:
         """
         Compare the right 16 bits of the two numbers and if they all match
         return true.
         """
-        pass
+        bin_gen_a = f"{self.gen_a:032b}"[::-1]
+        bin_gen_b = f"{self.gen_b:032b}"[::-1]
+
+        # Every one of the last 16 bit must match
+        for idx in range(16):
+            if bin_gen_a[idx] != bin_gen_b[idx]:
+                return False
+
+        return True
 
     def matching_pairs(self, num_pairs: int) -> int:
         """
         Count the matching generated pairs.
         """
-        pass
+        pair_count = 0
+
+        for _ in range(num_pairs):
+            self.iterate()
+            pair_count += int(self.compare_pair())
+
+        return pair_count
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {GeneratorDuel(634, 301).matching_pairs(40_000_000)}")
