@@ -40,37 +40,82 @@ from collections import deque
 
 class ProgramDance:
     def __init__(self, initial_progs: str, instruc_file: str):
-        pass
+        self.progs = deque(initial_progs)
+        self.instructs = []
+
+        # Parse the instruction file
+        with open(instruc_file, "r") as fp:
+            for raw in fp.read().split(","):
+                tmp_insr = {}
+
+                # Parse the raw instruction
+                if raw[0] == "s":
+                    tmp_insr["name"] = "spin"
+                    tmp_insr["magnitude"] = int(raw[1:])
+
+                elif raw[0] == "x":
+                    tmp_insr["name"] = "exchange"
+                    val0, val1 = raw[1:].split("/", 1)
+                    tmp_insr["idx_a"] = int(val0)
+                    tmp_insr["idx_b"] = int(val1)
+
+                elif raw[0] == "p":
+                    tmp_insr["name"] = "partner"
+                    val0, val1 = raw[1:].split("/", 1)
+                    tmp_insr["prog_a"] = val0.strip()
+                    tmp_insr["prog_b"] = val1.strip()
+
+                else:
+                    raise Exception(f"Instruction {raw} isn't valid")
+
+                self.instructs.append(tmp_insr)
 
     def spin(self, magnitude: int):
         """
         Make a number of programs move from the end to the front
         """
-        pass
+        self.progs.rotate(magnitude)
 
     def exchange(self, idx_a: int, idx_b: int):
         """
         Swap programs by index.
         """
-        pass
+        val_a = self.progs[idx_a]
+        val_b = self.progs[idx_b]
+        self.progs[idx_a] = val_b
+        self.progs[idx_b] = val_a
 
     def partner(self, prog_a: str, prog_b: str):
         """
         Swap programs by value.
         """
-        pass
+        idx_a = self.progs.index(prog_a)
+        idx_b = self.progs.index(prog_b)
+        self.exchange(idx_a, idx_b)
 
     def execute_command(self, com: dict[str:str]):
         """
         Execute one of the commands, spin, exchange or partner.
         """
-        pass
+        if com["name"] == "spin":
+            self.spin(com["magnitude"])
+
+        elif com["name"] == "exchange":
+            self.exchange(com["idx_a"], com["idx_b"])
+
+        elif com["name"] == "partner":
+            self.partner(com["prog_a"], com["prog_b"])
+
+        else:
+            raise Exception(f"Command is not supported: {com}")
 
     def run_all_commands(self) -> str:
         """
         Using the instructions file find the final order of the programs.
         """
-        pass
+        for instr_idx in range(len(self.instructs)):
+            self.execute_command(self.instructs[instr_idx])
+        return "".join(self.progs)
 
 
 if __name__ == "__main__":

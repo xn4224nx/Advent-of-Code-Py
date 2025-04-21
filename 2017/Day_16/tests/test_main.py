@@ -35,7 +35,7 @@ def test_exchange_exp01():
 
 
 def test_partner_exp01():
-    test = ProgramDance("eabcd", "./data/example_01.txt")
+    test = ProgramDance("eabdc", "./data/example_01.txt")
     test.partner("e", "b")
     assert test.progs == deque("baedc")
 
