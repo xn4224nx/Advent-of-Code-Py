@@ -119,4 +119,6 @@ class ProgramDance:
 
 
 if __name__ == "__main__":
-    pass
+    print(
+        f"Part 1 = {ProgramDance('abcdefghijklmnop', './data/input.txt').run_all_commands()}"
+    )
