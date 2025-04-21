@@ -61,3 +61,8 @@ def test_execute_command_exp01():
 def test_run_all_commands_exp01():
     test = ProgramDance("abcde", "./data/example_01.txt")
     assert test.run_all_commands() == "baedc"
+
+
+def test_run_all_commands_exp02():
+    test = ProgramDance("baedc", "./data/example_01.txt")
+    assert test.run_all_commands() == "ceadb"

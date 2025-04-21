@@ -33,6 +33,24 @@ After finishing their dance, the programs end up in order baedc.
 PART 1: You watch the dance for a while and record their dance moves (your
         puzzle input). In what order are the programs standing after their
         dance?
+
+Now that you're starting to get a feel for the dance moves, you turn your
+attention to the dance as a whole.
+
+Keeping the positions they ended up in from their previous dance, the programs
+perform it again and again: including the first dance, a total of one billion
+(1000000000) times.
+
+In the example above, their second dance would begin with the order baedc, and
+use the same dance moves:
+
+    -   s1, a spin of size 1: cbaed.
+
+    -   x3/4, swapping the last two programs: cbade.
+
+    -   pe/b, swapping programs e and b: ceadb.
+
+PART 2: In what order are the programs standing after their billion dances?
 """
 
 from collections import deque
@@ -40,6 +58,7 @@ from collections import deque
 
 class ProgramDance:
     def __init__(self, initial_progs: str, instruc_file: str):
+        self.init_state = deque(initial_progs)
         self.progs = deque(initial_progs)
         self.instructs = []
 
@@ -109,16 +128,57 @@ class ProgramDance:
         else:
             raise Exception(f"Command is not supported: {com}")
 
+    def state(self):
+        """
+        Return the state the programs are currently in.
+        """
+        return "".join(self.progs)
+
     def run_all_commands(self) -> str:
         """
         Using the instructions file find the final order of the programs.
         """
         for instr_idx in range(len(self.instructs)):
             self.execute_command(self.instructs[instr_idx])
-        return "".join(self.progs)
+
+        return self.state()
+
+    def loop_detection_fstate(self, iterations: int = 1_000_000_000) -> str:
+        """
+        Run commands until a duplicate program state is seen. Then determine
+        what the final state of the programs will be after the specified number
+        of iterations.
+        """
+        self.progs = self.init_state
+        seen_states = {self.state(): 0}
+        loop_iter = 0
+
+        # Find the loop in the instructions
+        while True:
+            self.run_all_commands()
+            loop_iter += 1
+
+            # Check if this state has been seen before
+            if self.state() in seen_states:
+                break
+
+        # Determine characteristics about the loop
+        loop_state = self.state()
+        loop_size = loop_iter - seen_states[loop_state]
+
+        # Work out how many of the iterations still need to be done after the loop
+        remainder = (iterations - seen_states[loop_state]) % loop_size
+
+        for _ in range(remainder):
+            for instr_idx in range(len(self.instructs)):
+                self.execute_command(self.instructs[instr_idx])
+
+        return self.state()
 
 
 if __name__ == "__main__":
+    perm_prom = ProgramDance("abcdefghijklmnop", "./data/input.txt")
     print(
-        f"Part 1 = {ProgramDance('abcdefghijklmnop', './data/input.txt').run_all_commands()}"
+        f"Part 1 = {perm_prom.run_all_commands()}\n"
+        f"Part 2 = {perm_prom.loop_detection_fstate()}\n"
     )
