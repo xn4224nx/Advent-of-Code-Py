@@ -93,8 +93,8 @@ def test_spin_exp09():
 
 
 def test_post_final_value_exp01():
-    assert SpinLock(3).post_value(9) == 5
+    assert SpinLock(3).post_value(9, 9) == 5
 
 
 def test_post_final_value_exp02():
-    assert SpinLock(3).post_value(2017) == 638
+    assert SpinLock(3).post_value(2017, 2017) == 638
