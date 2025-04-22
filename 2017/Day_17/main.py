@@ -70,8 +70,8 @@ from collections import deque
 class SpinLock:
     def __init__(self, step_size: int):
         self.buff = deque([0])
+        self.step = step_size
         self.idx = 1
-        self.step = 3
 
     def spin(self):
         """
@@ -92,4 +92,4 @@ class SpinLock:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {SpinLock(354).post_value(2017)}")
