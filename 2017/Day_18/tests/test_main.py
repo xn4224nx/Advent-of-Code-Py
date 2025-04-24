@@ -82,7 +82,7 @@ def test_add_example_03():
     test = Duo("./data/example_01.txt")
     test.reg = {"a": 2, "b": 3}
     test.add("b", 7)
-    assert test.reg["b"] == 9
+    assert test.reg["b"] == 10
     assert test.idx == 1
 
 
@@ -106,7 +106,7 @@ def test_mod_example_01():
     test = Duo("./data/example_01.txt")
     test.reg = {"a": 200, "b": 35}
     test.mod("b", 7)
-    assert test.reg == {"a": 2, "b": 0}
+    assert test.reg == {"a": 200, "b": 0}
     assert test.idx == 1
 
 

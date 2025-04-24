@@ -80,35 +80,80 @@ PART 1: What is the value of the recovered frequency (the value of the most
         with a non-zero value?
 """
 
+import re
+
 
 class Duo:
     def __init__(self, datafile: str):
-        pass
+        cmd_re = r"([a-z]{3}) (-?[0-9]+|[a-z])\s?(-?[0-9]+|[a-z])?"
+
+        self.idx = 0
+        self.played = []
+        self.received = []
+        self.cmds = []
+        self.reg = {}
+
+        with open(datafile, "r") as fp:
+            for line in fp.readlines():
+                raw = re.match(cmd_re, line)
+
+                tmp_cmd = {"cmd": raw[1]}
+
+                # Parse the first variable
+                if any(x.isdigit() for x in raw[2]):
+                    tmp_cmd["x"] = int(raw[2])
+                else:
+                    tmp_cmd["x"] = raw[2]
+                    self.reg[raw[2]] = 0
+
+                # If the second variable exists add it in
+                if raw[3] is not None:
+                    if any(x.isdigit() for x in raw[3]):
+                        tmp_cmd["y"] = int(raw[3])
+                    else:
+                        tmp_cmd["y"] = raw[3]
+                        self.reg[raw[3]] = 0
+
+                self.cmds.append(tmp_cmd)
+
+    def parse_value(self, val: int | str) -> int:
+        """
+        Detect if it as reference to a register or a value. Either way return
+        a value. The register's value or the original value.
+        """
+        if isinstance(val, str):
+            return self.reg[val]
+        else:
+            return val
 
     def snd(self, x_val: int | str):
         """
         Plays a sound with a frequency equal to the value of x_val.
         """
-        pass
+        self.played.append(self.parse_value(x_val))
+        self.idx += 1
 
     def set_val(self, x_reg: str, y_val: int | str):
         """
         Sets register x_val to the value of y_val.
         """
-        pass
+        self.reg[x_reg] = self.parse_value(y_val)
+        self.idx += 1
 
     def add(self, x_reg: str, y_val: int | str):
         """
         Increases register x_val by the value of y_val.
         """
-        pass
+        self.reg[x_reg] += self.parse_value(y_val)
+        self.idx += 1
 
     def mul(self, x_reg: str, y_val: int | str):
         """
         Sets register x_reg to the result of multiplying the value contained
         in register x_reg by the value of y_val.
         """
-        pass
+        self.reg[x_reg] *= self.parse_value(y_val)
+        self.idx += 1
 
     def mod(self, x_reg: str, y_val: int | str):
         """
@@ -116,14 +161,17 @@ class Duo:
         in register x_reg by the value of Y (that is, it sets x_reg to the
         result of x_reg modulo Y).
         """
-        pass
+        self.reg[x_reg] %= self.parse_value(y_val)
+        self.idx += 1
 
     def rcv(self, x_val: int | str):
         """
         Recovers the frequency of the last sound played, but only when the
         value of x_val is not zero. (If it is zero, the command does nothing.)
         """
-        pass
+        if self.parse_value(x_val) != 0:
+            self.received.append(self.played[-1])
+        self.idx += 1
 
     def jgz(self, x_val: int | str, y_val: int | str):
         """
@@ -132,21 +180,50 @@ class Duo:
         instruction, an offset of -1 jumps to the previous instruction, and so
         on.)
         """
-        pass
+        if self.parse_value(x_val) > 0:
+            self.idx += self.parse_value(y_val)
+        else:
+            self.idx += 1
 
     def execute_cmd(self, cmd_info: dict[str:str]):
         """
         Take a command dictionary and execute one of the above methods based
         on its details.
         """
-        pass
+        match cmd_info["cmd"]:
+            case "snd":
+                self.snd(cmd_info["x"])
+
+            case "set":
+                self.set_val(cmd_info["x"], cmd_info["y"])
+
+            case "add":
+                self.add(cmd_info["x"], cmd_info["y"])
+
+            case "mul":
+                self.mul(cmd_info["x"], cmd_info["y"])
+
+            case "mod":
+                self.mod(cmd_info["x"], cmd_info["y"])
+
+            case "rcv":
+                self.rcv(cmd_info["x"])
+
+            case "jgz":
+                self.jgz(cmd_info["x"], cmd_info["y"])
+
+            case _:
+                raise Exception(f"Unknown command {cmd_info["cmd"]}")
 
     def first_rcv_execution(self) -> int:
         """
         Find the first recovered frequency when a non-zero rcv command is
         executed.
         """
-        pass
+        while len(self.received) < 1:
+            self.execute_cmd(self.cmds[self.idx])
+
+        return self.received[-1]
 
 
 if __name__ == "__main__":
