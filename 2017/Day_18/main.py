@@ -227,4 +227,4 @@ class Duo:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {Duo("./data/input.txt").first_rcv_execution()}")
