@@ -116,4 +116,4 @@ class Network:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {Network("./data/input.txt").path_letters()}")
