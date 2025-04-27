@@ -39,6 +39,32 @@ PART 1: The little packet looks up at you, hoping you can help it find the way.
         What letters will it see (in the order it would see them) if it follows
         the path? (The routing diagram is very wide; make sure you view it
         without line wrapping.)
+
+The packet is curious how many steps it needs to go.
+
+For example, using the same routing diagram from the example above...
+
+     |
+     |  +--+
+     A  |  C
+ F---|----E|--+
+     |  |  |  D
+     +B-+  +--+
+
+...the packet would go:
+
+        -   6 steps down (including the first line at the top of the diagram).
+        -   3 steps right.
+        -   4 steps up.
+        -   3 steps right.
+        -   4 steps down.
+        -   3 steps right.
+        -   2 steps up.
+        -   13 steps left (including the F it stops on).
+
+This would result in a total of 38 steps.
+
+PART 2: How many steps does the packet need to go?
 """
 
 import string
@@ -103,17 +129,20 @@ class Network:
     def path_letters(self) -> str:
         """
         Follow the path through the network and collect the letters that are
-        encountered.
+        encountered. Also return the number of steps in the path.
         """
         seen = ""
+        steps = 0
 
         while self.direct != 0:
             if self.plan[self.loc] in string.ascii_uppercase:
                 seen += self.plan[self.loc]
             self.step()
+            steps += 1
 
-        return seen + self.plan[self.loc]
+        return (seen + self.plan[self.loc], steps + 1)
 
 
 if __name__ == "__main__":
-    print(f"Part 1 = {Network("./data/input.txt").path_letters()}")
+    path, path_len = Network("./data/input.txt").path_letters()
+    print(f"Part 1 = {path}\nPart 2 = {path_len}\n")

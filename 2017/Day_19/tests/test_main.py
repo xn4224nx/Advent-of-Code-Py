@@ -158,4 +158,4 @@ def test_step_exp12():
 
 
 def test_path_letters_exp01():
-    assert Network("./data/example_01.txt").path_letters() == "ABCDEF"
+    assert Network("./data/example_01.txt").path_letters() == ("ABCDEF", 38)
