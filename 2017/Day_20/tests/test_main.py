@@ -132,4 +132,8 @@ def test_particle_dists_exp04():
 
 
 def test_long_term_closest_exp01():
-    assert ParticleSwarm("./data/example_01.txt").long_term_closest() == 0
+    assert ParticleSwarm("./data/example_01.txt").long_term_closest()[0] == 0
+
+
+def test_long_term_closest_exp02():
+    assert ParticleSwarm("./data/example_05.txt").long_term_closest()[1] == 1

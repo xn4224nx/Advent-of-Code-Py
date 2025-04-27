@@ -51,9 +51,42 @@ At this point, particle 1 will never be closer to <0,0,0> than particle 0, and
 so, in the long run, particle 0 will stay closest.
 
 PART 1: Which particle will stay closest to position <0,0,0> in the long term?
+
+To simplify the problem further, the GPU would like to remove any particles
+that collide. Particles collide if their positions ever exactly match. Because
+particles are updated simultaneously, more than two particles can collide at
+the same time and place. Once particles collide, they are removed and cannot
+collide with anything else after that tick.
+
+    p=<-6,0,0>, v=< 3,0,0>, a=< 0,0,0>
+    p=<-4,0,0>, v=< 2,0,0>, a=< 0,0,0>    -6 -5 -4 -3 -2 -1  0  1  2  3
+    p=<-2,0,0>, v=< 1,0,0>, a=< 0,0,0>    (0)   (1)   (2)            (3)
+    p=< 3,0,0>, v=<-1,0,0>, a=< 0,0,0>
+
+    p=<-3,0,0>, v=< 3,0,0>, a=< 0,0,0>
+    p=<-2,0,0>, v=< 2,0,0>, a=< 0,0,0>    -6 -5 -4 -3 -2 -1  0  1  2  3
+    p=<-1,0,0>, v=< 1,0,0>, a=< 0,0,0>             (0)(1)(2)      (3)
+    p=< 2,0,0>, v=<-1,0,0>, a=< 0,0,0>
+
+    p=< 0,0,0>, v=< 3,0,0>, a=< 0,0,0>
+    p=< 0,0,0>, v=< 2,0,0>, a=< 0,0,0>    -6 -5 -4 -3 -2 -1  0  1  2  3
+    p=< 0,0,0>, v=< 1,0,0>, a=< 0,0,0>                       X (3)
+    p=< 1,0,0>, v=<-1,0,0>, a=< 0,0,0>
+
+    ------destroyed by collision------
+    ------destroyed by collision------    -6 -5 -4 -3 -2 -1  0  1  2  3
+    ------destroyed by collision------                      (3)
+    p=< 0,0,0>, v=<-1,0,0>, a=< 0,0,0>
+
+In this example, particles 0, 1, and 2 are simultaneously destroyed at the
+time and place marked X. On the next tick, particle 3 passes through unharmed.
+
+PART 1: How many particles are left after all collisions are resolved?
 """
 
 import re
+import sys
+from itertools import combinations
 
 
 class ParticleSwarm:
@@ -116,38 +149,32 @@ class ParticleSwarm:
         """
         return [abs(x[0][0]) + abs(x[0][1]) + abs(x[0][2]) for x in self.particles]
 
-    def long_term_closest(self) -> int:
+    def long_term_closest(self) -> tuple[int, int]:
         """
         Perform multiple ticks to determe which of the particles will remain the
-        closest to the specified point long term. Shortcut using SUVAT equations
-        s = ut + 0.5 at^2
+        closest to the specified point long term. Calculate both the index when
+        collisions happen and when they don't.
         """
-        time_period = 1_000_000
+        time_period = 1_000
+        uncollided = {x for x in range(len(self.particles))}
 
-        # Calculate the new positions after a large period of time
-        part_dists = []
-        for p_idx in range(len(self.particles)):
-            part_dists.append(
-                abs(
-                    self.particles[p_idx][0][0]
-                    + self.particles[p_idx][1][0] * time_period
-                    + 0.5 * self.particles[p_idx][2][0] * time_period * time_period
-                )
-                + abs(
-                    self.particles[p_idx][0][1]
-                    + self.particles[p_idx][1][1] * time_period
-                    + 0.5 * self.particles[p_idx][2][1] * time_period * time_period
-                )
-                + abs(
-                    self.particles[p_idx][0][2]
-                    + self.particles[p_idx][1][2] * time_period
-                    + 0.5 * self.particles[p_idx][2][2] * time_period * time_period
-                )
-            )
+        # Move the particles forward
+        for _ in range(time_period):
+            self.tick()
 
-        # Find the particle with the smallest distance
-        return min(range(len(part_dists)), key=part_dists.__getitem__)
+            # Check for collided particles
+            new_collisions = set()
+            for p0_idx, p1_idx in combinations(uncollided, 2):
+                if self.particles[p0_idx][0] == self.particles[p1_idx][0]:
+                    new_collisions.update([p0_idx, p1_idx])
+
+            # Remove the collided particles
+            [uncollided.remove(x) for x in new_collisions]
+
+        part_dists = self.particle_dists()
+        return min(range(len(part_dists)), key=part_dists.__getitem__), len(uncollided)
 
 
 if __name__ == "__main__":
-    print(f"Part 1 = {ParticleSwarm("./data/input.txt").long_term_closest()}")
+    min_idx, num_left = ParticleSwarm("./data/input.txt").long_term_closest()
+    print(f"Part 1 = {min_idx}\nPart 2 = {num_left}\n")
