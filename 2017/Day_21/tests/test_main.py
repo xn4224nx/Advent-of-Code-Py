@@ -8,46 +8,62 @@ import numpy as np
 
 def test_new_artwork():
     test = FractalArt("./data/example_01.txt")
-    assert test.pixels == np.array(
-        [[False, True, False], [False, False, True], [True, True, True]], dtype=bool
+    assert np.all(
+        test.pixels
+        == np.array(
+            [[False, True, False], [False, False, True], [True, True, True]], dtype=bool
+        )
     )
-    assert test.rules == [
-        [
-            np.array([[False, False], [False, True]], dtype=bool),
-            np.array(
-                [[False, True, False], [False, False, True], [True, True, True]],
-                dtype=bool,
-            ),
-        ],
-        [
-            np.array(
-                [[False, True, False], [False, False, True], [True, True, True]],
-                dtype=bool,
-            ),
-            np.array(
-                [
-                    [True, False, False, True],
-                    [False, False, False, False],
-                    [True, False, False, True],
-                    [False, True, True, False],
-                ],
-                dtype=bool,
-            ),
-        ],
-    ]
+
+    assert np.all(
+        test.rules[0][0] == np.array([[False, False], [False, True]], dtype=bool)
+    )
+    assert np.all(
+        test.rules[0][1]
+        == np.array(
+            [
+                [True, True, False],
+                [True, False, False],
+                [False, False, False],
+            ],
+            dtype=bool,
+        )
+    )
+
+    assert np.all(
+        test.rules[1][0]
+        == np.array(
+            [[False, True, False], [False, False, True], [True, True, True]], dtype=bool
+        )
+    )
+    assert np.all(
+        test.rules[1][1]
+        == np.array(
+            [
+                [True, False, False, True],
+                [False, False, False, False],
+                [False, False, False, False],
+                [True, False, False, True],
+            ],
+            dtype=bool,
+        )
+    )
 
 
 def test_split_exp01():
     test = FractalArt("./data/example_01.txt")
-    test.div3_split()
-    assert test.pixels == np.array(
-        [
-            [True, False, False, True],
-            [False, False, False, False],
-            [False, False, False, False],
-            [True, False, False, True],
-        ],
-        dtype=bool,
+    test.div_n_split(3)
+    assert np.all(
+        test.pixels
+        == np.array(
+            [
+                [True, False, False, True],
+                [False, False, False, False],
+                [False, False, False, False],
+                [True, False, False, True],
+            ],
+            dtype=bool,
+        )
     )
 
 
@@ -62,117 +78,123 @@ def test_split_exp02():
         ],
         dtype=bool,
     )
-    test.div2_split()
-    assert test.pixels == np.array(
-        [
+    test.div_n_split(2)
+    assert np.all(
+        test.pixels
+        == np.array(
             [
-                True,
-                True,
-                False,
-                True,
-                True,
-                False,
+                [
+                    True,
+                    True,
+                    False,
+                    True,
+                    True,
+                    False,
+                ],
+                [
+                    True,
+                    False,
+                    False,
+                    True,
+                    False,
+                    False,
+                ],
+                [
+                    False,
+                    False,
+                    False,
+                    False,
+                    False,
+                    False,
+                ],
+                [
+                    True,
+                    True,
+                    False,
+                    True,
+                    True,
+                    False,
+                ],
+                [
+                    True,
+                    False,
+                    False,
+                    True,
+                    False,
+                    False,
+                ],
+                [
+                    False,
+                    False,
+                    False,
+                    False,
+                    False,
+                    False,
+                ],
             ],
-            [
-                True,
-                False,
-                False,
-                True,
-                False,
-                False,
-            ],
-            [
-                False,
-                False,
-                False,
-                False,
-                False,
-                False,
-            ],
-            [
-                True,
-                True,
-                False,
-                True,
-                True,
-                False,
-            ],
-            [
-                True,
-                False,
-                False,
-                True,
-                False,
-                False,
-            ],
-            [
-                False,
-                False,
-                False,
-                False,
-                False,
-                False,
-            ],
-        ],
-        dtype=bool,
+            dtype=bool,
+        )
     )
 
 
 def test_multi_split_exp01():
     test = FractalArt("./data/example_01.txt")
     test.splits(2)
-    assert test.pixels == np.array(
-        [
+    assert np.all(
+        test.pixels
+        == np.array(
             [
-                True,
-                True,
-                False,
-                True,
-                True,
-                False,
+                [
+                    True,
+                    True,
+                    False,
+                    True,
+                    True,
+                    False,
+                ],
+                [
+                    True,
+                    False,
+                    False,
+                    True,
+                    False,
+                    False,
+                ],
+                [
+                    False,
+                    False,
+                    False,
+                    False,
+                    False,
+                    False,
+                ],
+                [
+                    True,
+                    True,
+                    False,
+                    True,
+                    True,
+                    False,
+                ],
+                [
+                    True,
+                    False,
+                    False,
+                    True,
+                    False,
+                    False,
+                ],
+                [
+                    False,
+                    False,
+                    False,
+                    False,
+                    False,
+                    False,
+                ],
             ],
-            [
-                True,
-                False,
-                False,
-                True,
-                False,
-                False,
-            ],
-            [
-                False,
-                False,
-                False,
-                False,
-                False,
-                False,
-            ],
-            [
-                True,
-                True,
-                False,
-                True,
-                True,
-                False,
-            ],
-            [
-                True,
-                False,
-                False,
-                True,
-                False,
-                False,
-            ],
-            [
-                False,
-                False,
-                False,
-                False,
-                False,
-                False,
-            ],
-        ],
-        dtype=bool,
+            dtype=bool,
+        )
     )
 
 
@@ -254,7 +276,9 @@ def test_count_on_pixels_exp03():
 
 
 def test_count_on_pixels_exp04():
-    assert FractalArt("./data/example_01.txt").splits(2).count_on_pixels() == 12
+    test = FractalArt("./data/example_01.txt")
+    test.splits(2)
+    assert test.count_on_pixels() == 12
 
 
 def test_str_art_exp01():

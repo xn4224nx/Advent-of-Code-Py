@@ -113,23 +113,133 @@ import numpy as np
 
 class FractalArt:
     def __init__(self, rule_file: str):
-        pass
+        self.pixels = np.array(
+            [[False, True, False], [False, False, True], [True, True, True]], dtype=bool
+        )
+
+        # Read the instruction file and parse the instructions
+        self.rules = []
+        with open(rule_file, "r") as fp:
+            for line in fp.readlines():
+                line = line.replace("#", "1")
+                line = line.replace(".", "0")
+                line = line.replace("/", "")
+
+                before, after = line.split(" => ", maxsplit=1)
+
+                # Create 1D boolean arrays
+                before = np.array(np.array(list(before.strip()), dtype=int), dtype=bool)
+                after = np.array(np.array(list(after.strip()), dtype=int), dtype=bool)
+
+                # Create Square arrays
+                b_size = int(np.sqrt(len(before)))
+                a_size = int(np.sqrt(len(after)))
+                before = before.reshape((b_size, b_size))
+                after = after.reshape((a_size, a_size))
+
+                # Create the four rotated forms of the rotated before and the
+                # flipped versions
+                self.rules.extend(
+                    [
+                        [np.rot90(before, k=0), after],
+                        [np.rot90(before, k=1), after],
+                        [np.rot90(before, k=2), after],
+                        [np.rot90(before, k=3), after],
+                        [np.fliplr(before), after],
+                        [np.flipud(before), after],
+                        [np.fliplr(np.rot90(before, k=0)), after],
+                        [np.fliplr(np.rot90(before, k=1)), after],
+                        [np.fliplr(np.rot90(before, k=2)), after],
+                        [np.fliplr(np.rot90(before, k=3)), after],
+                        [np.flipud(np.rot90(before, k=0)), after],
+                        [np.flipud(np.rot90(before, k=1)), after],
+                        [np.flipud(np.rot90(before, k=2)), after],
+                        [np.flipud(np.rot90(before, k=3)), after],
+                    ]
+                )
+
+    def print_pixels(self, p_pixels: np.array) -> str:
+        """
+        Show a square grid of pixels.
+        """
+        art = ""
+
+        for x in range(0, p_pixels.shape[0]):
+            for y in range(0, p_pixels.shape[0]):
+                if p_pixels[x, y]:
+                    art += "#"
+                else:
+                    art += "."
+            art += "\n"
+
+        return art
+
+    def show_rules(self):
+        """
+        Show the rules that are in the class
+        """
+        for before, after in self.rules:
+            print(
+                "BEFORE\n======\n"
+                + self.print_pixels(before)
+                + "AFTER\n=====\n"
+                + self.print_pixels(after),
+                end="\n\n",
+            )
 
     def splits(self, num_splits: int):
-        pass
+        """
+        Split the artwork into chunks of two or three and replace these chunks
+        based on the rules inherent to the class.
+        """
+        for _ in range(num_splits):
+            if self.pixels.shape[0] % 2 == 0:
+                self.div_n_split(2)
+            elif self.pixels.shape[0] % 3 == 0:
+                self.div_n_split(3)
+            else:
+                raise Exceptions(f"Cannot process shape {self.pixels.shape}")
 
-    def div2_split(self):
-        pass
+    def div_n_split(self, n: int):
+        """
+        Split the artwork into chunks of two and replace them according to the
+        rules inherent to the class.
+        """
+        new_side_len = (self.pixels.shape[0] // n) * (n + 1)
+        new_pixels = np.ones((new_side_len, new_side_len), dtype=bool)
 
-    def div3_split(self):
-        pass
+        # Check each chunk for corresponding one in the rules
+        for x in range(self.pixels.shape[0] // n):
+            for y in range(self.pixels.shape[0] // n):
+                chunk = self.pixels[x * n : x * n + n, y * n : y * n + n]
+
+                # Find a match in the rules and set the new chunk
+                for before, after in self.rules:
+                    if chunk.shape == before.shape and np.all(chunk == before):
+                        new_pixels[
+                            x * (n + 1) : x * (n + 1) + (n + 1),
+                            y * (n + 1) : y * (n + 1) + (n + 1),
+                        ] = after
+                        break
+                else:
+                    raise Exception(
+                        f"No Match found for chunk:\n{self.print_pixels(chunk)}"
+                    )
+
+        # Set the new pixels
+        self.pixels = new_pixels
 
     def count_on_pixels(self) -> int:
-        pass
+        """
+        How many pixels in the artwork are True.
+        """
+        return np.sum(self.pixels)
 
     def __str__(self):
-        pass
+        self.print_pixels(self.pixels)
 
 
 if __name__ == "__main__":
-    pass
+    basic_gen = FractalArt("./data/input.txt")
+    basic_gen.splits(5)
+    print(f"Part 1 = {basic_gen.count_on_pixels()}")
