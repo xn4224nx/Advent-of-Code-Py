@@ -106,6 +106,8 @@ Finally, the squares are joined into a new grid:
 Thus, after 2 iterations, the grid contains 12 pixels that are on.
 
 PART 1: How many pixels stay on after 5 iterations?
+
+PART 2: How many pixels stay on after 18 iterations?
 """
 
 import numpy as np
@@ -243,3 +245,5 @@ if __name__ == "__main__":
     basic_gen = FractalArt("./data/input.txt")
     basic_gen.splits(5)
     print(f"Part 1 = {basic_gen.count_on_pixels()}")
+    basic_gen.splits(13)
+    print(f"Part 2 = {basic_gen.count_on_pixels()}")
