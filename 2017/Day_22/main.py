@@ -129,20 +129,51 @@ PART 1: Given your actual map, after 10000 bursts of activity, how many bursts
 
 class Infection:
     def __init__(self, inital_cluster_state: str):
-        pass
+        self.infec_nodes = set()
+        self.carr_dir = complex(0, 1)
 
-    def burst(self, num_burst: int = 1):
+        with open(inital_cluster_state, "r") as fp:
+            for row, line in enumerate(fp.readlines()):
+                for col, char in enumerate(line):
+                    if char == "#":
+                        self.infec_nodes.add((col, row))
+
+        self.carr_loc = (col // 2, row // 2)
+
+    def burst(self):
         """
         Based on where the carrier is perform certain actions and movements
         """
-        pass
+        if self.carr_loc in self.infec_nodes:
+            self.carr_dir *= complex(0, -1)
+            self.infec_nodes.remove(self.carr_loc)
+
+        # The current node is not infected
+        else:
+            self.carr_dir *= complex(0, 1)
+            self.infec_nodes.add(self.carr_loc)
+
+        # Move the carrier one space in direction it is pointing
+        self.carr_loc = (
+            self.carr_loc[0] + self.carr_dir.real,
+            self.carr_loc[1] - self.carr_dir.imag,
+        )
 
     def num_burst_infected(self, num_burst: int) -> int:
         """
         Count the number of nodes that get infected by a burst.
         """
-        pass
+        infect_cnt = 0
+
+        for _ in range(num_burst):
+            old_infc_cnt = len(self.infec_nodes)
+            self.burst()
+
+            if len(self.infec_nodes) > old_infc_cnt:
+                infect_cnt += 1
+
+        return infect_cnt
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {Infection("./data/input.txt").num_burst_infected(10000)}")

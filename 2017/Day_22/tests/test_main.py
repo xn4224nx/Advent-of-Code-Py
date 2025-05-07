@@ -18,44 +18,45 @@ def test_count_on_pixels_exp04():
 def test_burst_exp01():
     test = Infection("./data/example_01.txt")
     test.burst()
-    assert test.carr_loc == (0, -1)
+    assert test.carr_loc == (0, 1)
     assert test.carr_dir == complex(-1, 0)
     assert test.infec_nodes == {
         (2, 0),
         (0, 1),
-        (0, 0),
+        (1, 1),
     }
 
 
 def test_burst_exp02():
     test = Infection("./data/example_01.txt")
-    test.carr_loc = (0, -1)
+    test.carr_loc = (0, 1)
     test.carr_dir = complex(-1, 0)
     test.infec_nodes = {
         (2, 0),
         (0, 1),
-        (0, 0),
+        (1, 1),
     }
     test.burst()
-    assert test.carr_loc == (1, -1)
+    assert test.carr_loc == (0, 0)
     assert test.carr_dir == complex(0, 1)
     assert test.infec_nodes == {
         (2, 0),
-        (0, 0),
+        (1, 1),
     }
 
 
 def test_burst_exp03():
     test = Infection("./data/example_01.txt")
-    test.burst(6)
+    for _ in range(6):
+        test.burst()
 
-    assert test.carr_loc == (0, 2)
+    assert test.carr_loc == (0, 0)
     assert test.carr_dir == complex(0, 1)
     assert test.infec_nodes == {
-        (-1, 2),
-        (0, 2),
-        (-1, 1),
         (0, 1),
+        (-1, 0),
+        (0, 0),
+        (-1, 1),
         (1, 1),
         (2, 0),
     }
@@ -63,39 +64,36 @@ def test_burst_exp03():
 
 def test_burst_exp04():
     test = Infection("./data/example_01.txt")
-    test.burst(6)
+    for _ in range(7):
+        test.burst()
 
-    assert test.carr_loc == (0, 2)
+    assert test.carr_loc == (1, 0)
     assert test.carr_dir == complex(1, 0)
-    assert test.infec_nodes == {
-        (-1, 2),
-        (-1, 1),
-        (0, 1),
-        (1, 1),
-        (2, 0),
-    }
+    assert test.infec_nodes == {(0, 1), (-1, 1), (1, 1), (2, 0), (-1, 0)}
 
 
 def test_burst_exp05():
     test = Infection("./data/example_01.txt")
-    test.burst(70)
-    assert test.carr_loc == (2, 2)
+    for _ in range(70):
+        test.burst()
+
+    assert test.carr_loc == (2, 0)
     assert test.carr_dir == complex(0, 1)
     assert test.infec_nodes == {
-        (2, 1),
-        (1, 1),
-        (2, 0),
-        (3, 0),
+        (5, -1),
+        (-1, 0),
+        (2, 2),
+        (4, -2),
+        (1, 0),
+        (3, 2),
         (4, 1),
-        (5, 2),
-        (5, 3),
-        (4, 4),
-        (3, 5),
-        (2, 5),
-        (1, 4),
-        (0, 3),
-        (-1, 2),
+        (2, -3),
         (-1, 1),
+        (1, 1),
+        (3, -3),
+        (1, -2),
+        (5, 0),
+        (0, -1),
     }
 
 
