@@ -107,3 +107,13 @@ def test_num_burst_infected_exp02():
 
 def test_num_burst_infected_exp03():
     assert Infection("./data/example_01.txt").num_burst_infected(10000) == 5587
+
+
+def test_num_burst_infected_exp04():
+    assert Infection("./data/example_01.txt", True).num_burst_infected(100) == 26
+
+
+def test_num_burst_infected_exp05():
+    assert (
+        Infection("./data/example_01.txt", True).num_burst_infected(10000000) == 2511944
+    )
