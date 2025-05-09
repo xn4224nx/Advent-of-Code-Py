@@ -149,4 +149,4 @@ def test_jnz_exp04():
         ["jnz", "h", "b"],
     ]
     test.exe_command(0)
-    assert test.cmd_idx == 8
+    assert test.cmd_idx == 7

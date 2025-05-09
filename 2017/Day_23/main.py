@@ -34,22 +34,87 @@ PART 1: If you run the program (your puzzle input), how many times is the mul
 
 class CPU:
     def __init__(self, command_file: str):
-        pass
+        self.cmd_idx = 0
+        self.register = {
+            "a": 0,
+            "b": 0,
+            "c": 0,
+            "d": 0,
+            "e": 0,
+            "f": 0,
+            "g": 0,
+            "h": 0,
+        }
+        self.cmds = []
 
-    def exe_command(self, cmd: dict[str:str]):
+        with open(command_file, "r") as fp:
+            for line in fp.readlines():
+                self.cmds.append(
+                    [
+                        int(x) if x[1:].isdigit() or x.isdigit() else x
+                        for x in line.split()
+                    ]
+                )
+
+    def lookup_val(self, val: int | str) -> int:
+        """
+        Lookup a value in the register and return its value or just return the
+        original value.
+        """
+        if isinstance(val, int):
+            return val
+        else:
+            return self.register[val]
+
+    def exe_command(self, com_idx: int):
         """
         Modify the CPU with the supplied command.
         """
-        pass
+        com_name = self.cmds[com_idx][0]
 
-    def command_count(self, com_idx: int) -> int:
+        if com_name == "set":
+            self.register[self.cmds[com_idx][1]] = self.lookup_val(
+                self.cmds[com_idx][2]
+            )
+
+        elif com_name == "sub":
+            self.register[self.cmds[com_idx][1]] -= self.lookup_val(
+                self.cmds[com_idx][2]
+            )
+
+        elif com_name == "mul":
+            self.register[self.cmds[com_idx][1]] *= self.lookup_val(
+                self.cmds[com_idx][2]
+            )
+
+        elif com_name == "jnz":
+            if self.lookup_val(self.cmds[com_idx][1]) != 0:
+                self.cmd_idx += self.lookup_val(self.cmds[com_idx][2]) - 1
+
+        else:
+            raise Exception(f"Unrecognised command {com_name}")
+
+        self.cmd_idx += 1
+
+    def command_count(self, com_name: str) -> int:
         """
         Execute all the commands in order until the command index points to
         a command that doesn't exist. While doing this count the number of
         times the specified command is executed.
         """
-        pass
+        cmd_counts = {self.cmds[x][0]: 0 for x in range(len(self.cmds))}
+        assert com_name in cmd_counts
+
+        while self.cmd_idx >= 0 and self.cmd_idx < len(self.cmds):
+
+            # Record the command about to be executed
+            cmd_counts[self.cmds[self.cmd_idx][0]] += 1
+
+            # Execute current command
+            self.exe_command(self.cmd_idx)
+
+        return cmd_counts[com_name]
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {CPU("./data/input.txt").command_count('mul')}")
