@@ -29,7 +29,26 @@ testing, but prevents it from doing any meaningful work.
 
 PART 1: If you run the program (your puzzle input), how many times is the mul
         instruction invoked?
+
+Now, it's time to fix the problem.
+
+The debug mode switch is wired directly to register a. You flip the switch,
+which makes register a now start at 1 when the program is executed.
+
+Immediately, the coprocessor begins to overheat. Whoever wrote this program
+obviously didn't choose a very efficient implementation. You'll need to optimize
+the program if it has any hope of completing before Santa needs that printer
+working.
+
+The coprocessor's ultimate goal is to determine the final value left in register
+h once the program completes. Technically, if it had that... it wouldn't even
+need to run the program.
+
+PART 2: After setting register a to 1, if the program were to run to completion,
+        what value would be left in register h?
 """
+
+from sympy.ntheory import isprime
 
 
 class CPU:
@@ -47,6 +66,7 @@ class CPU:
         }
         self.cmds = []
 
+        # Read the commands and parse the numbers
         with open(command_file, "r") as fp:
             for line in fp.readlines():
                 self.cmds.append(
@@ -115,6 +135,35 @@ class CPU:
 
         return cmd_counts[com_name]
 
+    def final_reg_val(self, reg_name: str) -> int:
+        """
+        Find the final value that a register has after executing all commands.
+        """
+        assert reg_name in self.register
+
+        while self.cmd_idx >= 0 and self.cmd_idx < len(self.cmds):
+            self.exe_command(self.cmd_idx)
+
+        return self.register[reg_name]
+
+    def part_02_fast(self) -> int:
+        """
+        Optimised version of part 2. Find the number of non-primes between
+        two specified values.
+        """
+        counter = 0
+        first_val = self.cmds[0][2] * self.cmds[4][2] - self.cmds[5][2]
+        last_val = first_val - self.cmds[7][2]
+
+        for val in range(first_val, last_val + 1, -self.cmds[-2][2]):
+            if not isprime(val):
+                counter += 1
+
+        return counter
+
 
 if __name__ == "__main__":
-    print(f"Part 1 = {CPU("./data/input.txt").command_count('mul')}")
+    print(
+        f"Part 1 = {CPU("./data/input.txt").command_count('mul')}\n"
+        f"Part 2 = {CPU("./data/input.txt").part_02_fast()}\n"
+    )
