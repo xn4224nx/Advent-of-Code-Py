@@ -108,26 +108,40 @@ class BridgeFinder:
         Check all valid ways to build a bridge with the supplied components and
         return the strength of the strongest possible bridge.
         """
-        seen_strengths = set()
 
-        # Identify the components that could start a bridge and continue it
-        start_idxs = [x for x in range(len(self.comps)) if 0 in self.comps[x]]
-        other_idxs = [x for x in range(len(self.comps)) if x not in start_idxs]
+        # Keep a record of all seen bridges starting with single component ones
+        bridge_strengths = {}
+        curr_bridges = {(x,) for x in range(len(self.comps)) if 0 in self.comps[x]}
 
-        # Find all the possible bridge component combinations
-        for st_idx in start_idxs:
-            other_idxs = [x for x in range(len(self.comps)) if x != st_idx]
+        # Keep exploring possible bridges till no more can be made
+        while curr_bridges:
+            new_bridges = set()
 
-            for bridge_len in range(len(other_idxs)):
-                for idx_perm in permutations(other_idxs, bridge_len):
-                    bridge = (st_idx,) + idx_perm
+            # For each previous bridge see if it can be extended
+            for prev_bridge in curr_bridges:
 
-                    if self.is_component_comb_valid(bridge):
-                        seen_strengths.add(self.bridge_strength(bridge))
+                # Check if any component can be added
+                for comp_idx in range(len(self.comps)):
 
-        # Return the value of the strongest bridge
-        return max(seen_strengths)
+                    # No duplicate components allowed
+                    if comp_idx in prev_bridge:
+                        continue
+
+                    tmp_bridge = prev_bridge + (comp_idx,)
+
+                    # See if this addition would make a valid bridge
+                    if self.is_component_comb_valid(tmp_bridge):
+                        new_bridges.add(tmp_bridge)
+
+            # Save the strenghts of the older bridges
+            bridge_strengths.update({x: self.bridge_strength(x) for x in curr_bridges})
+
+            # Prepare for the next loop iteration
+            curr_bridges = new_bridges
+
+        # return the biggest strenght found
+        return max(bridge_strengths.values())
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {BridgeFinder("./data/input.txt").find_strongest_bridge()}")
