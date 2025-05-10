@@ -63,4 +63,4 @@ def test_is_component_comb_valid_exp06():
 
 
 def test_find_strongest_bridge_exp01():
-    assert BridgeFinder("./data/example_01.txt").find_strongest_bridge() == 31
+    assert BridgeFinder("./data/example_01.txt").find_strongest_bridge() == (31, 19)

@@ -58,9 +58,22 @@ Of these bridges, the strongest one is 0/1--10/1--9/10; it has a strength of
 
 PART 1: What is the strength of the strongest bridge you can make with the
         components you have available?
-"""
 
-from itertools import permutations
+The bridge you've built isn't long enough; you can't jump the rest of the way.
+
+In the example above, there are two longest bridges:
+
+    -   0/2--2/2--2/3--3/4
+
+    -   0/2--2/2--2/3--3/5
+
+Of them, the one which uses the 3/5 component is stronger; its strength is:
+
+    0+2 + 2+2 + 2+3 + 3+5 = 19.
+
+PART 2: What is the strength of the longest bridge you can make? If you can
+        make multiple bridges of the longest length, pick the strongest one.
+"""
 
 
 class BridgeFinder:
@@ -103,14 +116,15 @@ class BridgeFinder:
 
         return True
 
-    def find_strongest_bridge(self) -> int:
+    def find_strongest_bridge(self) -> (int, int):
         """
         Check all valid ways to build a bridge with the supplied components and
-        return the strength of the strongest possible bridge.
+        return the strength of the strongest possible bridge and the strenght of
+        the longest bridge.
         """
 
         # Keep a record of all seen bridges starting with single component ones
-        bridge_strengths = {}
+        all_bridges = set()
         curr_bridges = {(x,) for x in range(len(self.comps)) if 0 in self.comps[x]}
 
         # Keep exploring possible bridges till no more can be made
@@ -134,14 +148,35 @@ class BridgeFinder:
                         new_bridges.add(tmp_bridge)
 
             # Save the strenghts of the older bridges
-            bridge_strengths.update({x: self.bridge_strength(x) for x in curr_bridges})
+            all_bridges.update(curr_bridges)
 
             # Prepare for the next loop iteration
             curr_bridges = new_bridges
 
-        # return the biggest strenght found
-        return max(bridge_strengths.values())
+        # Find the strongest and longest bridges
+        all_max_strength = 0
+        long_max_strength = 0
+        long_max = 0
+
+        for bridge_comp in all_bridges:
+            brd_steng = self.bridge_strength(bridge_comp)
+            brd_len = len(bridge_comp)
+
+            # Find the overall strongest bridge
+            if brd_steng > all_max_strength:
+                all_max_strength = brd_steng
+
+            # Find the strength of the longest bridge (largest in a tie)
+            if brd_len > long_max or (
+                brd_len == long_max and brd_steng > long_max_strength
+            ):
+                long_max_strength = brd_steng
+                long_max = brd_len
+
+        # return the biggest strenght found and longest bridge strength
+        return all_max_strength, long_max_strength
 
 
 if __name__ == "__main__":
-    print(f"Part 1 = {BridgeFinder("./data/input.txt").find_strongest_bridge()}")
+    overall_max, long_max = BridgeFinder("./data/input.txt").find_strongest_bridge()
+    print(f"Part 1 = {overall_max}\nPart 2 = {long_max}\n")
