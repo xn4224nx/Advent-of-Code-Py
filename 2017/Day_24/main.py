@@ -60,29 +60,73 @@ PART 1: What is the strength of the strongest bridge you can make with the
         components you have available?
 """
 
+from itertools import permutations
+
 
 class BridgeFinder:
     def __init__(self, component_file: str):
-        pass
+        with open(component_file, "r") as fp:
+            self.comps = [
+                tuple(map(int, x.split("/", maxsplit=1))) for x in fp.readlines()
+            ]
 
     def bridge_strength(self, component_idxs: tuple[int]) -> int:
         """
         Calculate the total strength of a combination of bridge components.
         """
-        pass
+        return sum([self.comps[x][0] + self.comps[x][1] for x in component_idxs])
 
     def is_component_comb_valid(self, component_idxs: tuple[int]) -> bool:
         """
         Determine if a combination of components is a valid bridge.
         """
-        pass
+
+        # The bridge must start with zero
+        if 0 not in self.comps[component_idxs[0]]:
+            return False
+
+        # Construct the bridge as a list of the components
+        bridge = [0, max(self.comps[component_idxs[0]])]
+        for idx in component_idxs[1:]:
+
+            # Check there is a matching component in this segment
+            if bridge[-1] not in self.comps[idx]:
+                return False
+
+            bridge.append(bridge[-1])
+
+            # Determine the non matching component and add it to the end
+            if self.comps[idx][0] == bridge[-1]:
+                bridge.append(self.comps[idx][1])
+            else:
+                bridge.append(self.comps[idx][0])
+
+        return True
 
     def find_strongest_bridge(self) -> int:
         """
         Check all valid ways to build a bridge with the supplied components and
         return the strength of the strongest possible bridge.
         """
-        pass
+        seen_strengths = set()
+
+        # Identify the components that could start a bridge and continue it
+        start_idxs = [x for x in range(len(self.comps)) if 0 in self.comps[x]]
+        other_idxs = [x for x in range(len(self.comps)) if x not in start_idxs]
+
+        # Find all the possible bridge component combinations
+        for st_idx in start_idxs:
+            other_idxs = [x for x in range(len(self.comps)) if x != st_idx]
+
+            for bridge_len in range(len(other_idxs)):
+                for idx_perm in permutations(other_idxs, bridge_len):
+                    bridge = (st_idx,) + idx_perm
+
+                    if self.is_component_comb_valid(bridge):
+                        seen_strengths.add(self.bridge_strength(bridge))
+
+        # Return the value of the strongest bridge
+        return max(seen_strengths)
 
 
 if __name__ == "__main__":
