@@ -33,8 +33,7 @@ def test_step_exp02():
     test.cursor = 1
     test.tape = {0}
 
-    for _ in range(2):
-        test.step()
+    test.step()
 
     assert test.state == "A"
     assert test.cursor == 0
@@ -47,8 +46,7 @@ def test_step_exp03():
     test.cursor = 0
     test.tape = {0, 1}
 
-    for _ in range(3):
-        test.step()
+    test.step()
 
     assert test.state == "B"
     assert test.cursor == -1
@@ -61,8 +59,7 @@ def test_step_exp04():
     test.cursor = -1
     test.tape = {1}
 
-    for _ in range(4):
-        test.step()
+    test.step()
 
     assert test.state == "A"
     assert test.cursor == -2
@@ -75,8 +72,7 @@ def test_step_exp05():
     test.cursor = -2
     test.tape = {1, -1}
 
-    for _ in range(5):
-        test.step()
+    test.step()
 
     assert test.state == "B"
     assert test.cursor == -1
@@ -89,8 +85,7 @@ def test_step_exp06():
     test.cursor = -1
     test.tape = {1, -1, -2}
 
-    for _ in range(6):
-        test.step()
+    test.step()
 
     assert test.state == "A"
     assert test.cursor == 0

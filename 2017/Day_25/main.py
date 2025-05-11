@@ -91,24 +91,87 @@ PART 1: Recreate the Turing machine and save the computer! What is the
         diagnostic checksum it produces once it's working again?
 """
 
+import re
+
 
 class TuringMachine:
     def __init__(self, rules_file: str):
-        pass
+        self.rules = {}
+        self.tape = set()
+        self.cursor = 0
+
+        with open(rules_file, "r") as fp:
+            data = [x for x in fp.readlines()]
+
+        # What state does the machine start in
+        self.state = data[0][-3]
+
+        # How many steps does a diagnostic require
+        self.diag_steps = int(re.search(r"\d+", data[1]).group())
+
+        # Parse the rules
+        for lidx in range(3, len(data), 10):
+            self.rules[
+                (
+                    re.search(r"([A-Z]+):", data[lidx]).group(1),
+                    0 if "0" in data[lidx + 1] else 1,
+                )
+            ] = [
+                0 if "0" in data[lidx + 2] else 1,
+                "R" if "right" in data[lidx + 3] else "L",
+                re.search(r"([A-Z]+)\.", data[lidx + 4]).group(1),
+            ]
+            self.rules[
+                (
+                    re.search(r"([A-Z]+):", data[lidx]).group(1),
+                    0 if "0" in data[lidx + 5] else 1,
+                )
+            ] = [
+                0 if "0" in data[lidx + 6] else 1,
+                "R" if "right" in data[lidx + 7] else "L",
+                re.search(r"([A-Z]+)\.", data[lidx + 8]).group(1),
+            ]
 
     def step(self):
         """
         Change the machine based on the state and the value the cursor points
         to.
         """
-        pass
+        if self.cursor in self.tape:
+            curr_val = 1
+        else:
+            curr_val = 0
+
+        # Extract the commands
+        write_val, direct, new_state = self.rules[(self.state, curr_val)]
+
+        print(self.rules[(self.state, curr_val)])
+
+        # Change the value on the tape the cursor points to
+        if write_val == 1:
+            self.tape.add(self.cursor)
+
+        elif curr_val != write_val:
+            self.tape.remove(self.cursor)
+
+        # Move the cursor
+        if direct == "R":
+            self.cursor += 1
+        else:
+            self.cursor -= 1
+
+        # Change the state
+        self.state = new_state
 
     def diagnostic_checksum(self) -> int:
         """
         Perform the required number of steps and return the total number of
         ones on the tape.
         """
-        pass
+        for _ in range(self.diag_steps):
+            self.step()
+
+        return len(self.tape)
 
 
 if __name__ == "__main__":
