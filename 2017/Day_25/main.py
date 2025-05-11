@@ -145,8 +145,6 @@ class TuringMachine:
         # Extract the commands
         write_val, direct, new_state = self.rules[(self.state, curr_val)]
 
-        print(self.rules[(self.state, curr_val)])
-
         # Change the value on the tape the cursor points to
         if write_val == 1:
             self.tape.add(self.cursor)
@@ -175,4 +173,4 @@ class TuringMachine:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {TuringMachine("./data/input.txt").diagnostic_checksum()}")
