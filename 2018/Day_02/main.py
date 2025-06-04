@@ -86,4 +86,4 @@ class Warehouse:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {Warehouse('./data/input_0.txt').checksum()}")
