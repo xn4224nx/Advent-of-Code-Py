@@ -43,12 +43,38 @@ and three of them contain a letter which appears exactly three times.
 Multiplying these together produces a checksum of 4 * 3 = 12.
 
 PART 1: What is the checksum for your list of box IDs?
+
+Confident that your list of box IDs is complete, you're ready to find the boxes
+full of prototype fabric.
+
+The boxes will have IDs which differ by exactly one character at the same
+position in both strings. For example, given the following box IDs:
+
+    abcde
+    fghij
+    klmno
+    pqrst
+    fguij
+    axcye
+    wvxyz
+
+The IDs abcde and axcye are close, but they differ by two characters (the
+second and fourth). However, the IDs fghij and fguij differ by exactly one
+character, the third (h and u). Those must be the correct boxes.
+
+PART 2: What letters are common between the two correct box IDs? (In the
+        example above, this is found by removing the differing character from
+        either ID, producing fgij.)
 """
+
+import sys
+from itertools import combinations
 
 
 class Warehouse:
     def __init__(self, box_ids_file: str):
         self.boxes = [x.strip() for x in open(box_ids_file, "r").readlines()]
+        self.box_id_len = len(self.boxes[0])
 
     def box_check(self, box: str) -> (bool, bool):
         """
@@ -84,6 +110,33 @@ class Warehouse:
         # Return the product of both checks
         return check_2 * check_3
 
+    def most_common_letters(self) -> int:
+        """
+        Find the boxes that are closest to each other and return the common
+        letters between both.
+        """
+        largest_same_chr = 0
+        most_common_ch = ""
+
+        # Compare each box to each other
+        for comb in combinations(range(len(self.boxes)), 2):
+            tmp_same_cnt = 0
+            tmp_common = ""
+
+            # Check letter by letter
+            for char_idx in range(self.box_id_len):
+                if self.boxes[comb[0]][char_idx] == self.boxes[comb[1]][char_idx]:
+                    tmp_same_cnt += 1
+                    tmp_common += self.boxes[comb[0]][char_idx]
+
+            # Check if this combination is the lowest seen
+            if tmp_same_cnt > largest_same_chr:
+                largest_same_chr = tmp_same_cnt
+                most_common_ch = tmp_common
+
+        return most_common_ch
+
 
 if __name__ == "__main__":
     print(f"Part 1 = {Warehouse('./data/input_0.txt').checksum()}")
+    print(f"Part 2 = {Warehouse('./data/input_0.txt').most_common_letters()}")

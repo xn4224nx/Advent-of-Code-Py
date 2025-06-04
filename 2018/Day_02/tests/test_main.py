@@ -47,3 +47,7 @@ def test_box_check_exp07():
 
 def test_checksum_exp01():
     assert Warehouse("./data/example_01.txt").checksum() == 12
+
+
+def test_most_common_letters_exp01():
+    assert Warehouse("./data/example_02.txt").most_common_letters() == "fgij"
