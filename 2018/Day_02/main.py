@@ -48,21 +48,41 @@ PART 1: What is the checksum for your list of box IDs?
 
 class Warehouse:
     def __init__(self, box_ids_file: str):
-        pass
+        self.boxes = [x.strip() for x in open(box_ids_file, "r").readlines()]
 
-    def box_check(self, box: str, val: int) -> (bool, bool):
+    def box_check(self, box: str) -> (bool, bool):
         """
         Does the box contain exactly 2 number of the same letter and does it
         contain exactly 3 for the same letter.
         """
-        pass
+        letter_cnts = {}
+
+        # Count the occurance of each character
+        for char in box:
+            if char in letter_cnts:
+                letter_cnts[char] += 1
+            else:
+                letter_cnts[char] = 1
+
+        # Determine if there are any letters that occur twice or three times
+        counts = [x for x in letter_cnts.values()]
+        return 2 in counts, 3 in counts
 
     def checksum(self) -> int:
         """
         Count the number of boxes with 2 and 3 of the same letter. Multiply the
         numbers together to calculate the checksum.
         """
-        pass
+        check_2, check_3 = 0, 0
+
+        # Count the total number of boxes that pass both checks
+        for box in self.boxes:
+            cnt_2, cnt_3 = self.box_check(box)
+            check_2 += cnt_2
+            check_3 += cnt_3
+
+        # Return the product of both checks
+        return check_2 * check_3
 
 
 if __name__ == "__main__":
