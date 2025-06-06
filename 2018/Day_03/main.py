@@ -66,16 +66,35 @@ PART 1: If the Elves all proceed with their own plans, none of them will have
         claims?
 """
 
+import re
+
 
 class FabricSlicer:
     def __init__(self, rect_def_file: str):
-        pass
+        self.coverage = {}
+
+        with open(rect_def_file, "r") as fp:
+            for line in fp.readlines():
+
+                # Extract all numbers from the line
+                nums = [int(x) for x in re.findall(r"\d+", line)]
+
+                # Determine the points that this piece of fabric covers
+                for x_idx in range(nums[1], nums[1] + nums[3]):
+                    for y_idx in range(nums[2], nums[2] + nums[4]):
+                        point = (x_idx, y_idx)
+
+                        # Note that this piece of fabric is on this point
+                        if point in self.coverage:
+                            self.coverage[point].add(nums[0])
+                        else:
+                            self.coverage[point] = {nums[0]}
 
     def calc_overlapping_area(self) -> int:
         """
         Calculate the total area covered by one or more squares.
         """
-        pass
+        return len([1 for x in self.coverage.values() if len(x) >= 2])
 
 
 if __name__ == "__main__":
