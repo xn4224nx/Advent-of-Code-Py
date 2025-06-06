@@ -44,3 +44,7 @@ def test_read_exp01():
 
 def test_calc_overlapping_exp01():
     assert FabricSlicer("./data/example_0.txt").calc_overlapping_area() == 4
+
+
+def test_find_non_overlap_exp01():
+    assert FabricSlicer("./data/example_0.txt").find_non_overlaping() == [3]

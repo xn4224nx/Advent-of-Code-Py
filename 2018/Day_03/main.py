@@ -64,6 +64,15 @@ while adjacent to the others, does not overlap either of them.)
 PART 1: If the Elves all proceed with their own plans, none of them will have
         enough fabric. How many square inches of fabric are within two or more
         claims?
+
+Amidst the chaos, you notice that exactly one claim doesn't overlap by even a
+single square inch of fabric with any other claim. If you can somehow draw
+attention to it, maybe the Elves will be able to make Santa's suit after all!
+
+For example, in the claims above, only claim 3 is intact after all claims are
+made.
+
+PART 2: What is the ID of the only claim that doesn't overlap?
 """
 
 import re
@@ -96,6 +105,26 @@ class FabricSlicer:
         """
         return len([1 for x in self.coverage.values() if len(x) >= 2])
 
+    def find_non_overlaping(self) -> list[int]:
+        """
+        Get a list of the pieces of fabric that don't overlap woth any other.
+        """
+        all_fabrics = set()
+        overlap_fabrics = set()
+
+        # Determine the fabrics and those that overlap
+        for overlap in self.coverage.values():
+            all_fabrics.update(overlap)
+
+            if len(overlap) > 1:
+                overlap_fabrics.update(overlap)
+
+        return [x for x in all_fabrics if x not in overlap_fabrics]
+
 
 if __name__ == "__main__":
-    print(f"Part 1 = {FabricSlicer("./data/input_0.txt").calc_overlapping_area()}")
+    elves = FabricSlicer("./data/input_0.txt")
+    print(
+        f"Part 1 = {elves.calc_overlapping_area()}\n"
+        f"Part 2 = {elves.find_non_overlaping()}\n"
+    )
