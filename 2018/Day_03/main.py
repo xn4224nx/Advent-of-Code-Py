@@ -98,4 +98,4 @@ class FabricSlicer:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {FabricSlicer("./data/input_0.txt").calc_overlapping_area()}")
