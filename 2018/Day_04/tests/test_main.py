@@ -184,3 +184,6 @@ def test_guard_sleep_record_exp02():
 
 def test_bypass_strat_01():
     assert WatchRecord("./data/example_0.txt").bypass_strat_01() == 240
+
+def test_bypass_strat_02():
+    assert WatchRecord("./data/example_1.txt").bypass_strat_01() == 240

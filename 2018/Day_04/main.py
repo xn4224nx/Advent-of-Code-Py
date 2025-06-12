@@ -82,10 +82,40 @@ PART 1: What is the ID of the guard you chose multiplied by the minute you
         chose? (In the above example, the answer would be 10 * 24 = 240.)
 """
 
+import re
+from datetime import datetime
+
 
 class WatchRecord:
     def __init__(self, raw_datafile: str):
-        pass
+        self.times = []
+        self.events = []
+        self.guards = set()
+
+        with open(raw_datafile, "r") as fp:
+            for line in fp.readlines():
+                event_df = re.search(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}", line)
+
+                # Ensure the line is valid
+                if event_df is not None:
+                    self.times.append(datetime.strptime(event_df.group(0), r"%Y-%m-%d %H:%M"))
+
+                    # Determine the nature of the event
+                    if "falls" in line:
+                        self.events.append("falls")
+
+                    elif "wakes" in line:
+                        self.events.append("wakes")
+
+                    elif "#" in line:
+                        temp_guard = int(re.search(r"#(\d+)", line).group(1))
+                        self.events.append(temp_guard)
+                        self.guards.add(temp_guard)
+
+        # Sort the event earliest to latest
+        self.times, self.events = zip(*sorted(zip(self.times ,self.events)))
+        self.times = list(self.times)
+        self.events = list(self.events)
 
     def guard_sleep_record(self, guard_id: int) -> list[int]:
         pass
