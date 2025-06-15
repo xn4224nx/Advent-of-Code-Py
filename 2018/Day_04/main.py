@@ -98,7 +98,9 @@ class WatchRecord:
 
                 # Ensure the line is valid
                 if event_df is not None:
-                    self.times.append(datetime.strptime(event_df.group(0), r"%Y-%m-%d %H:%M"))
+                    self.times.append(
+                        datetime.strptime(event_df.group(0), r"%Y-%m-%d %H:%M")
+                    )
 
                     # Determine the nature of the event
                     if "falls" in line:
@@ -113,15 +115,82 @@ class WatchRecord:
                         self.guards.add(temp_guard)
 
         # Sort the event earliest to latest
-        self.times, self.events = zip(*sorted(zip(self.times ,self.events)))
+        self.times, self.events = zip(*sorted(zip(self.times, self.events)))
         self.times = list(self.times)
         self.events = list(self.events)
 
-    def guard_sleep_record(self, guard_id: int) -> list[int]:
-        pass
+    def generate_guard_sleep_record(self):
+        """
+        For every minute from 00:00 to 00:59 count the number of times the guard
+        is asleep.
+        """
+        self.guard_sleep_record = {x: [0] * 60 for x in self.guards}
+        curr_guard = None
+        guard_awake = True
+
+        # Iterate over every event and determine when a guard sleeps
+        for event_idx in range(len(self.events)):
+
+            # A guard falls asleep
+            if self.events[event_idx] == "falls":
+                guard_awake = False
+
+            # A guard wakes up
+            elif self.events[event_idx] == "wakes":
+                guard_awake = True
+
+                # When was the guard first asleep in the late hour
+                if self.times[event_idx - 1].hour > 0:
+                    start_min = 0
+                else:
+                    start_min = self.times[event_idx - 1].minute
+
+                # Make a record of each minute the guard was asleep
+                for min_idx in range(start_min, self.times[event_idx].minute):
+                    self.guard_sleep_record[curr_guard][min_idx] += 1
+
+            # A new guard goes on shift
+            elif isinstance(self.events[event_idx], int):
+
+                # See if a guard finished the previous shift asleep
+                if not guard_awake:
+                    for min_idx in range(self.times[event_idx - 1].minute, 60):
+                        self.guard_sleep_record[curr_guard][min_idx] += 1
+
+                curr_guard = self.events[event_idx]
+                guard_awake = True
+
+        # See if a guard finished the last shift asleep
+        if not guard_awake:
+            for min_idx in range(self.times[event_idx - 1].minute, 60):
+                self.guard_sleep_record[curr_guard][min_idx] += 1
 
     def bypass_strat_01(self) -> int:
-        pass
+        """
+        Find the guard that has the most minutes asleep and return the minute
+        that the guard is most likely to be asleep times by the guard id.
+        """
+        self.generate_guard_sleep_record()
+
+        sleepiest_guard = 0
+        sleepiest_time = 0
+
+        # Find the guard who sleeps the most
+        for guard in self.guards:
+            if sum(self.guard_sleep_record[guard]) > sleepiest_time:
+                sleepiest_time = sum(self.guard_sleep_record[guard])
+                sleepiest_guard = guard
+
+        min_largest = 0
+        min_idx = 0
+
+        # For that guard find the minute he was most likley to be asleep
+        for sl_min in range(0, 60):
+            if self.guard_sleep_record[sleepiest_guard][sl_min] > min_largest:
+                min_largest = self.guard_sleep_record[sleepiest_guard][sl_min]
+                min_idx = sl_min
+
+        return min_idx * sleepiest_guard
 
 
 if __name__ == "__main__":
