@@ -80,6 +80,16 @@ analyzed.
 
 PART 1: What is the ID of the guard you chose multiplied by the minute you
         chose? (In the above example, the answer would be 10 * 24 = 240.)
+
+Strategy 2: Of all guards, which guard is most frequently asleep on the same
+minute?
+
+In the example above, Guard #99 spent minute 45 asleep more than any other guard
+or minute - three times in total. (In all other cases, any guard spent any
+minute asleep at most twice.)
+
+PART 2: What is the ID of the guard you chose multiplied by the minute you
+        chose? (In the above example, the answer would be 99 * 45 = 4455.)
 """
 
 import re
@@ -192,6 +202,29 @@ class WatchRecord:
 
         return min_idx * sleepiest_guard
 
+    def bypass_strat_02(self) -> int:
+        """
+        Find the guard that is most likely to be sleep at a particular minute.
+        Then return the guard id times by the minute they will be asleep.
+        """
+        self.generate_guard_sleep_record()
+        sleepiest_guard = 0
+        sleepiest_time = 0
+        sleepiest_idx = 0
+
+        for guard in self.guards:
+            times = self.guard_sleep_record[guard]
+
+            if max(times) > sleepiest_time:
+                sleepiest_time = max(times)
+                sleepiest_guard = guard
+                sleepiest_idx = times.index(max(times))
+
+        return sleepiest_guard * sleepiest_idx
+
 
 if __name__ == "__main__":
-    print(f"Part 1 = {WatchRecord('./data/input_0.txt').bypass_strat_01()}")
+    print(
+        f"Part 1 = {WatchRecord('./data/input_0.txt').bypass_strat_01()}\n"
+        f"Part 2 = {WatchRecord('./data/input_0.txt').bypass_strat_02()}\n"
+    )
