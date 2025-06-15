@@ -194,4 +194,4 @@ class WatchRecord:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {WatchRecord('./data/input_0.txt').bypass_strat_01()}")
