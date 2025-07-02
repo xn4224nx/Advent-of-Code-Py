@@ -69,9 +69,6 @@ class Polymer:
 
         # Prune the polymer
         for idx in reversed(rm_indexs):
-
-            print(self.units[:idx], self.units[idx + 2 :])
-
             self.units = self.units[:idx] + self.units[idx + 2 :]
 
     def final_len(self) -> int:
@@ -87,4 +84,7 @@ class Polymer:
 
 
 if __name__ == "__main__":
-    pass
+    with open("./data/input_0.txt", "r") as fp:
+        long_poly = fp.read().strip()
+
+    print(f"Part 1 = {Polymer(long_poly).final_len() }")
