@@ -49,20 +49,41 @@ PART 1: How many units remain after fully reacting the polymer you scanned?
 
 class Polymer:
     def __init__(self, s_units: str):
-        pass
+        self.units = s_units
 
     def collapse(self):
         """
         Iterate over the polymer and if an upper and lower letter of the same
         type are next to each other remove them.
         """
-        pass
+        rm_indexs = []
+
+        # Find the indexs of pairs to remove
+        idx = 0
+        while idx < len(self.units) - 1:
+            if abs(ord(self.units[idx]) - ord(self.units[idx + 1])) == 32:
+                rm_indexs.append(idx)
+                idx += 2
+            else:
+                idx += 1
+
+        # Prune the polymer
+        for idx in reversed(rm_indexs):
+
+            print(self.units[:idx], self.units[idx + 2 :])
+
+            self.units = self.units[:idx] + self.units[idx + 2 :]
 
     def final_len(self) -> int:
         """
         After collapsing the polymer as much as possible find its final length.
         """
-        pass
+        while True:
+            old_len = len(self.units)
+            self.collapse()
+
+            if old_len == len(self.units):
+                return old_len
 
 
 if __name__ == "__main__":
