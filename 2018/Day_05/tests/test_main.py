@@ -56,3 +56,7 @@ def test_final_len_exp01():
 
 def test_final_len_exp02():
     assert Polymer("abBA").final_len() == 0
+
+
+def test_len_after_rm_exp01():
+    assert Polymer("dabAcCaCBAcCcaDA").len_after_rm() == 4

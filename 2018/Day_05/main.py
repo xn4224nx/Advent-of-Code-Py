@@ -44,7 +44,35 @@ Now, consider a larger example, dabAcCaCBAcCcaDA:
 After all possible reactions, the resulting polymer contains 10 units.
 
 PART 1: How many units remain after fully reacting the polymer you scanned?
+
+Time to improve the polymer.
+
+One of the unit types is causing problems; it's preventing the polymer from
+collapsing as much as it should. Your goal is to figure out which unit type is
+causing the most problems, remove all instances of it (regardless of
+polarity), fully react the remaining polymer, and measure its length.
+
+For example, again using the polymer dabAcCaCBAcCcaDA from above:
+
+        -   Removing all A/a units produces dbcCCBcCcD. Fully reacting this
+            polymer produces dbCBcD, which has length 6.
+
+        -   Removing all B/b units produces daAcCaCAcCcaDA. Fully reacting
+            this polymer produces daCAcaDA, which has length 8.
+
+        -   Removing all C/c units produces dabAaBAaDA. Fully reacting this
+            polymer produces daDA, which has length 4.
+
+        -   Removing all D/d units produces abAcCaCBAcCcaA. Fully reacting
+            this polymer produces abCBAc, which has length 6.
+
+In this example, removing all C/c units was best, producing the answer 4.
+
+PART 2: What is the length of the shortest polymer you can produce by
+        removing all units of exactly one type and fully reacting the result?
 """
+
+from string import ascii_lowercase, ascii_uppercase
 
 
 class Polymer:
@@ -82,9 +110,31 @@ class Polymer:
             if old_len == len(self.units):
                 return old_len
 
+    def len_after_rm(self) -> int:
+        """
+        Test the removal of each letter type and find the one that gives the
+        shortest length. Then return the smallest length.
+        """
+        orig_poly = self.units[:]
+        min_poly_size = len(orig_poly)
+
+        for l_idx in range(len(ascii_lowercase)):
+            self.units = orig_poly[:]
+            self.units = self.units.replace(ascii_lowercase[l_idx], "")
+            self.units = self.units.replace(ascii_uppercase[l_idx], "")
+            l_min = self.final_len()
+
+            if l_min < min_poly_size:
+                min_poly_size = l_min
+
+        return min_poly_size
+
 
 if __name__ == "__main__":
     with open("./data/input_0.txt", "r") as fp:
         long_poly = fp.read().strip()
 
-    print(f"Part 1 = {Polymer(long_poly).final_len() }")
+    print(
+        f"Part 1 = {Polymer(long_poly).final_len()}\n"
+        f"Part 2 = {Polymer(long_poly).len_after_rm()}\n"
+    )
