@@ -104,8 +104,8 @@ class MineField:
         inf_area = [False] * len(self.mine_coords)
 
         # Check every square to find out what mine is closest
-        for x_idx in range(self.field_size[0]):
-            for y_idx in range(self.field_size[1]):
+        for y_idx in range(self.field_size[1] + 1):
+            for x_idx in range(self.field_size[0] + 1):
                 pnt = (x_idx, y_idx)
 
                 # The square the mine is on is always closest to it but that
@@ -116,6 +116,7 @@ class MineField:
                 # Determine the closest mine to this square
                 min_dist = sys.maxsize
                 closest_mine = 0
+                tie_in_dist = False
 
                 for mine_idx in range(len(self.mine_coords)):
                     dist = self.manhatt_dist(pnt, self.mine_coords[mine_idx])
@@ -123,9 +124,17 @@ class MineField:
                     if dist < min_dist:
                         min_dist = dist
                         closest_mine = mine_idx
+                        tie_in_dist = False
 
-                # If this point is on the edge then the area cover by that mine
-                # is infinite and it is excluded from the answer.
+                    elif dist == min_dist:
+                        tie_in_dist = True
+
+                # Ensure this distance is unique amd there isn't a tie
+                if tie_in_dist:
+                    continue
+
+                # If this point is on the edge then the area covered by that
+                # mine is infinite and it is excluded from the answer.
                 if not inf_area[closest_mine] and (
                     pnt[0] == 0
                     or pnt[0] == self.field_size[0]
@@ -150,4 +159,4 @@ class MineField:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = { MineField("./data/input_0.txt").largest_enclosed_space()}")
