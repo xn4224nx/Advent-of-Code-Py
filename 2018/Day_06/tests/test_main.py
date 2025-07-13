@@ -20,3 +20,7 @@ def test_new_minefield_exp01():
 
 def test_largest_enclosed_space_exp01():
     assert MineField("./data/example_0.txt").largest_enclosed_space() == 17
+
+
+def test_containing_region_size_exp01():
+    assert MineField("./data/example_0.txt").containing_region_size(32) == 16

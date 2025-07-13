@@ -67,6 +67,55 @@ is closest to 17 (both including the coordinate's location itself). Therefore,
 in this example, the size of the largest area is 17.
 
 PART 1: What is the size of the largest area that isn't infinite?
+
+On the other hand, if the coordinates are safe, maybe the best you can do is try
+to find a region near as many coordinates as possible.
+
+For example, suppose you want the sum of the Manhattan distance to all of the
+coordinates to be less than 32. For each location, add up the distances to all
+of the given coordinates; if the total of those distances is less than 32, that
+location is within the desired region. Using the same coordinates as above, the
+resulting region looks like this:
+
+    ..........
+    .A........
+    ..........
+    ...###..C.
+    ..#D###...
+    ..###E#...
+    .B.###....
+    ..........
+    ..........
+    ........F.
+
+In particular, consider the highlighted location 4,3 located at the top middle
+of the region. Its calculation is as follows, where abs() is the absolute value
+function:
+
+        -   Distance to coordinate A: abs(4-1) + abs(3-1) =  5
+
+        -   Distance to coordinate B: abs(4-1) + abs(3-6) =  6
+
+        -   Distance to coordinate C: abs(4-8) + abs(3-3) =  4
+
+        -   Distance to coordinate D: abs(4-3) + abs(3-4) =  2
+
+        -   Distance to coordinate E: abs(4-5) + abs(3-5) =  3
+
+        -   Distance to coordinate F: abs(4-8) + abs(3-9) = 10
+
+        -   Total distance: 5 + 6 + 4 + 2 + 3 + 10 = 30
+
+Because the total distance to all coordinates (30) is less than 32, the location
+is within the region.
+
+This region, which also includes coordinates D and E, has a total size of 16.
+
+Your actual region will need to be much larger than this example, though,
+instead including all locations with a total distance of less than 10000.
+
+PART 1: What is the size of the region containing all locations which have a
+        total distance to all given coordinates of less than 10000?
 """
 
 import sys
@@ -157,6 +206,33 @@ class MineField:
 
         return max_area
 
+    def containing_region_size(self, max_total_dist: int) -> int:
+        """
+        Find the size of the region that every point within is a cumulative
+        distance away from all the mines less than  `max_total_dist`.
+        """
+        viable_coords = set()
+
+        # Check each coordinate to see if it is within the required distance
+        for y_idx in range(self.field_size[1] + 1):
+            for x_idx in range(self.field_size[0] + 1):
+                pnt = (x_idx, y_idx)
+                total_dist = 0
+
+                # Check the point is close enough to all mines
+                for mine_idx in range(len(self.mine_coords)):
+                    total_dist += self.manhatt_dist(pnt, self.mine_coords[mine_idx])
+
+                    if total_dist >= max_total_dist:
+                        break
+
+                # Save the coordinate
+                else:
+                    viable_coords.add(pnt)
+
+        return len(viable_coords)
+
 
 if __name__ == "__main__":
     print(f"Part 1 = { MineField("./data/input_0.txt").largest_enclosed_space()}")
+    print(f"Part 2 = { MineField("./data/input_0.txt").containing_region_size(10000)}")
