@@ -10,7 +10,7 @@ Archive of Advent of Code attempts using the python language.
 | 3   | :star2: | :star2: | :star2: | :star2: |         |         |         |         |         |
 | 4   | :star2: | :star2: | :star2: | :star2: |         |         |         |         |         |
 | 5   | :star2: | :star2: | :star2: | :star2: |         |         |         |         |         |
-| 6   | :star2: | :star2: | :star2: |         |         |         |         |         |         |
+| 6   | :star2: | :star2: | :star2: | :star2: |         |         |         |         |         |
 | 7   | :star2: | :star2: | :star2: |         |         |         |         |         |         |
 | 8   | :star2: | :star2: | :star2: |         |         |         |         |         |         |
 | 9   | :star2: | :star2: | :star2: |         |         |         |         |         |         |
