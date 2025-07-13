@@ -112,4 +112,4 @@ class SleighSteps:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {SleighSteps("./data/input_0.txt").correct_order()}")
