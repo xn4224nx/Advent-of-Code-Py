@@ -72,14 +72,43 @@ PART 1: In what order should the steps in your instructions be completed?
 
 class SleighSteps:
     def __init__(self, step_relations: str):
-        pass
+        self.depends = {}
+
+        with open(step_relations, "r") as fp:
+            for line in fp.readlines():
+                step_0 = ord(line[5]) - ord("A")
+                step_1 = ord(line[36]) - ord("A")
+
+                # Ensure that the steps are known about
+                if step_0 not in self.depends:
+                    self.depends[step_0] = set()
+                if step_1 not in self.depends:
+                    self.depends[step_1] = set()
+
+                # Add in dependancies
+                self.depends[step_1].add(step_0)
 
     def correct_order(self) -> str:
         """
         Determine the order that the steps must be executed in order to
         build the sleigh. Return a string of that order.
         """
-        pass
+        unused_steps = {x for x in self.depends.keys()}
+        step_order = []
+
+        while len(unused_steps) > 0:
+            pos_nxt_steps = [x for x in unused_steps if len(self.depends[x]) == 0]
+
+            # Pick the alphabetically ordered first next step
+            nxt_step = sorted(pos_nxt_steps)[0]
+
+            # Update data structures
+            step_order.append(nxt_step)
+            unused_steps.remove(nxt_step)
+            [y.discard(nxt_step) for y in self.depends.values()]
+
+        # Convert the order back to letters
+        return "".join([chr(x + ord("A")) for x in step_order])
 
 
 if __name__ == "__main__":
