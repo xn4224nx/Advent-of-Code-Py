@@ -91,4 +91,4 @@ class Tree:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {Tree("./data/input_0.txt").node_metadata_sum()}")
