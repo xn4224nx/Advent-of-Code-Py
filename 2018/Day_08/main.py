@@ -58,13 +58,36 @@ PART 1: What is the sum of all metadata entries?
 
 class Tree:
     def __init__(self, node_file: str):
-        pass
+        with open(node_file, "r") as fp:
+            self.raw_info = list(map(int, fp.read().strip().split()))
 
     def node_metadata_sum(self) -> int:
         """
         For all the nodes in the tree sum their constituant metadata.
         """
-        pass
+        children = [self.raw_info[0]]
+        meta_cnt = [self.raw_info[1]]
+        node_data = []
+
+        # Extract the node meta data
+        tree_idx = 2
+        while tree_idx < len(self.raw_info):
+
+            # If the current node has nodes below it save it and move on
+            if children[-1] > 0:
+                children[-1] -= 1
+                children.append(self.raw_info[tree_idx])
+                meta_cnt.append(self.raw_info[tree_idx + 1])
+                tree_idx += 2
+
+            # Otherwise save the node data and then move along
+            else:
+                node_data += self.raw_info[tree_idx : tree_idx + meta_cnt[-1]]
+                tree_idx += meta_cnt[-1]
+                children.pop()
+                meta_cnt.pop()
+
+        return sum(node_data)
 
 
 if __name__ == "__main__":
