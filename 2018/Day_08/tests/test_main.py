@@ -11,4 +11,8 @@ def test_new_tree_exp01():
 
 
 def test_node_metadata_sum_exp01():
-    assert Tree("./data/example_0.txt").node_metadata_sum() == 138
+    assert Tree("./data/example_0.txt").statistics()[0] == 138
+
+
+def test_root_node_value_exp01():
+    assert Tree("./data/example_0.txt").statistics()[1] == 66
