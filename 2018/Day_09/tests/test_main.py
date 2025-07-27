@@ -23,3 +23,7 @@ def test_high_score_exp04():
 
 def test_high_score_exp05():
     assert MarbleGame(players=30, last_marble_worth=5807).high_score() == 37305
+
+
+def test_high_score_exp06():
+    assert MarbleGame(players=9, last_marble_worth=25).high_score() == 32

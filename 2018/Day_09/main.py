@@ -75,13 +75,41 @@ Here are a few more examples:
 PART 1: What is the winning Elf's score?
 """
 
+from collections import deque
+
 
 class MarbleGame:
     def __init__(self, players: int, last_marble_worth: int):
-        pass
+        self.players = players
+        self.last_marble_worth = last_marble_worth
 
     def high_score(self) -> int:
-        pass
+        """
+        When playing the game what is the winning elf's score.
+        """
+        curr_player = 0
+        player_scores = [0] * self.players
+        circle = deque([0])
+
+        # Add the marbles incrementally
+        for marb_idx in range(1, self.last_marble_worth + 1):
+
+            # If the marble is a multiple of 23 score the current player.
+            if marb_idx % 23 == 0:
+                player_scores[curr_player] += marb_idx
+                circle.rotate(7)
+                player_scores[curr_player] += circle.pop()
+                circle.rotate(-1)
+
+            # Rotate clockwise and add in the current marble
+            else:
+                circle.rotate(-1)
+                circle.append(marb_idx)
+
+            # Move onto the next player
+            curr_player = (curr_player + 1) % self.players
+
+        return max(player_scores)
 
 
 if __name__ == "__main__":
