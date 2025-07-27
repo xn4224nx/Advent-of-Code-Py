@@ -73,6 +73,11 @@ Here are a few more examples:
     -   30 players; last marble is worth 5807 points: high score is 37305
 
 PART 1: What is the winning Elf's score?
+
+Amused by the speed of your answer, the Elves are curious:
+
+PART 2: What would the new winning Elf's score be if the number of the last
+        marble were 100 times larger?
 """
 
 from collections import deque
@@ -114,3 +119,4 @@ class MarbleGame:
 
 if __name__ == "__main__":
     print(f"Part 1 = {MarbleGame(427, 70723).high_score()}")
+    print(f"Part 2 = {MarbleGame(427, 7072300).high_score()}")
