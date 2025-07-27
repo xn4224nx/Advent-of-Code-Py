@@ -113,4 +113,4 @@ class MarbleGame:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {MarbleGame(427, 70723).high_score()}")
