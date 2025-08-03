@@ -217,6 +217,13 @@ class Galaxy:
 
         return "\n".join("".join(line) for line in galaxy_future)
 
+    def message(self):
+        """
+        Find the hidden message in the movement of the stars.
+        """
+        time_msg = self.find_coalescence()
+        print(self.show_future(time_msg))
+
 
 if __name__ == "__main__":
-    pass
+    Galaxy("./data/input_0.txt").message()
