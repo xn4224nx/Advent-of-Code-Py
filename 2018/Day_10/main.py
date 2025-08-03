@@ -159,6 +159,13 @@ After 3 seconds, the message appeared briefly: HI. Of course, your message will
 be much longer and will take many more seconds to appear.
 
 PART 1: What message will eventually appear in the sky?
+
+Good thing you didn't have to wait, because that would have taken a long time -
+much longer than the 3 seconds in the example above.
+
+PART 2: Impressed by your sub-hour communication capabilities, the Elves are
+        curious: exactly how many seconds would they have needed to wait for
+        that message to appear?
 """
 
 import re
@@ -217,13 +224,15 @@ class Galaxy:
 
         return "\n".join("".join(line) for line in galaxy_future)
 
-    def message(self):
+    def message(self) -> int:
         """
-        Find the hidden message in the movement of the stars.
+        Find the hidden message in the movement of the stars and return the
+        number of seconds it took.
         """
         time_msg = self.find_coalescence()
         print(self.show_future(time_msg))
+        return time_msg
 
 
 if __name__ == "__main__":
-    Galaxy("./data/input_0.txt").message()
+    print(f"\nPart 2 = {Galaxy("./data/input_0.txt").message()}")
