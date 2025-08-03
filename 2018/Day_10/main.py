@@ -161,29 +161,61 @@ be much longer and will take many more seconds to appear.
 PART 1: What message will eventually appear in the sky?
 """
 
+import re
+import sys
+
 
 class Galaxy:
     def __init__(self, initial_stars: str):
-        pass
+        with open(initial_stars, "r") as fp:
+            self.s_stats = [
+                [int(x) for x in re.findall(r"\-?\d+", line)] for line in fp.readlines()
+            ]
 
-    def advance_time(self):
+    def star_ranges(self, t_idx: int) -> (int, int, int):
         """
-        Move the stars one second into the future.
+        At a point a time what is the range of the galaxy.
         """
-        pass
+        return (
+            min(x + t_idx * vx for (x, _, vx, _) in self.s_stats),
+            max(x + t_idx * vx for (x, _, vx, _) in self.s_stats),
+            min(y + t_idx * vy for (_, y, _, vy) in self.s_stats),
+            max(y + t_idx * vy for (_, y, _, vy) in self.s_stats),
+        )
 
-    def __str__(self):
+    def find_coalescence(self) -> int:
         """
-        What is the current state of the stars
+        Find the point in time where the stars are closest together.
         """
-        pass
+        prev_min = sys.maxsize
+        current_min = sys.maxsize - 1
+        time_idx = 0
 
-    def find_msg(self) -> str:
+        # Find the time where the stars are closest together
+        while current_min < prev_min:
+            prev_min = current_min
+
+            # Calculate the current star spread
+            min_x, max_x, min_y, max_y = self.star_ranges(time_idx)
+            current_min = 2 * (max_x - min_x) + 2 * (max_y - min_y)
+
+            # Prepare for the next loop
+            time_idx += 1
+
+        return time_idx - 2
+
+    def show_future(self, t_idx: int) -> str:
         """
-        After an unknown amount of time what is the written message that the
-        stars show?
+        Print the state of the galaxy at a point in time.
         """
-        pass
+        min_x, max_x, min_y, max_y = self.star_ranges(t_idx)
+        galaxy_future = [["."] * (1 + max_x - min_x) for j in range(1 + max_y - min_y)]
+
+        # Add the stars into the empty space
+        for x, y, vx, vy in self.s_stats:
+            galaxy_future[y + t_idx * vy - min_y][x + t_idx * vx - min_x] = "#"
+
+        return "\n".join("".join(line) for line in galaxy_future)
 
 
 if __name__ == "__main__":
