@@ -18,8 +18,8 @@ def test_new_sleighsteps_exp01():
 
 
 def test_correct_order_exp01():
-    assert SleighSteps("./data/example_0.txt").correct_order() == "CABDFE"
+    assert SleighSteps("./data/example_0.txt").assemble(1, 0)[0] == "CABDFE"
 
 
 def test_threaded_correct_order_exp01():
-    assert SleighSteps("./data/example_0.txt").threaded_order_time(2, 0) == 15
+    assert SleighSteps("./data/example_0.txt").assemble(2, 0)[1] == 15

@@ -136,84 +136,61 @@ class SleighSteps:
                 # Add in dependancies
                 self.depends[step_1].add(step_0)
 
-    def correct_order(self) -> str:
+    def assemble(self, num_workers: int, add_time: int) -> (str, int):
         """
-        Determine the order that the steps must be executed in order to
-        build the sleigh. Return a string of that order.
-        """
-        depends = self.depends.copy()
-        unused_steps = {x for x in depends.keys()}
-        step_order = []
-
-        while len(unused_steps) > 0:
-            pos_nxt_steps = [x for x in unused_steps if len(depends[x]) == 0]
-
-            # Pick the alphabetically ordered first next step
-            nxt_step = sorted(pos_nxt_steps)[0]
-
-            # Update data structures
-            step_order.append(nxt_step)
-            unused_steps.remove(nxt_step)
-            [y.discard(nxt_step) for y in depends.values()]
-
-        # Convert the order back to letters
-        return "".join([chr(x + ord("A")) for x in step_order])
-
-    def threaded_order_time(self, num_workers: int, add_time: int) -> int:
-        """
-        Determine the total time to do all the steps when you have a certain
-        number workers and each step takes a value equal to its order and an
-        additional time period.
+        Construct the sleigh using and return the completed sleigh string and
+        the time required to make it. You have a certain number workers and each
+        step takes a value equal to its order and and additional time period.
         """
         step_order = []
-        depends = self.depends.copy()
-        unused_steps = {x for x in depends.keys()}
+        used_steps = set()
+        processing_steps = set()
+
         worker_load = [None] * num_workers
-        worker_time = [None] * num_workers
+        worker_time = [0] * num_workers
         time_taken = 0
 
-        while len(unused_steps) > 0:
-            pos_nxt_steps = sorted(
-                [x for x in unused_steps if len(depends[x]) == 0], reverse=True
+        while len(used_steps) < len(self.depends):
+
+            nxt_steps = sorted(
+                [
+                    x
+                    for x, y in self.depends.items()
+                    if y.issubset(used_steps)
+                    and x not in processing_steps
+                    and x not in used_steps
+                ],
+                reverse=True,
             )
 
             # Assign the steps to workers
             for wrk_idx in range(num_workers):
-                if worker_load[wrk_idx] is None and pos_nxt_steps:
-                    step = pos_nxt_steps.pop()
+                if worker_load[wrk_idx] is None and nxt_steps:
+                    step = nxt_steps.pop()
                     worker_load[wrk_idx] = step
                     worker_time[wrk_idx] = 1 + step + add_time
-                    unused_steps.remove(step)
-                    [y.discard(step) for y in depends.values()]
+                    processing_steps.add(step)
 
-            # Find the step that will complete next
-            nxt_step = None
-            min_wrk_idx = None
-            min_time = sys.maxsize
-
-            for wrk_idx in range(num_workers):
-                if worker_time[wrk_idx] is not None and worker_time[wrk_idx] < min_time:
-                    nxt_step = worker_load[wrk_idx]
-                    min_wrk_idx = wrk_idx
-                    min_time = worker_time[wrk_idx]
-
-            # Speed forward time till one of the workers completes
-            worker_time = [
-                worker_time[x] - min_time if worker_time[x] is not None else None
-                for x in range(num_workers)
-            ]
-
-            # Add the completed step and reset the worker
-            step_order.append(nxt_step)
-            worker_time[min_wrk_idx] = None
-            worker_load[min_wrk_idx] = None
+            # When will the next tasks complete
+            min_time = min([x for x in worker_time if x != 0])
             time_taken += min_time
 
+            # Move time forward to when they stop
+            for wrk_idx in range(num_workers):
+                if worker_time[wrk_idx] != 0:
+                    worker_time[wrk_idx] -= min_time
+
+                    # A worker finishes the letter and it is added to the word.
+                    if worker_time[wrk_idx] == 0:
+                        processing_steps.remove(worker_load[wrk_idx])
+                        used_steps.add(worker_load[wrk_idx])
+                        step_order.append(worker_load[wrk_idx])
+                        worker_load[wrk_idx] = None
+
         # Take care of the remaining workers
-        return time_taken + max([x for x in worker_time if x is not None]) + 1
+        return ("".join([chr(x + ord("A")) for x in step_order]), time_taken)
 
 
 if __name__ == "__main__":
-    constr = SleighSteps("./data/input_0.txt")
-    print(f"Part 1 = {constr.correct_order()}")
-    print(f"Part 2 = {constr.threaded_order_time(5, 60)}")
+    word, time = SleighSteps("./data/input_0.txt").assemble(5, 60)
+    print(f"Part 1 = {word}\nPart 2 = {time}")
