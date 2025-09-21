@@ -83,6 +83,27 @@ total power of 30); they are in the middle of this region:
 
 PART 1: What is the X,Y coordinate of the top-left fuel cell of the 3x3 square
         with the largest total power?
+
+You discover a dial on the side of the device; it seems to let you select a
+square of any size, not just 3x3. Sizes from 1x1 to 300x300 are supported.
+
+Realizing this, you now must find the square of any size with the largest total
+power. Identify this square by including its size as a third parameter after the
+top-left coordinate: a 9x9 square with a top-left corner of 3,5 is identified as
+3,5,9.
+
+For example:
+
+        -   For grid serial number 18, the largest total square (with a total
+            power of 113) is 16x16 and has a top-left corner of 90,269, so its
+            identifier is 90,269,16.
+
+        -   For grid serial number 42, the largest total square (with a total
+            power of 119) is 12x12 and has a top-left corner of 232,251, so its
+            identifier is 232,251,12.
+
+PART 2: What is the X,Y,size identifier of the square with the largest total
+        power?
 """
 
 import sys
@@ -90,17 +111,17 @@ import sys
 
 class FuelGrid:
     """
-    Simulate a grid of fuel cells that has varying power levels.
+    Simulate a square grid of fuel cells that has varying power levels.
     """
 
-    def __init__(self, serial_num: int, grid_dim: (int, int)):
-        self.grid = [[None] * (grid_dim[0] + 1) for _ in range(grid_dim[1] + 1)]
-        self.grid_dim = grid_dim
+    def __init__(self, serial_num: int, grid_size: int):
+        self.grid = [[None] * (grid_size + 1) for _ in range(grid_size + 1)]
+        self.grid_size = grid_size
         self.serial_num = serial_num
 
         # Populate the fuel grid using the predefined rules
-        for x in range(1, self.grid_dim[0] + 1):
-            for y in range(1, self.grid_dim[1] + 1):
+        for x in range(1, self.grid_size + 1):
+            for y in range(1, self.grid_size + 1):
                 rack_id = x + 10
                 pwr_lvl = rack_id * y
                 pwr_lvl += self.serial_num
@@ -109,22 +130,22 @@ class FuelGrid:
                 pwr_lvl -= 5
                 self.grid[x][y] = pwr_lvl
 
-    def coords_of_max_power(self, sample_dim: (int, int)) -> (int, int):
+    def coords_of_max_power(self, sample_size: int) -> ((int, int), int):
         """
         Find the top left coordinates of the square in the grid that has the
-        largest total sum.
+        largest total sum. Also return the total power of this sample.
         """
         max_pwr_lvl = -sys.maxsize - 1
         max_coord = None
 
         # Check each and every part of the grid to find the largest total power
-        for x in range(1, self.grid_dim[0] + 1 - sample_dim[0]):
-            for y in range(1, self.grid_dim[1] + 1 - sample_dim[1]):
+        for x in range(1, self.grid_size + 1 - sample_size):
+            for y in range(1, self.grid_size + 1 - sample_size):
                 sample_pwr = 0
 
                 # Sum the contents of the sample
-                for x_s in range(x, x + sample_dim[0]):
-                    for y_s in range(y, y + sample_dim[1]):
+                for x_s in range(x, x + sample_size):
+                    for y_s in range(y, y + sample_size):
                         sample_pwr += self.grid[x_s][y_s]
 
                 # See if a new maximum has been found
@@ -132,8 +153,30 @@ class FuelGrid:
                     max_pwr_lvl = sample_pwr
                     max_coord = (x, y)
 
-        return max_coord
+        return max_coord, max_pwr_lvl
+
+    def max_power_search_var_window(self) -> ((int, int), int):
+        """
+        Find the top left coordinates of the square in the grid that has the
+        largest total sum. Vary the size of the square from 1x1 to the whole
+        grid and return the coordinate and the sample size.
+        """
+        max_pwr_lvl = -sys.maxsize - 1
+        max_coord = None
+        max_sample = None
+
+        for sample_size in range(3, 20):
+            coord, pwr = self.coords_of_max_power(sample_size)
+
+            if pwr > max_pwr_lvl:
+                max_pwr_lvl = pwr
+                max_coord = coord
+                max_sample = sample_size
+
+        return max_coord, max_sample
 
 
 if __name__ == "__main__":
-    print(f"Part 1 = {FuelGrid(1723, (300, 300)).coords_of_max_power((3, 3))}")
+    chronos = FuelGrid(1723, 300)
+    print(f"Part 1 = {chronos.coords_of_max_power(3)[0]}")
+    print(f"Part 2 = {chronos.max_power_search_var_window()}")
