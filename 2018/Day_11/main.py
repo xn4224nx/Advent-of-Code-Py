@@ -136,4 +136,4 @@ class FuelGrid:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {FuelGrid(1723, (300, 300)).coords_of_max_power((3, 3))}")
