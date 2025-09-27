@@ -108,6 +108,8 @@ PART 1: After 20 generations, what is the sum of the numbers of all pots which
         contain a plant?
 """
 
+import sys
+
 
 class CaveGarden:
     """
@@ -116,7 +118,52 @@ class CaveGarden:
     """
 
     def __init__(self, data_file: str):
-        pass
+        self.empty = "."
+        self.full = "#"
+
+        self.plants = set()
+        self.r_maintain = []
+        self.r_remove = []
+        self.r_add = []
+
+        with open(data_file, "r") as fp:
+
+            for idx, line in enumerate(fp):
+                line = line.strip()
+
+                # Read the intial state.
+                if idx == 0:
+                    for e_idx, ele in enumerate(line.split(": ")[1]):
+                        if ele == self.full:
+                            self.plants.add(e_idx)
+
+                # Read the conversion rules.
+                elif idx > 1:
+                    pre_state, post_state = line.split(" => ")
+                    pre_state_size = len(pre_state)
+
+                    # Convert the before states to indexes.
+                    pre_state = [
+                        e_idx - pre_state_size // 2
+                        for e_idx, ele in enumerate(pre_state)
+                        if ele == self.full
+                    ]
+
+                    # Does this rule maintain a plant
+                    if post_state == self.full and 0 in pre_state:
+                        self.r_maintain.append(pre_state)
+
+                    # Does this rule add a plant
+                    elif post_state == self.full and 0 not in pre_state:
+                        self.r_add.append(pre_state)
+
+                    # Does this rule remove a plant
+                    elif post_state == self.empty and 0 in pre_state:
+                        self.r_remove.append(pre_state)
+
+        # Define the state of the plant pots
+        self.max_plant = max(self.plants)
+        self.min_plant = min(self.plants)
 
     def grow(self):
         """
