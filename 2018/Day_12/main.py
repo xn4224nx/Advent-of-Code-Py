@@ -106,6 +106,13 @@ produces 325.
 
 PART 1: After 20 generations, what is the sum of the numbers of all pots which
         contain a plant?
+
+You realize that 20 generations aren't enough. After all, these plants will need
+to last another 1500 years to even reach your timeline, not to mention your
+future.
+
+PART 2: After fifty billion (50000000000) generations, what is the sum of the
+        numbers of all pots which contain a plant?
 """
 
 import sys
@@ -247,6 +254,30 @@ class CaveGarden:
 
         return self.plant_score()
 
+    def long_term_plant_score(self, elapsed_time: int) -> int:
+        """
+        Find the plant score after a very large elapsed time.
+        """
+
+        # find the plant score at 1000 and 2000
+        for _ in range(1000):
+            self.grow()
+        score_1k = self.plant_score()
+
+        for _ in range(1000):
+            self.grow()
+        score_2k = self.plant_score()
+
+        # Determine the gradient and intercept
+        grad = (score_2k - score_1k) / 1000
+        intercept = score_2k - grad * 2000
+
+        # Calculate what it will be at in the large elapsed time
+        return int(grad * elapsed_time + intercept)
+
 
 if __name__ == "__main__":
     print(f"Part 1 = {CaveGarden('./data/input_0.txt').total_plants_after_time(20)}")
+    print(
+        f"Part 2 = {CaveGarden('./data/input_0.txt').long_term_plant_score(50000000000)}"
+    )
