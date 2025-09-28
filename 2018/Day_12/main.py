@@ -109,6 +109,7 @@ PART 1: After 20 generations, what is the sum of the numbers of all pots which
 """
 
 import sys
+from collections import deque
 
 
 class CaveGarden:
@@ -120,63 +121,131 @@ class CaveGarden:
     def __init__(self, data_file: str):
         self.empty = "."
         self.full = "#"
-
-        self.plants = set()
-        self.r_maintain = []
+        self.window = 5
+        self.orig_start = 0
         self.r_remove = []
         self.r_add = []
+        self.r_maintain = []
 
         with open(data_file, "r") as fp:
-
             for idx, line in enumerate(fp):
                 line = line.strip()
 
                 # Read the intial state.
                 if idx == 0:
-                    for e_idx, ele in enumerate(line.split(": ")[1]):
-                        if ele == self.full:
-                            self.plants.add(e_idx)
+                    line = line.split(": ")[1]
+                    self.plants = deque(line)
 
                 # Read the conversion rules.
                 elif idx > 1:
                     pre_state, post_state = line.split(" => ")
-                    pre_state_size = len(pre_state)
-
-                    # Convert the before states to indexes.
-                    pre_state = [
-                        e_idx - pre_state_size // 2
-                        for e_idx, ele in enumerate(pre_state)
-                        if ele == self.full
-                    ]
-
-                    # Does this rule maintain a plant
-                    if post_state == self.full and 0 in pre_state:
-                        self.r_maintain.append(pre_state)
 
                     # Does this rule add a plant
-                    elif post_state == self.full and 0 not in pre_state:
-                        self.r_add.append(pre_state)
+                    if (
+                        post_state == self.full
+                        and pre_state[self.window // 2] == self.empty
+                    ):
+                        self.r_add.append(list(pre_state))
 
                     # Does this rule remove a plant
-                    elif post_state == self.empty and 0 in pre_state:
-                        self.r_remove.append(pre_state)
+                    elif (
+                        post_state == self.empty
+                        and pre_state[self.window // 2] == self.full
+                    ):
+                        self.r_remove.append(list(pre_state))
 
-        # Define the state of the plant pots
-        self.max_plant = max(self.plants)
-        self.min_plant = min(self.plants)
+                    # Does this rule maintain a plant
+                    elif (
+                        post_state == self.full
+                        and pre_state[self.window // 2] == self.full
+                    ):
+                        self.r_maintain.append(list(pre_state))
 
     def grow(self):
         """
         Apply the pre-defined rules to the current plants and change the garden.
         """
-        pass
+        # Ensure that there is at least four empty pots at the start
+        while (
+            self.full == self.plants[0]
+            or self.full == self.plants[1]
+            or self.full == self.plants[2]
+            or self.full == self.plants[3]
+        ):
+            self.plants.appendleft(self.empty)
+            self.orig_start -= 1
+
+        # Ensure that there at least four empty pots at the end
+        while (
+            self.full == self.plants[len(self.plants) - 1]
+            or self.full == self.plants[len(self.plants) - 2]
+            or self.full == self.plants[len(self.plants) - 3]
+            or self.full == self.plants[len(self.plants) - 4]
+        ):
+            self.plants.append(self.empty)
+
+        new_plants = deque(self.empty * len(self.plants))
+        sample = deque([self.plants[x] for x in range(self.window)])
+
+        # Implement the changes
+        for idx in range(self.window, len(self.plants)):
+
+            # Add a plant
+            for add_pat in self.r_add:
+                for pat_idx in range(len(add_pat)):
+                    if sample[pat_idx] != add_pat[pat_idx]:
+                        break
+                else:
+                    assert self.plants[idx - self.window // 2 - 1] == self.empty
+                    new_plants[idx - self.window // 2 - 1] = self.full
+
+            # Maintain a plant
+            for main_pat in self.r_maintain:
+                for pat_idx in range(len(main_pat)):
+                    if sample[pat_idx] != main_pat[pat_idx]:
+                        break
+                else:
+                    assert self.plants[idx - self.window // 2 - 1] == self.full
+                    new_plants[idx - self.window // 2 - 1] = self.full
+
+            # Remove a plant
+            for rm_pat in self.r_remove:
+                for pat_idx in range(len(rm_pat)):
+                    if sample[pat_idx] != rm_pat[pat_idx]:
+                        break
+                else:
+                    assert self.plants[idx - self.window // 2 - 1] == self.full
+                    new_plants[idx - self.window // 2 - 1] = self.empty
+
+            # Move the sample onto the next window
+            sample.popleft()
+            sample.append(self.plants[idx])
+
+        # Overwrite the old plants
+        self.plants = new_plants
+
+    def plant_score(self) -> int:
+        """
+        Sum up the indexex of the plants, the index being relative to the
+        original position of the first every left most plant.
+        """
+        plant_sum = 0
+
+        for plnt_idx in range(len(self.plants)):
+            if self.plants[plnt_idx] == self.full:
+                plant_sum += plnt_idx + self.orig_start
+
+        return plant_sum
 
     def total_plants_after_time(self, elapsed_time: int) -> int:
         """
-        Apply the growth rules the set amount of times and count the resulting
-        plants.
+        Apply the growth rules the set amount of times and return the resulting
+        plant score.
         """
-        pass
+        for _ in range(elapsed_time):
+            self.grow()
+
+        return self.plant_score()
 
 
 if __name__ == "__main__":
