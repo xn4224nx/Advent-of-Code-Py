@@ -249,4 +249,4 @@ class CaveGarden:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {CaveGarden('./data/input_0.txt').total_plants_after_time(20)}")
