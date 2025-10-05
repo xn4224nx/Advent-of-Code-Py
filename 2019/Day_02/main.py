@@ -92,11 +92,16 @@ PART 1: What value is left at position 0 after the program halts?
 
 
 class IntcodeProgram:
-    def __init__(self, init_state_file: str):
+    def __init__(self, init_state_file: str, diag: bool = False):
         self.pntr = 0
 
         with open(init_state_file, "r") as fp:
             self.register = [int(x) for x in fp.read().split(",")]
+
+        # Setup the program for spaceship diagnostics
+        if diag:
+            self.register[1] = 12
+            self.register[2] = 2
 
     def step(self):
         """
@@ -136,4 +141,4 @@ class IntcodeProgram:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {IntcodeProgram('./data/input_0.txt', True).final_prog_value()}")
