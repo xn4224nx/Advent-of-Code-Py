@@ -93,19 +93,46 @@ PART 1: What value is left at position 0 after the program halts?
 
 class IntcodeProgram:
     def __init__(self, init_state_file: str):
-        pass
+        self.pntr = 0
+
+        with open(init_state_file, "r") as fp:
+            self.register = [int(x) for x in fp.read().split(",")]
 
     def step(self):
         """
         Execute the next command for the program.
         """
-        pass
+
+        # The program reaches an end state
+        if self.register[self.pntr] == 99:
+            return
+
+        # Perform an addition
+        elif self.register[self.pntr] == 1:
+            self.register[self.register[self.pntr + 3]] = (
+                self.register[self.register[self.pntr + 1]]
+                + self.register[self.register[self.pntr + 2]]
+            )
+
+        # Perform a multiplication
+        elif self.register[self.pntr] == 2:
+            self.register[self.register[self.pntr + 3]] = (
+                self.register[self.register[self.pntr + 1]]
+                * self.register[self.register[self.pntr + 2]]
+            )
+
+        else:
+            raise Exception(f"Invalid Opcode: {self.register[self.pntr]}")
+
+        self.pntr += 4
 
     def final_prog_value(self) -> int:
         """
         After executing all commands what is the value in the first register?
         """
-        pass
+        while self.register[self.pntr] != 99:
+            self.step()
+        return self.register[0]
 
 
 if __name__ == "__main__":

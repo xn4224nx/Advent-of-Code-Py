@@ -21,6 +21,7 @@ def test_step_exp_0():
 def test_step_exp_1():
     test = IntcodeProgram("./data/example_0.txt")
     test.step()
+    test.step()
     assert test.pntr == 8
     assert test.register == [3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50]
 
