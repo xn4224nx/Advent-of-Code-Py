@@ -19,3 +19,15 @@ def test_example_03():
 
 def test_example_04():
     assert module_fuel_req(100756) == 33583
+
+
+def test_example_05():
+    assert module_fuel_req(14, True) == 2
+
+
+def test_example_06():
+    assert module_fuel_req(1969, True) == 966
+
+
+def test_example_07():
+    assert module_fuel_req(100756, True) == 50346
