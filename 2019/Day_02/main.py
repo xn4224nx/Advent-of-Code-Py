@@ -88,7 +88,54 @@ program, replace position 1 with the value 12 and replace position 2 with the
 value 2.
 
 PART 1: What value is left at position 0 after the program halts?
+
+"Good, the new computer seems to be working correctly! Keep it nearby during
+this mission - you'll probably use it again. Real Intcode computers support many
+more features than your new one, but we'll let you know what they are as you
+need them."
+
+"However, your current priority should be to complete your gravity assist around
+the Moon. For this mission to succeed, we should settle on some terminology for
+the parts you've already built."
+
+Intcode programs are given as a list of integers; these values are used as the
+initial state for the computer's memory. When you run an Intcode program, make
+sure to start by initializing memory to the program's values. A position in
+memory is called an address (for example, the first value in memory is at
+"address 0").
+
+Opcodes (like 1, 2, or 99) mark the beginning of an instruction. The values used
+immediately after an opcode, if any, are called the instruction's parameters.
+For example, in the instruction 1,2,3,4, 1 is the opcode; 2, 3, and 4 are the
+parameters. The instruction 99 contains only an opcode and has no parameters.
+
+The address of the current instruction is called the instruction pointer; it
+starts at 0. After an instruction finishes, the instruction pointer increases by
+the number of values in the instruction; until you add more instructions to the
+computer, this is always 4 (1 opcode + 3 parameters) for the add and multiply
+instructions. (The halt instruction would increase the instruction pointer by 1,
+but it halts the program instead.)
+
+"With terminology out of the way, we're ready to proceed. To complete the
+gravity assist, you need to determine what pair of inputs produces the output
+19690720."
+
+The inputs should still be provided to the program by replacing the values at
+addresses 1 and 2, just like before. In this program, the value placed in
+address 1 is called the noun, and the value placed in address 2 is called the
+verb. Each of the two input values will be between 0 and 99, inclusive.
+
+Once the program has halted, its output is available at address 0, also just
+like before. Each time you try a pair of inputs, make sure you first reset the
+computer's memory to the values in the program (your puzzle input) - in other
+words, don't reuse memory from a previous attempt.
+
+PART 2: Find the input noun and verb that cause the program to produce the
+        output 19690720. What is 100 * noun + verb? (For example, if noun=12 and
+        verb=2, the answer would be 1202.)
 """
+
+from itertools import permutations
 
 
 class IntcodeProgram:
@@ -97,6 +144,9 @@ class IntcodeProgram:
 
         with open(init_state_file, "r") as fp:
             self.register = [int(x) for x in fp.read().split(",")]
+
+        # Make a copy of the original memory state.
+        self.orig_mem = self.register[:]
 
         # Setup the program for spaceship diagnostics
         if diag:
@@ -139,6 +189,29 @@ class IntcodeProgram:
             self.step()
         return self.register[0]
 
+    def find_noun_verb(self, result: int) -> int:
+        """
+        Find the pair of numbers at position one and two that create a specific
+        `result` after the program has finished running.
+        """
+        for noun in range(100):
+            for verb in range(100):
+
+                # Set the program to its initial state
+                self.register = self.orig_mem[:]
+                self.pntr = 0
+
+                # Insert the noun and verb
+                self.register[1] = noun
+                self.register[2] = verb
+
+                # See if the end result is the one we are looking for
+                if self.final_prog_value() == result:
+                    return 100 * noun + verb
+
 
 if __name__ == "__main__":
-    print(f"Part 1 = {IntcodeProgram('./data/input_0.txt', True).final_prog_value()}")
+    print(
+        f"Part 1 = {IntcodeProgram('./data/input_0.txt', True).final_prog_value()}\n"
+        f"Part 2 = {IntcodeProgram('./data/input_0.txt').find_noun_verb(19690720)}\n"
+    )
