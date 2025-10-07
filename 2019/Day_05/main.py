@@ -195,4 +195,6 @@ class AdvIntProgram:
 
 
 if __name__ == "__main__":
-    pass
+    print(
+        f"Part 1 = {AdvIntProgram('./data/input_0.txt').diagnostics(1)}",
+    )
