@@ -102,7 +102,28 @@ PART 1: After providing 1 to the only input instruction and passing all the
 
 class AdvIntProgram:
     def __init__(self, program_file: str):
-        pass
+        self.ptr = 0
+        self.outputs = []
+        with open(program_file, "r") as fp:
+            self.mem = [int(x) for x in fp.read().split(",")]
+
+    def curr_params(self) -> (int, int, int, int):
+        """
+        For the current instruction retrive the opcode and the three parameters.
+        """
+        instr_num = self.mem[self.ptr]
+
+        # The opcode is the ones and tens of the instruction number
+        opcode = instr_num % 100
+        instr_num //= 100
+
+        # The three parameters are the 10k, k and 100 digits
+        params = []
+        for prm_i in range(3):
+            params.append(instr_num % 10)
+            instr_num //= 10
+
+        return (opcode, params[0], params[1], params[2])
 
     def step(self):
         """
