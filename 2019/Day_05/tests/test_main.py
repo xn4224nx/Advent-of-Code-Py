@@ -41,10 +41,13 @@ def test_add_step():
 
 def test_print_step():
     test = AdvIntProgram("./data/example_0.txt")
-    test.diag_code = randrange(10000)
-    val = test.diag_code
+    test.input_code = randrange(10000)
+
     test.step()
-    assert test.outputs == [val]
+    assert test.mem == [test.input_code, 0, 4, 0, 99]
+
+    test.step()
+    assert test.outputs == [test.input_code]
 
 
 def test_curr_params_exp0():
@@ -81,3 +84,8 @@ def test_curr_params_exp4():
     test = AdvIntProgram("./data/example_0.txt")
     test.mem = [9127]
     assert test.curr_params() == (27, 1, 9, 0)
+
+
+def test_diagnostics_exp0():
+    val = randrange(10000)
+    assert AdvIntProgram("./data/example_0.txt").diagnostics(val) == val

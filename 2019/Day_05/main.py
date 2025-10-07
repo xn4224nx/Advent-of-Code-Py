@@ -103,6 +103,7 @@ PART 1: After providing 1 to the only input instruction and passing all the
 class AdvIntProgram:
     def __init__(self, program_file: str):
         self.ptr = 0
+        self.input_code = 0
         self.outputs = []
         with open(program_file, "r") as fp:
             self.mem = [int(x) for x in fp.read().split(",")]
@@ -125,18 +126,72 @@ class AdvIntProgram:
 
         return (opcode, params[0], params[1], params[2])
 
-    def step(self):
+    def step(self) -> int:
         """
-        Process the current instruction.
+        Process the current instruction and return the opcode it generated.
         """
-        pass
+        opcode, pram1, pram2, pram3 = self.curr_params()
+
+        # Resolve the parameters
+        if (
+            pram1 == 0
+            and self.ptr + 1 < len(self.mem)
+            and self.mem[self.ptr + 1] < len(self.mem)
+        ):
+            pram1 = self.mem[self.mem[self.ptr + 1]]
+        elif self.ptr + 1 < len(self.mem):
+            pram1 = self.mem[self.ptr + 1]
+
+        if (
+            pram2 == 0
+            and self.ptr + 2 < len(self.mem)
+            and self.mem[self.ptr + 2] < len(self.mem)
+        ):
+            pram2 = self.mem[self.mem[self.ptr + 2]]
+        elif self.ptr + 2 < len(self.mem):
+            pram2 = self.mem[self.ptr + 2]
+
+        # Opcode 1 - Addition - three parameters
+        if opcode == 1:
+            self.mem[self.mem[self.ptr + 3]] = pram1 + pram2
+            self.ptr += 4
+
+        # Opcode 2 - Multiplication - three parameters
+        elif opcode == 2:
+            self.mem[self.mem[self.ptr + 3]] = pram1 * pram2
+            self.ptr += 4
+
+        # Opcode 3 - Set a value in memory to what the input is - one parameter
+        elif opcode == 3:
+            self.mem[self.mem[self.ptr + 1]] = self.input_code
+            self.ptr += 2
+
+        # Opcode 4 - Output a value - one parameter
+        elif opcode == 4:
+            self.outputs.append(pram1)
+            self.ptr += 2
+
+        # Opcode 99 - Exit
+        elif opcode == 99:
+            pass
+
+        else:
+            raise Exception(f"Unknown Opcode: '{opcode}'")
+
+        return opcode
 
     def diagnostics(self, input_instr: int) -> int:
         """
         After providing the input instruction `input_instr` and passing all test
         return the final diagnostic code.
         """
-        pass
+        self.input_code = input_instr
+
+        # Generate diagnostic codes unti lthe stop code is reached.
+        while self.step() != 99:
+            pass
+
+        return self.outputs[-1]
 
 
 if __name__ == "__main__":
