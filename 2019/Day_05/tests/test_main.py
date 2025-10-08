@@ -3,7 +3,7 @@ Tests for the main script.
 """
 
 from main import AdvIntProgram
-from random import randrange
+from random import randrange, randint
 
 
 def test_new_inst_exp_0():
@@ -86,6 +86,90 @@ def test_curr_params_exp4():
     assert test.curr_params() == (27, 1, 9, 0)
 
 
-def test_diagnostics_exp0():
+def test_diagnostics_exp00():
     val = randrange(10000)
     assert AdvIntProgram("./data/example_0.txt").diagnostics(val) == val
+
+
+def test_diagnostics_exp01_position_equal_to():
+    assert AdvIntProgram("./data/example_3.txt").diagnostics(8) == 1
+
+
+def test_diagnostics_exp02_position_equal_to():
+    assert AdvIntProgram("./data/example_3.txt").diagnostics(randint(-1000, 7)) == 0
+
+
+def test_diagnostics_exp03_position_equal_to():
+    assert AdvIntProgram("./data/example_3.txt").diagnostics(randint(9, 1000)) == 0
+
+
+def test_diagnostics_exp04_position_less_than():
+    assert AdvIntProgram("./data/example_4.txt").diagnostics(randint(8, 1000)) == 0
+
+
+def test_diagnostics_exp05_position_less_than():
+    assert AdvIntProgram("./data/example_4.txt").diagnostics(8) == 0
+
+
+def test_diagnostics_exp06_position_less_than():
+    assert AdvIntProgram("./data/example_4.txt").diagnostics(randint(-1000, 7)) == 1
+
+
+def test_diagnostics_exp07_immediate_equal_to():
+    assert AdvIntProgram("./data/example_5.txt").diagnostics(8) == 1
+
+
+def test_diagnostics_exp08_immediate_equal_to():
+    assert AdvIntProgram("./data/example_5.txt").diagnostics(randint(9, 1000)) == 0
+
+
+def test_diagnostics_exp09_immediate_equal_to():
+    assert AdvIntProgram("./data/example_5.txt").diagnostics(randint(-1000, 7)) == 0
+
+
+def test_diagnostics_exp10_immediate_less_than():
+    assert AdvIntProgram("./data/example_6.txt").diagnostics(randint(-1000, 7)) == 1
+
+
+def test_diagnostics_exp11_immediate_less_than():
+    assert AdvIntProgram("./data/example_6.txt").diagnostics(8) == 0
+
+
+def test_diagnostics_exp12_immediate_less_than():
+    assert AdvIntProgram("./data/example_6.txt").diagnostics(randint(8, 1000)) == 0
+
+
+def test_diagnostics_exp13_jump_position():
+    assert AdvIntProgram("./data/example_7.txt").diagnostics(0) == 0
+
+
+def test_diagnostics_exp14_jump_position():
+    assert AdvIntProgram("./data/example_7.txt").diagnostics(randint(-1000, -1)) == 1
+
+
+def test_diagnostics_exp15_jump_position():
+    assert AdvIntProgram("./data/example_7.txt").diagnostics(randint(1, 1000)) == 1
+
+
+def test_diagnostics_exp16_jump_immediate():
+    assert AdvIntProgram("./data/example_8.txt").diagnostics(0) == 0
+
+
+def test_diagnostics_exp17_jump_immediate():
+    assert AdvIntProgram("./data/example_8.txt").diagnostics(randint(-1000, -1)) == 1
+
+
+def test_diagnostics_exp18_jump_immediate():
+    assert AdvIntProgram("./data/example_8.txt").diagnostics(randint(1, 1000)) == 1
+
+
+def test_diagnostics_exp19():
+    assert AdvIntProgram("./data/example_9.txt").diagnostics(8) == 1000
+
+
+def test_diagnostics_exp20():
+    assert AdvIntProgram("./data/example_9.txt").diagnostics(randint(-1000, 7)) == 999
+
+
+def test_diagnostics_exp21():
+    assert AdvIntProgram("./data/example_9.txt").diagnostics(randint(9, 1000)) == 1001
