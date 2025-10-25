@@ -76,13 +76,44 @@ PART 1: What is the total number of direct and indirect orbits in your map data?
 
 class Orrery:
     def __init__(self, data_file: str):
-        pass
+        self.sub_orbits = {}
+
+        with open(data_file, "r") as fp:
+            for line in fp.readlines():
+                inner_body, outer_body = line.strip().split(")", 1)
+
+                if inner_body not in self.sub_orbits:
+                    self.sub_orbits[inner_body] = set()
+
+                if outer_body not in self.sub_orbits:
+                    self.sub_orbits[outer_body] = set()
+
+                self.sub_orbits[inner_body].add(outer_body)
 
     def num_orbits(self) -> int:
         """
-        The total number of direct and indirect orbits in the Orrery.
+        The total number of direct and indirect orbits for one body only.
         """
-        pass
+        num_orbits = 0
+
+        # Keep track of the orbits beneath the current bodies
+        curr_bodies = {"COM": 0}
+
+        # Work from the centre out determining the total orbits
+        while curr_bodies:
+            nxt_bodies = {}
+
+            # Save the orbits of the current bodies
+            num_orbits += sum(curr_bodies.values())
+
+            # Move onto the next layer of orbits
+            for body, depth in curr_bodies.items():
+                for sub_bod in self.sub_orbits[body]:
+                    nxt_bodies[sub_bod] = depth + 1
+
+            curr_bodies = nxt_bodies
+
+        return num_orbits
 
 
 if __name__ == "__main__":
