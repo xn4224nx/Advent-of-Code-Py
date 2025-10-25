@@ -117,4 +117,4 @@ class Orrery:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {Orrery('./data/input_0.txt').num_orbits()}")
