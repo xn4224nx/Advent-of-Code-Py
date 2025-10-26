@@ -253,4 +253,4 @@ class Amplifier:
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {Amplifier('./data/input_0.txt').max_thruster_signal()[0]}")
