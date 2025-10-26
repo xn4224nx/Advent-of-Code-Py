@@ -71,17 +71,79 @@ Here, we can count the total number of orbits as follows:
 The total number of direct and indirect orbits in this example is 42.
 
 PART 1: What is the total number of direct and indirect orbits in your map data?
+
+Now, you just need to figure out how many orbital transfers you (YOU) need to
+take to get to Santa (SAN).
+
+You start at the object YOU are orbiting; your destination is the object SAN is
+orbiting. An orbital transfer lets you move from any object to an object
+orbiting or orbited by that object.
+
+For example, suppose you have the following map:
+
+    COM)B
+    B)C
+    C)D
+    D)E
+    E)F
+    B)G
+    G)H
+    D)I
+    E)J
+    J)K
+    K)L
+    K)YOU
+    I)SAN
+
+Visually, the above map of orbits looks like this:
+
+                          YOU
+                         /
+        G - H       J - K - L
+       /           /
+COM - B - C - D - E - F
+               \
+                I - SAN
+
+In this example, YOU are in orbit around K, and SAN is in orbit around I. To
+move from K to I, a minimum of 4 orbital transfers are required:
+
+        -   K to J
+
+        -   J to E
+
+        -   E to D
+
+        -   D to I
+
+Afterward, the map of orbits looks like this:
+
+        G - H       J - K - L
+       /           /
+COM - B - C - D - E - F
+               \
+                I - SAN
+                 \
+                  YOU
+
+PART 2: What is the minimum number of orbital transfers required to move from
+        the object YOU are orbiting to the object SAN is orbiting? (Between the
+        objects they are orbiting - not between YOU and SAN.)
 """
+
+import sys
 
 
 class Orrery:
     def __init__(self, data_file: str):
         self.sub_orbits = {}
+        self.links = {}
 
         with open(data_file, "r") as fp:
             for line in fp.readlines():
                 inner_body, outer_body = line.strip().split(")", 1)
 
+                # Determine what body is a sub orbit of another body
                 if inner_body not in self.sub_orbits:
                     self.sub_orbits[inner_body] = set()
 
@@ -89,6 +151,16 @@ class Orrery:
                     self.sub_orbits[outer_body] = set()
 
                 self.sub_orbits[inner_body].add(outer_body)
+
+                # What are bidirectional links between bodies.
+                if inner_body not in self.links:
+                    self.links[inner_body] = set()
+
+                if outer_body not in self.links:
+                    self.links[outer_body] = set()
+
+                self.links[inner_body].add(outer_body)
+                self.links[outer_body].add(inner_body)
 
     def num_orbits(self) -> int:
         """
@@ -115,6 +187,38 @@ class Orrery:
 
         return num_orbits
 
+    def num_transfers(self, start: str, end: str) -> int:
+        """
+        How many orbital transfers will it take to get from the start body to
+        the end one.
+        """
+        unvisited_bodies = set(x for x in self.links.keys())
+        body_dist = {x: sys.maxsize for x in self.links.keys()}
+
+        # Start from the current node
+        body_dist[start] = 0
+
+        # Find the shortest distance to the end body
+        while end in unvisited_bodies:
+
+            # Select the unvisited node with the shortest dist
+            curr_bod = min(unvisited_bodies, key=body_dist.get)
+            new_dist = body_dist[curr_bod] + 1
+
+            # Update the unvisited neighbours of this body
+            for neigh_body in self.links[curr_bod]:
+                if neigh_body in unvisited_bodies and body_dist[neigh_body] > new_dist:
+                    body_dist[neigh_body] = new_dist
+
+            # Don't check this node again
+            unvisited_bodies.remove(curr_bod)
+
+        # Deduct two to simulate the bodies moving around each other.
+        return body_dist[end] - 2
+
 
 if __name__ == "__main__":
-    print(f"Part 1 = {Orrery('./data/input_0.txt').num_orbits()}")
+    print(
+        f"Part 1 = {Orrery('./data/input_0.txt').num_orbits()}\n"
+        f"Part 2 = {Orrery('./data/input_0.txt').num_transfers('YOU', 'SAN')}\n"
+    )

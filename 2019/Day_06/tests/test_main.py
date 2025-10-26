@@ -21,7 +21,25 @@ def test_new_orrery_exp_0():
         "K": {"L"},
         "L": set(),
     }
+    assert test.links == {
+        "COM": {"B"},
+        "B": {"G", "C", "COM"},
+        "C": {"D", "B"},
+        "D": {"C", "I", "E"},
+        "E": {"D", "J", "F"},
+        "F": {"E"},
+        "G": {"H", "B"},
+        "H": {"G"},
+        "I": {"D"},
+        "J": {"K", "E"},
+        "K": {"L", "J"},
+        "L": {"K"},
+    }
 
 
 def test_num_orbits_exp_0():
     assert Orrery("./data/example_0.txt").num_orbits() == 42
+
+
+def test_num_transfers_exp_0():
+    assert Orrery("./data/example_1.txt").num_transfers("YOU", "SAN") == 4
