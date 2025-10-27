@@ -46,15 +46,49 @@ PART 1: To make sure the image wasn't corrupted during transmission, the Elves
 
 class DSNImage:
     def __init__(self, raw_data_file: str, img_dims: (int, int)):
-        pass
+        self.dims = img_dims
+        self.pixels = []
+
+        with open(raw_data_file, "r") as fp:
+            raw_data = fp.read().strip()
+
+            # Fill the image layer by layer
+            for layer_idx in range(len(raw_data) // (self.dims[0] * self.dims[1])):
+                self.pixels.append(
+                    [
+                        int(x)
+                        for x in raw_data[
+                            layer_idx
+                            * self.dims[0]
+                            * self.dims[1] : (layer_idx + 1)
+                            * self.dims[0]
+                            * self.dims[1]
+                        ]
+                    ]
+                )
 
     def checksum(self) -> int:
         """
         Find the layer that contains the fewest 0 digits. Ont that layer return
         the number of 1 digits multiplied by the number of 2 digits.
         """
-        pass
+        min_zeros = self.dims[0] * self.dims[1]
+        min_zero_layer = None
+
+        # Find the layer with the fewest zeros
+        for layer_idx in range(len(self.pixels)):
+            layer_zero_cnt = self.pixels[layer_idx].count(0)
+
+            if layer_zero_cnt < min_zeros:
+                min_zeros = layer_zero_cnt
+                min_zero_layer = layer_idx
+
+        # Calculate the checksum
+        num_1s = self.pixels[min_zero_layer].count(1)
+        num_2s = self.pixels[min_zero_layer].count(2)
+
+        return num_1s * num_2s
 
 
 if __name__ == "__main__":
-    pass
+    print(f"Part 1 = {DSNImage('./data/input_0.txt', (25, 6)).checksum()}")
