@@ -41,6 +41,54 @@ PART 1: To make sure the image wasn't corrupted during transmission, the Elves
         would like you to find the layer that contains the fewest 0 digits. On
         that layer, what is the number of 1 digits multiplied by the number of 2
         digits?
+
+Now you're ready to decode the image. The image is rendered by stacking the
+layers and aligning the pixels with the same positions in each layer. The digits
+indicate the color of the corresponding pixel: 0 is black, 1 is white, and 2 is
+transparent.
+
+The layers are rendered with the first layer in front and the last layer in
+back. So, if a given position has a transparent pixel in the first and second
+layers, a black pixel in the third layer, and a white pixel in the fourth layer,
+the final image would have a black pixel at that position.
+
+For example, given an image 2 pixels wide and 2 pixels tall, the image data
+0222112222120000 corresponds to the following image layers:
+
+    Layer 1: 02
+             22
+
+    Layer 2: 11
+             22
+
+    Layer 3: 22
+             12
+
+    Layer 4: 00
+             00
+
+Then, the full image can be found by determining the top visible pixel in each
+position:
+
+
+
+        -   The top-left pixel is black because the top layer is 0.
+
+        -   The top-right pixel is white because the top layer is 2
+            (transparent), but the second layer is 1.
+
+        -   The bottom-left pixel is white because the top two layers are 2, but
+            the third layer is 1.
+
+        -   The bottom-right pixel is black because the only visible pixel in
+            that position is 0 (from layer 4).
+
+So, the final image looks like this:
+
+    01
+    10
+
+PART 2: What message is produced after decoding your image?
 """
 
 
@@ -89,6 +137,42 @@ class DSNImage:
 
         return num_1s * num_2s
 
+    def __str__(self):
+        """
+        Render image, based on the colour values:
+
+            0 = black,
+            1 = white
+            2 = transparent
+
+        The layers are rendered with the first layer in front and the last layer
+        in back.
+        """
+        render = ""
+
+        # Build the image pixel by pixel
+        for col_idx in range(self.dims[1]):
+            for row_idx in range(self.dims[0]):
+
+                # Dig deeper till either a black or white pixel is found
+                for layer_idx in range(len(self.pixels)):
+                    curr_pxl = self.pixels[layer_idx][row_idx + col_idx * self.dims[0]]
+
+                    if curr_pxl == 0:
+                        render += " "
+                        break
+
+                    elif curr_pxl == 1:
+                        render += "█"
+                        break
+
+                else:
+                    raise Exception(f"No colour found in ({row_idx}{col_idx})")
+
+            render += "\n"
+        return render
+
 
 if __name__ == "__main__":
-    print(f"Part 1 = {DSNImage('./data/input_0.txt', (25, 6)).checksum()}")
+    bios_secret = DSNImage("./data/input_0.txt", (25, 6))
+    print(f"Part 1 = {bios_secret.checksum()}\nPart 2 =\n{bios_secret}")
